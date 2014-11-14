@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2014 John D. Ament
+  ~ Copyright 2014 Gerald Muecke
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -18,16 +18,15 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>ws.ament.hammock</groupId>
-    <artifactId>hammock-core</artifactId>
+    <groupId>li.moskito</groupId>
+    <artifactId>inkstand-core</artifactId>
     <packaging>jar</packaging>
-    <url>https://github.com/johnament/hammock/wiki/Hammock</url>
-    <version>0.0.3-SNAPSHOT</version>
+    <url>https://github.com/moskitoli/inkstand/wiki</url>
+    <version>0.0.1-SNAPSHOT</version>
     <parent>
-        <groupId>ws.ament.hammock</groupId>
-        <artifactId>hammock</artifactId>
-        <version>0.0.3-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <groupId>li.moskito</groupId>
+        <artifactId>inkstand</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <dependencies>
         <dependency>

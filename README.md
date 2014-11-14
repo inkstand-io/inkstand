@@ -1,6 +1,4 @@
-hammock
+Inkstand
 =======
 
-[![Build Status](https://travis-ci.org/johnament/hammock.png)](https://travis-ci.org/johnament/hammock)
-
-Hammock, a lightweight integration of RestEasy, Undertow, and Weld.
+Inkstand, a lightweight integration of RestEasy, Undertow, and Weld, based on Hammock
