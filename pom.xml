@@ -20,6 +20,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>li.moskito</groupId>
 	<artifactId>inkstand</artifactId>
+	<name>${project.groupId}:${project.artifactId}</name>
 	<packaging>pom</packaging>
 	<url>https://github.com/moskitoli/inkstand/wiki</url>
 	<version>0.0.1-SNAPSHOT</version>
@@ -40,6 +41,19 @@
 		<connection>scm:git:https://github.com/moskitoli/inkstand.git</connection>
 	</scm>
 	<properties>
+		<!-- Common Libraries Versions -->
+		<slf4j.version>1.7.6</slf4j.version>
+		<log4j.version>2.0-rc1</log4j.version>
+		<!-- Sonar and Code Coverage -->
+		<coverage.unit.test.path>${project.basedir}/../target/jacoco-ut.exec</coverage.unit.test.path>
+		<coverage.integration.test.path>${project.basedir}/../target/jacoco-it.exec</coverage.integration.test.path>
+		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.reportPath>${coverage.unit.test.path}</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${coverage.integration.test.path}</sonar.jacoco.itReportPath>
+		<sonar.language>java</sonar.language>
+		<jacoco.version>0.7.2.201409121644</jacoco.version>
+	
 		<!-- Test lib versions -->
 		<test.junit.version>4.11</test.junit.version>
 		<test.mockito.version>1.9.5</test.mockito.version>
@@ -70,54 +84,87 @@
 	
 	<dependencyManagement>
 		<dependencies>
-			<!-- Single JEE Requirements -->
+			<!-- Javax -->
+			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>${javax.javaee-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.jcr</groupId>
+				<artifactId>jcr</artifactId>
+				<version>${javax.jcr.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.ws.rs</groupId>
+				<artifactId>javax.ws.rs-api</artifactId>
+				<version>${javax.ws.rs-api.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
+				<version>${javax.validation-api.version}</version>
 			</dependency>
-			<!-- Deltaspike -->
+			
+			<!-- Apache Commons -->
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${apache.commons.io.version}</version>
+			</dependency>
+			<!-- Apache Deltaspike -->
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
 				<artifactId>deltaspike-core-api</artifactId>
+				<version>${apache.deltaspike.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
 				<artifactId>deltaspike-core-impl</artifactId>
+				<version>${apache.deltaspike.version}</version>
 			</dependency>
-			<!-- Weld -->
-			<dependency>
-				<groupId>org.jboss.weld.se</groupId>
-				<artifactId>weld-se</artifactId>
-			</dependency>
-			<!-- Resteasy -->
+			<!-- JBoss Resteasy-->
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>jaxrs-api</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-jaxrs</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-cdi</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>async-http-servlet-3.0</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-client</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
-			<!-- Servlet/Web Container -->
+			
+			<!-- Weld CDI Container -->
+			<dependency>
+				<groupId>org.jboss.weld.se</groupId>
+				<artifactId>weld-se</artifactId>
+				<version>${jboss.weld.se.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
+				<version>${jboss.undertow.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-servlet</artifactId>
+				<version>1.2.0.Beta3</version>
 			</dependency>
 			<!-- Test Dependencies -->
 			<dependency>
