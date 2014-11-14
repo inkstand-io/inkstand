@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2014 John D. Ament
+  ~ Copyright 2014 Gerald Muecke
   ~
   ~  Licensed under the Apache License, Version 2.0 (the "License");
   ~  you may not use this file except in compliance with the License.
@@ -15,139 +15,203 @@
   ~  See the License for the specific language governing permissions and
   ~  limitations under the License.
   -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>li.moskito</groupId>
+	<artifactId>inkstand</artifactId>
+	<packaging>pom</packaging>
+	<url>https://github.com/moskitoli/inkstand/wiki</url>
+	<version>0.0.1-SNAPSHOT</version>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/moskitoli/inkstand/issues</url>
+	</issueManagement>
+	<scm>
+		<developerConnection>scm:git:git@github.com:moskitoli/inkstand.git</developerConnection>
+		<url>https://github.com/moskitoli/inkstand</url>
+		<connection>scm:git:https://github.com/moskitoli/inkstand.git</connection>
+	</scm>
+	<properties>
+		<!-- Test lib versions -->
+		<test.junit.version>4.11</test.junit.version>
+		<test.mockito.version>1.9.5</test.mockito.version>
+		<test.htmlunit.version>2.8</test.htmlunit.version>
+		<test.jsonassert.version>1.2.3</test.jsonassert.version>
+		<test.arquillian.version>1.1.3.Final</test.arquillian.version>
+		<test.arquillian.weld.version>1.0.0.CR8</test.arquillian.weld.version>
+		<!-- javax library versions -->
+		<javax.jcr.version>2.0</javax.jcr.version>
+		<javax.javaee-api.version>7.0</javax.javaee-api.version>
+		<javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
+		<javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
+		<!-- Apache Library Version -->
+		<apache.commons.io.version>2.4</apache.commons.io.version>
+		<apache.deltaspike.version>1.1.0</apache.deltaspike.version>
+		<apache.jackrabbit.version>2.6.5</apache.jackrabbit.version>
+		<!-- JBoss Library Version -->
+		<jboss.resteasy.version>3.0.10.Final</jboss.resteasy.version>
+		<jboss.weld.se.version>3.0.0.Alpha1</jboss.weld.se.version>
+		<jboss.undertow.version>1.2.0.Beta3</jboss.undertow.version>
+		<!-- Library Versions -->
+		<halite.version>0.0.15</halite.version>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>ws.ament.hammock</groupId>
-    <artifactId>hammock</artifactId>
-    <packaging>pom</packaging>
-    <url>https://github.com/johnament/hammock/wiki</url>
-    <version>0.0.3-SNAPSHOT</version>
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/johnament/hammock/issues</url>
-    </issueManagement>
-    <scm>
-        <developerConnection>scm:git:git@github.com:johnament/hammock.git</developerConnection>
-        <url>https://github.com/johnament/hammock</url>
-        <connection>scm:git:https://github.com/johnament/hammock.git</connection>
-    </scm>
-    <properties>
-        <weld.version>2.2.0.Alpha1</weld.version>
-        <resteasy.version>3.0.6.Final</resteasy.version>
-        <arquillian.version>1.1.3.Final</arquillian.version>
-        <undertow.version>1.0.0.Final</undertow.version>
-        <arquillian.weld.version>1.0.0.CR8</arquillian.weld.version>
-        <slf4j.version>1.7.6</slf4j.version>
-        <junit.version>4.11</junit.version>
-    </properties>
-    <modules>
-        <module>core</module>
-    </modules>
-    <dependencyManagement>
-        <dependencies>
+	</properties>
+	<modules>
+		<module>inkstand-core</module>
+	</modules>
+	
+	<dependencyManagement>
+		<dependencies>
+			<!-- Single JEE Requirements -->
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+			</dependency>
+			<!-- Deltaspike -->
+			<dependency>
+				<groupId>org.apache.deltaspike.core</groupId>
+				<artifactId>deltaspike-core-api</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.deltaspike.core</groupId>
+				<artifactId>deltaspike-core-impl</artifactId>
+			</dependency>
+			<!-- Weld -->
+			<dependency>
+				<groupId>org.jboss.weld.se</groupId>
+				<artifactId>weld-se</artifactId>
+			</dependency>
+			<!-- Resteasy -->
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>jaxrs-api</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-jaxrs</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-cdi</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>async-http-servlet-3.0</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.resteasy</groupId>
+				<artifactId>resteasy-client</artifactId>
+			</dependency>
+			<!-- Servlet/Web Container -->
+			<dependency>
+				<groupId>io.undertow</groupId>
+				<artifactId>undertow-core</artifactId>
+			</dependency>
+			<dependency>
+				<groupId>io.undertow</groupId>
+				<artifactId>undertow-servlet</artifactId>
+			</dependency>
+			<!-- Test Dependencies -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${test.junit.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-all</artifactId>
+				<version>${test.mockito.version}</version>
+			</dependency>
+			<!-- Arquillian -->
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>${arquillian.version}</version>
+                <version>${test.arquillian.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.jboss.weld.se</groupId>
-                <artifactId>weld-se</artifactId>
-                <version>${weld.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-jaxrs</artifactId>
-                <version>${resteasy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.undertow</groupId>
-                <artifactId>undertow-core</artifactId>
-                <version>${undertow.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.undertow</groupId>
-                <artifactId>undertow-servlet</artifactId>
-                <version>${undertow.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-cdi</artifactId>
-                <version>${resteasy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>async-http-servlet-3.0</artifactId>
-                <version>${resteasy.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.arquillian.container</groupId>
                 <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-                <version>${arquillian.weld.version}</version>
+                <version>${test.arquillian.weld.version}</version>
                 <scope>test</scope>
             </dependency>
-            <dependency>
-                <groupId>org.jboss.resteasy</groupId>
-                <artifactId>resteasy-client</artifactId>
-                <version>${resteasy.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+		</dependencies>
+	</dependencyManagement>
 
-    <build>
-        <defaultGoal>clean verify</defaultGoal>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	<dependencies>
+		<!-- Code Coverage -->
+		<dependency>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>${jacoco.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<!-- Binding for Log4J -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<!-- Log4j API and Core implementation required for binding -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<!-- Test libraries -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<defaultGoal>clean verify</defaultGoal>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.jboss.weld.environment.se.StartMain</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
