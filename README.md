@@ -14,7 +14,7 @@ In comparison to the original hammock project, Inkstand provides the following f
 - NO support for management resources
 
 Configuration
-=============
+-------------
 Beyond Hammock, Inkstand provides a default configuration for the HTTP server (localhost:80) which can 
 easily be overriden - either by providing JVM parameters
 -Dinkstand.http.port=
@@ -23,22 +23,22 @@ or by providing a properties file by implementing org.apache.deltaspike.core.api
 the very same parameters. Alternatively, the parameters can be set by implementing the WebServerConfiguration interface.
 
 Resources and Providers
-=======================
+-----------------------
 Per default, inkstand scans the classpath for Path resources an Providers which are automatically published as REST
 services. The default contextRoot can be overridden by defining the property inkstand.rest.contextRoot (see above)
 or by implementing and injecting an implementation of ApplicationConfiguration. 
 
 HTTP Container and Rest Implementation
-======================================
+--------------------------------------
 Inkstand allows to replace the http container (default: undertow) by providing an Alternative an the Rest implementation
 (default: Resteasy without security).
 
 JCR support
-===========
+-----------
 For application integration, Inkstand provides injectable access to a Jackrabbit based JCR repository (OAK is planned).
 
 Global Alternatives
-===================
+-------------------
 One of the more important feature is the CDI Extention GlobalAlternativeSelector. The selector allows to define 
 an alternative class or stereotype in an application jar's beans.xml, which are injectable as alternative in other
 bean deployment archive as long as they are annotation with @Priority. The default CDI 1.1 spec only supports the 
