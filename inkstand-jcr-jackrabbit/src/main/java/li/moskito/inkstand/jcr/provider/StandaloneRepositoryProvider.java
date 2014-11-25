@@ -2,7 +2,9 @@ package li.moskito.inkstand.jcr.provider;
 
 import java.io.File;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Priority;
+import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.jcr.Repository;
@@ -22,10 +24,10 @@ import org.slf4j.LoggerFactory;
  * configured using the {@code inque.jcr.home} property, either defined in the inque.properties file or via JVM
  * argument.
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
-@Priority(1)
+@Priority(2)
 public class StandaloneRepositoryProvider implements RepositoryProvider {
 
     /**
@@ -36,14 +38,26 @@ public class StandaloneRepositoryProvider implements RepositoryProvider {
     @Inject
     @ConfigProperty(name = "inque.jcr.home")
     private String repositoryHome;
+    
+    private RepositoryImpl repository;
 
     @Override
     @Produces
     @StandaloneRepository
     public Repository getRepository()
             throws RepositoryException {
-        LOG.info("Connecting to local repository at {}", repositoryHome);
-        final RepositoryConfig config = RepositoryConfig.create(new File(repositoryHome));
-        return RepositoryImpl.create(config);
+        if(repository == null) {
+            LOG.info("Connecting to local repository at {}", repositoryHome);
+            final RepositoryConfig config = RepositoryConfig.create(new File(repositoryHome));
+            repository = RepositoryImpl.create(config);    
+        }
+        return repository;
+    }
+    
+    @PreDestroy
+    public void close(@Disposes Repository repository) {
+        if(repository instanceof RepositoryImpl){
+            ((RepositoryImpl)repository).shutdown();
+        }
     }
 }

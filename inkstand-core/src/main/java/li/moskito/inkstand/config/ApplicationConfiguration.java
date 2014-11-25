@@ -5,7 +5,7 @@ import java.util.Collection;
 /**
  * Configuration for the Application that should be run
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public interface ApplicationConfiguration {

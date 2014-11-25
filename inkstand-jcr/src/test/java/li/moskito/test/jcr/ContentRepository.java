@@ -18,7 +18,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  * Rule for testing with java content repositories
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public abstract class ContentRepository extends ExternalResource {

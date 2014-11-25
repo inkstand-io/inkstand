@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Priority;
+import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.jcr.Repository;
@@ -21,6 +22,7 @@ import li.moskito.inkstand.jcr.util.JCRUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.apache.jackrabbit.commons.cnd.ParseException;
+import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.slf4j.Logger;
@@ -29,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Provider that provides a transient, in-memory repository that is not persisted
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 @Priority(1)
@@ -69,17 +71,18 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     }
 
     @PreDestroy
-    public void shutdownRepository() {
+    public void shutdownRepository(@Disposes Repository repository) {
 
         try {
-            if (repository != null) {
-                repository.shutdown();
+            if (repository != null && repository instanceof TransientRepository) {
+                ((TransientRepository)repository).shutdown();
             }
             FileUtils.deleteDirectory(tempFolder.toFile());
         } catch (final IOException e) {
             throw new RuntimeException("Could not cleanup temp folder", e);
         }
     }
+    
 
     /**
      * Creates a transient test repository for integration testing

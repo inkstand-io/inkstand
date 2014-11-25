@@ -12,7 +12,7 @@ import javax.security.auth.Subject;
 
 /**
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public final class SecurityTestHelper {

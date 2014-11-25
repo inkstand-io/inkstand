@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  * {@link TransientRepository} of Jackrabitt that is an in-memory repository. Nevertheless it requires a filesystem
  * location to put the configuration file (repository.xml) to.
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public class InMemoryContentRepository extends ContentRepository {

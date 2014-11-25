@@ -12,7 +12,7 @@
 	
 	<properties>
 		<!-- Apache Library Version -->
-		<apache.jackrabbit.version>2.6.5</apache.jackrabbit.version>
+		<apache.jackrabbit.version>2.8.0</apache.jackrabbit.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -41,6 +41,7 @@
 			<groupId>javax.jcr</groupId>
 			<artifactId>jcr</artifactId>
 		</dependency>
+		<!-- Jackrabbit -->
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-core</artifactId>
@@ -49,10 +50,16 @@
 			<groupId>org.apache.jackrabbit</groupId>
 			<artifactId>jackrabbit-jcr-commons</artifactId>
 		</dependency>
+		<!-- Deltaspike -->
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
 			<artifactId>deltaspike-core-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-impl</artifactId>
+		</dependency>
+		<!-- JCR stereotypes -->
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-jcr</artifactId>

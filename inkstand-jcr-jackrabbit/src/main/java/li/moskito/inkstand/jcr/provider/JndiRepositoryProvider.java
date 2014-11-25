@@ -11,13 +11,14 @@ import li.moskito.inkstand.jcr.RepositoryProvider;
 /**
  * Provides a JCR {@link Repository} that is available as JNDI resource with the name &quot;java:/jcr/local&quot;
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
-@Priority(1)
+@Priority(3)
 public class JndiRepositoryProvider implements RepositoryProvider {
 
-    @Resource(mappedName = "java:/jcr/local")
+	//TODO find a generic way to point to a the JCR Repo via JNDI
+    @Resource(mappedName = "java:/jcr/local/node01")
     private Repository repository;
 
     @Override

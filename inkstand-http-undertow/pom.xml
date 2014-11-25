@@ -16,12 +16,27 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
+			<groupId>li.moskito</groupId>
+			<artifactId>inkstand-ms</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<!-- Undertow -->
+		<dependency>
 			<groupId>io.undertow</groupId>
 			<artifactId>undertow-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.undertow</groupId>
 			<artifactId>undertow-servlet</artifactId>
+		</dependency>
+		<!-- Deltaspike -->
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-impl</artifactId>
 		</dependency>
 	</dependencies>
 </project>

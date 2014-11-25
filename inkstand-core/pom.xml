@@ -15,28 +15,23 @@
 	<name>${project.groupId}:${project.artifactId}</name>
 	<packaging>jar</packaging>
 	<url>https://github.com/moskitoli/inkstand/wiki</url>
+	<description>
+	The core package contains the configuration API, a launcher class and CDI extensions that are
+	required for configuration and auto-discovery. The CDI extensions can be used without the full inkstand
+	bundle by just using this core package. 
+	</description>
+	
 	<dependencies>
 		<!-- the Weld CDI container -->
 		<dependency>
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 		</dependency>
-		<!-- Deltaspike -->
-		<dependency>
-			<groupId>org.apache.deltaspike.core</groupId>
-			<artifactId>deltaspike-core-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.deltaspike.core</groupId>
-			<artifactId>deltaspike-core-impl</artifactId>
-		</dependency>
+		
 	</dependencies>
 </project>

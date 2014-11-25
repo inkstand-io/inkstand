@@ -24,7 +24,7 @@ import org.mockito.Mockito;
  * 
  * The MockContentRepository can be initialized per test or per class.
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public class MockContentRepository extends ContentRepository {

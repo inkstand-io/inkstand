@@ -7,7 +7,7 @@ import javax.enterprise.inject.Produces;
 /**
  * Interface to provide Undertow deployments
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public interface UndertowDeploymentProvider {

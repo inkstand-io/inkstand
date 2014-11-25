@@ -3,7 +3,7 @@ package li.moskito.inkstand;
 /**
  * Inkstand launcher. Alternative way of starting Weld SE Container.
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public class Inkstand {

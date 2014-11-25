@@ -6,16 +6,15 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import li.moskito.inkstand.http.WebServer;
 
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Launcher for the webserver.
+ * Launcher for an injectable microservice.  
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 @ApplicationScoped
@@ -27,12 +26,12 @@ public class ServiceLauncher {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceLauncher.class);
 
     @Inject
-    private WebServer webServer;
+    private MicroService microService;
 
     @PostConstruct
     public void init() {
         LOG.info("Starting web server");
-        webServer.start();
+        microService.start();
     }
 
     void watch(@Observes final ContainerInitialized containerInitialized) {
@@ -41,7 +40,7 @@ public class ServiceLauncher {
 
     @PreDestroy
     public void shutdown() {
-        webServer.stop();
+        microService.stop();
         LOG.info("Webserver stopped");
     }
 }

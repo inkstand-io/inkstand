@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Priority;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Produces;
@@ -21,9 +22,6 @@ import javax.enterprise.inject.spi.WithAnnotations;
 
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
-import org.jboss.weld.environment.deployment.WeldDeployment;
-import org.jboss.weld.environment.deployment.WeldResourceLoader;
-import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jboss.weld.xml.BeansXmlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +33,10 @@ public class GlobalAlternativeSelector implements Extension {
      */
     private static final Logger LOG = LoggerFactory.getLogger(GlobalAlternativeSelector.class);
 
+    /**
+     * Location of beans.xml
+     */
+    private static final String BEANS_XML = "META-INF/beans.xml";
     /**
      * Stereotype classes that enable an application alternative
      */
@@ -51,14 +53,23 @@ public class GlobalAlternativeSelector implements Extension {
      */
     public void loadApplicationAlternatives(@Observes final BeforeBeanDiscovery bbd) {
         LOG.info("starting bean discovery");
-        final ResourceLoader loader = new WeldResourceLoader();
-        final URL beansXmlUrl = loader.getResource(WeldDeployment.BEANS_XML);
+
+        final URL beansXmlUrl = getResource(BEANS_XML);
         if (beansXmlUrl == null) {
             throw new IllegalStateException("No beans.xml found");
         }
         final BeansXml beansXml = new BeansXmlParser().parse(beansXmlUrl);
         enabledStereotypes.addAll(loadClasses(beansXml.getEnabledAlternativeStereotypes()));
         enabledAlternatives.addAll(loadClasses(beansXml.getEnabledAlternativeClasses()));
+    }
+
+    private URL getResource(final String name) {
+        final ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if (cl != null) {
+            return cl.getResource(name);
+        } else {
+            return getClass().getResource(name);
+        }
     }
 
     /**
@@ -72,6 +83,7 @@ public class GlobalAlternativeSelector implements Extension {
     private Collection<Class<? extends Annotation>> loadClasses(final Iterable<Metadata<String>> enabledAlternatives) {
         final Set<Class<? extends Annotation>> classes = new HashSet<>();
         for (final Metadata<String> alternative : enabledAlternatives) {
+            LOG.info("Loading alternative {}", alternative);
             final String alternativeClassName = alternative.getValue();
             try {
                 classes.add((Class<? extends Annotation>) Class.forName(alternativeClassName));
@@ -82,18 +94,27 @@ public class GlobalAlternativeSelector implements Extension {
         return classes;
     }
 
+    /**
+     * Watches all alternatives. If a cross-bda alternative is marked with the {@link Priority} annotation it will be
+     * consideres as Application-Scoped alternative. If the alternative class itself or its stereotype matches the
+     * enabled alternative, it will be accepted, otherwise it will be vetoed.
+     * 
+     * @param pat
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void watchAlternatives(
             @Observes @WithAnnotations({ Stereotype.class, Alternative.class }) final ProcessAnnotatedType pat) {
         final AnnotatedType type = pat.getAnnotatedType();
-        if (enabledAlternatives.contains(type.getJavaClass())
+        // any non-priority alternative will be handles normally
+        if (!type.isAnnotationPresent(Priority.class)
+                || enabledAlternatives.contains(type.getJavaClass())
                 || matchesEnabledStereotypes(type)
                 || matchesEnabledStereotypes(type.getMethods())
                 || matchesEnabledStereotypes(type.getFields())) {
-            LOG.info("Enabled alternative {}", pat.getAnnotatedType());
+            LOG.info("Enable alternative {}", pat.getAnnotatedType());
             return;
         }
-        LOG.info("Disabledalternative {}", pat.getAnnotatedType());
+        LOG.info("Disable alternative {}", pat.getAnnotatedType());
         pat.veto();
     }
 
@@ -130,16 +151,8 @@ public class GlobalAlternativeSelector implements Extension {
         return false;
     }
 
-    void afterTypeDiscovery(@Observes final AfterTypeDiscovery atd, final BeanManager bm) {
-        LOG.debug("Discovered Alternatives {}", atd.getAlternatives());
+    public void afterTypeDiscovery(@Observes final AfterTypeDiscovery atd, final BeanManager bm) {
+        LOG.info("Discovered Alternatives {}", atd.getAlternatives());
     }
-
-    // void event(@Observes final AfterBeanDiscovery event) {
-    // LOG.info("AfterBeanDiscovery {}", event);
-    // }
-    //
-    // void event(@Observes final AfterDeploymentValidation event) {
-    // LOG.info("AfterDeploymentValidation {}", event);
-    // }
 
 }

@@ -5,7 +5,7 @@ import java.security.Principal;
 /**
  * A Principal to be used in test that carries a username information.
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public class SimpleUserPrincipal implements Principal {

@@ -4,15 +4,15 @@ import io.undertow.Undertow;
 
 import javax.inject.Inject;
 
-import li.moskito.inkstand.http.WebServer;
+import li.moskito.inkstand.MicroService;
 
 /**
  * Undertow based WebServer implementation
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
-public class UndertowWebServer implements WebServer {
+public class UndertowWebServer implements MicroService {
 
     @Inject
     private Undertow undertow;

@@ -3,7 +3,7 @@ package li.moskito.inkstand.config;
 /**
  * Configuration Interface for the WebServer
  * 
- * @author gmuecke
+ * @author Gerald Muecke, gerald@moskito.li
  * 
  */
 public interface WebServerConfiguration {
