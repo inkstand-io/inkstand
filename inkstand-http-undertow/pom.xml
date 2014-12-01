@@ -6,7 +6,9 @@
 		<artifactId>inkstand</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+	
 	<artifactId>inkstand-http-undertow</artifactId>
+	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Undertow Web Container for Inkstand.</description>
 
 	<dependencies>

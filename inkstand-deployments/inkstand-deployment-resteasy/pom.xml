@@ -6,7 +6,9 @@
 		<artifactId>inkstand-deployments</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
+	
 	<artifactId>inkstand-deployment-resteasy</artifactId>
+	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Simple Resteasy Deployment for Undertow.</description>
 
 	<dependencies>
