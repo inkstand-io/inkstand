@@ -14,7 +14,6 @@ import javax.enterprise.inject.Stereotype;
 import javax.enterprise.inject.spi.AfterTypeDiscovery;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
@@ -26,6 +25,12 @@ import org.jboss.weld.xml.BeansXmlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * CDI Extension that scans detects global alternatives (annotated with {@link Priority}) and disables those,
+ * that are not defined as alternative or stereotype in the beans.xml of the application.
+ * @author Gerald Muecke, gerald@moskito.li
+ *
+ */
 public class GlobalAlternativeSelector implements Extension {
 
     /**
@@ -52,7 +57,7 @@ public class GlobalAlternativeSelector implements Extension {
      * @param bbd
      */
     public void loadApplicationAlternatives(@Observes final BeforeBeanDiscovery bbd) {
-        LOG.info("starting bean discovery");
+        LOG.debug("starting bean discovery");
 
         final URL beansXmlUrl = getResource(BEANS_XML);
         if (beansXmlUrl == null) {
@@ -83,7 +88,7 @@ public class GlobalAlternativeSelector implements Extension {
     private Collection<Class<? extends Annotation>> loadClasses(final Iterable<Metadata<String>> enabledAlternatives) {
         final Set<Class<? extends Annotation>> classes = new HashSet<>();
         for (final Metadata<String> alternative : enabledAlternatives) {
-            LOG.info("Loading alternative {}", alternative);
+            LOG.debug("Loading alternative {}", alternative);
             final String alternativeClassName = alternative.getValue();
             try {
                 classes.add((Class<? extends Annotation>) Class.forName(alternativeClassName));
@@ -111,10 +116,10 @@ public class GlobalAlternativeSelector implements Extension {
                 || matchesEnabledStereotypes(type)
                 || matchesEnabledStereotypes(type.getMethods())
                 || matchesEnabledStereotypes(type.getFields())) {
-            LOG.info("Enable alternative {}", pat.getAnnotatedType());
+            LOG.debug("Enable alternative {}", pat.getAnnotatedType());
             return;
         }
-        LOG.info("Disable alternative {}", pat.getAnnotatedType());
+        LOG.debug("Disable alternative {}", pat.getAnnotatedType());
         pat.veto();
     }
 
@@ -151,7 +156,7 @@ public class GlobalAlternativeSelector implements Extension {
         return false;
     }
 
-    public void afterTypeDiscovery(@Observes final AfterTypeDiscovery atd, final BeanManager bm) {
+    public void afterTypeDiscovery(@Observes final AfterTypeDiscovery atd) {
         LOG.info("Discovered Alternatives {}", atd.getAlternatives());
     }
 

@@ -13,7 +13,9 @@ import javax.enterprise.inject.Stereotype;
 @ApplicationScoped
 @Alternative
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({
+        ElementType.TYPE, ElementType.METHOD, ElementType.FIELD
+})
 public @interface JndiRepository {
 
 }

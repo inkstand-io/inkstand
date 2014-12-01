@@ -60,7 +60,7 @@ public final class JCRUtil {
      * @throws ParseException
      */
     public static void initializeContentModel(final Session session)
-            throws IOException, RepositoryException, ParseException {
+            throws IOException, RepositoryException {
         final URL cndFile = JCRUtil.class.getResource("/inbox_jcr_model.cnd.txt");
         LOG.info("Initializing JCR Model from File {}", cndFile.getPath());
 
@@ -71,10 +71,16 @@ public final class JCRUtil {
         final String name = repository.getDescriptor(Repository.REP_NAME_DESC);
         LOG.info("Logged in as {} to a {} repository", user, name);
 
-        final NodeType[] nodeTypes = CndImporter.registerNodeTypes(cndReader, session, true);
-        if (LOG.isDebugEnabled()) {
-            logRegisteredNodeTypes(nodeTypes);
+        NodeType[] nodeTypes;
+        try {
+            nodeTypes = CndImporter.registerNodeTypes(cndReader, session, true);
+            if (LOG.isDebugEnabled()) {
+                logRegisteredNodeTypes(nodeTypes);
+            }
+        } catch (ParseException e) {
+            throw new RuntimeException("Could not register node types", e);
         }
+        
     }
 
     private static void logRegisteredNodeTypes(final NodeType[] nodeTypes) {
