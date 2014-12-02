@@ -22,7 +22,6 @@ import li.moskito.inkstand.jcr.util.JCRUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.apache.jackrabbit.commons.cnd.ParseException;
-import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.slf4j.Logger;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * Provider that provides a transient, in-memory repository that is not persisted
  * 
  * @author Gerald Muecke, gerald@moskito.li
- * 
  */
 @Priority(1)
 public class TransientRepositoryProvider implements RepositoryProvider {
@@ -52,8 +50,7 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     @Override
     @Produces
     @li.moskito.inkstand.jcr.TransientRepository
-    public Repository getRepository()
-            throws RepositoryException {
+    public Repository getRepository() throws RepositoryException {
         return repository;
     }
 
@@ -75,14 +72,13 @@ public class TransientRepositoryProvider implements RepositoryProvider {
 
         try {
             if (repository != null && repository instanceof TransientRepository) {
-                ((TransientRepository)repository).shutdown();
+                ((TransientRepository) repository).shutdown();
             }
             FileUtils.deleteDirectory(tempFolder.toFile());
         } catch (final IOException e) {
             throw new RuntimeException("Could not cleanup temp folder", e);
         }
     }
-    
 
     /**
      * Creates a transient test repository for integration testing
@@ -90,8 +86,7 @@ public class TransientRepositoryProvider implements RepositoryProvider {
      * @throws IOException
      * @throws ConfigurationException
      */
-    private void initializeRepository()
-            throws IOException, ConfigurationException {
+    private void initializeRepository() throws IOException, ConfigurationException {
         this.tempFolder = Files.createTempDirectory("inque");
         final URL configLocation = TransientRepositoryProvider.class.getResource(configURL);
         repository = JCRUtil.createTransientRepository(tempFolder.toFile(), configLocation);
@@ -104,16 +99,14 @@ public class TransientRepositoryProvider implements RepositoryProvider {
      * @throws IOException
      * @throws ParseException
      */
-    private void loadContentModel()
-            throws RepositoryException, IOException, ParseException {
+    private void loadContentModel() throws RepositoryException, IOException, ParseException {
         final Session adminSession = createAdminSession();
         JCRUtil.initializeContentModel(adminSession);
         adminSession.logout();
 
     }
 
-    private Session createAdminSession()
-            throws RepositoryException {
+    private Session createAdminSession() throws RepositoryException {
         final Session adminSession = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
         return adminSession;
     }

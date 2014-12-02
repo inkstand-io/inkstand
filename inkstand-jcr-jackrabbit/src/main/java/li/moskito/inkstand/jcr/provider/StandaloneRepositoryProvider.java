@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
  * argument.
  * 
  * @author Gerald Muecke, gerald@moskito.li
- * 
  */
 @Priority(2)
 public class StandaloneRepositoryProvider implements RepositoryProvider {
@@ -36,28 +35,27 @@ public class StandaloneRepositoryProvider implements RepositoryProvider {
     private static final Logger LOG = LoggerFactory.getLogger(StandaloneRepositoryProvider.class);
 
     @Inject
-    @ConfigProperty(name = "inque.jcr.home")
+    @ConfigProperty(name = "inkstand.jcr.home")
     private String repositoryHome;
-    
+
     private RepositoryImpl repository;
 
     @Override
     @Produces
     @StandaloneRepository
-    public Repository getRepository()
-            throws RepositoryException {
-        if(repository == null) {
+    public Repository getRepository() throws RepositoryException {
+        if (repository == null) {
             LOG.info("Connecting to local repository at {}", repositoryHome);
             final RepositoryConfig config = RepositoryConfig.create(new File(repositoryHome));
-            repository = RepositoryImpl.create(config);    
+            repository = RepositoryImpl.create(config);
         }
         return repository;
     }
-    
+
     @PreDestroy
     public void close(@Disposes Repository repository) {
-        if(repository instanceof RepositoryImpl){
-            ((RepositoryImpl)repository).shutdown();
+        if (repository instanceof RepositoryImpl) {
+            ((RepositoryImpl) repository).shutdown();
         }
     }
 }

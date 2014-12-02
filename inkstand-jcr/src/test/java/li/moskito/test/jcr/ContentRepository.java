@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.jcr.Repository;
 
-import li.moskito.test.TestUtil;
+import li.moskito.test.Scribble;
 import li.moskito.test.rules.ExternalResource;
 
 import org.junit.rules.TemporaryFolder;
@@ -57,7 +57,7 @@ public abstract class ContentRepository extends ExternalResource {
     protected void beforeClass()
             throws Throwable {
         super.before();
-        this.testRunId = TestUtil.generateRunId();
+        this.testRunId = Scribble.generateRunId();
         this.repository = createRepository();
         this.initialized = true;
     }
