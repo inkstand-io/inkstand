@@ -6,12 +6,19 @@
 		<artifactId>inkstand</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>inkstand-http-undertow</artifactId>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Undertow Web Container for Inkstand.</description>
 
 	<dependencies>
+        <dependency>
+            <groupId>li.moskito</groupId>
+            <artifactId>inkstand-test-util</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-core</artifactId>

@@ -12,6 +12,13 @@
 	<description>Simple Resteasy Deployment for Undertow.</description>
 
 	<dependencies>
+	    <dependency>
+            <groupId>li.moskito</groupId>
+            <artifactId>inkstand-test-util</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-core</artifactId>

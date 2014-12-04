@@ -49,28 +49,7 @@
 			<groupId>javax.jcr</groupId>
 			<artifactId>jcr</artifactId>
 		</dependency>
-		<!-- Jackrabbit -->
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-commons</artifactId>
-		</dependency>
-		<dependency>
-            <groupId>org.apache.jackrabbit</groupId>
-            <artifactId>jackrabbit-jca</artifactId>
-        </dependency>
-		<!-- Deltaspike -->
-		<dependency>
-			<groupId>org.apache.deltaspike.core</groupId>
-			<artifactId>deltaspike-core-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.deltaspike.core</groupId>
-			<artifactId>deltaspike-core-impl</artifactId>
-		</dependency>
+		
 		<!-- JCR stereotypes -->
 		<dependency>
 			<groupId>li.moskito</groupId>
@@ -91,6 +70,28 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		<!-- Jackrabbit -->
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jcr-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-jca</artifactId>
+        </dependency>
+        <!-- Deltaspike -->
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-impl</artifactId>
+        </dependency>
 	</dependencies>
 
 	<build>

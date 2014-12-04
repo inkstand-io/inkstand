@@ -1,22 +1,30 @@
 package li.moskito.inkstand.http.undertow;
 
+import static org.junit.Assert.assertEquals;
+import li.moskito.test.Scribble;
+
 import org.junit.Before;
 import org.junit.Test;
 
 public class UndertowDefaultConfigurationTest {
 
+    private UndertowDefaultConfiguration subject;
+
     @Before
     public void setUp() throws Exception {
+        this.subject = new UndertowDefaultConfiguration();
+        Scribble.injectInto(subject).configProperty("inkstand.http.port", 1024);
+        Scribble.injectInto(subject).configProperty("inkstand.http.listenaddress", "foreign.host");
     }
 
     @Test
     public void testGetPort() throws Exception {
-        throw new RuntimeException("not yet implemented");
+        assertEquals(1024, subject.getPort());
     }
 
     @Test
     public void testGetBindAddress() throws Exception {
-        throw new RuntimeException("not yet implemented");
+        assertEquals("foreign.host", subject.getBindAddress());
     }
 
 }

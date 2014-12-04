@@ -41,7 +41,7 @@ public final class Scribble {
          * @throws IllegalAccessException
          * @throws IllegalArgumentException
          */
-        public void configProperty(String configPropertyName, String value) throws IllegalArgumentException,
+        public void configProperty(String configPropertyName, Object value) throws IllegalArgumentException,
                 IllegalAccessException {
             for (Field field : target.getClass().getDeclaredFields()) {
                 ConfigProperty cp = field.getAnnotation(ConfigProperty.class);

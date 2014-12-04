@@ -52,6 +52,8 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     @ConfigProperty(name = "inkstand.jcr.transient.cndFileURL")
     private String cndFileURL;
 
+    private Session adminSession;
+
     @Override
     @Produces
     @li.moskito.inkstand.jcr.TransientRepository
@@ -65,7 +67,6 @@ public class TransientRepositoryProvider implements RepositoryProvider {
         try {
             initializeRepository();
             loadContentModel();
-            // TODO make data file configurable
         } catch (IOException | RepositoryException | ParseException e) {
             throw new RuntimeException("Could not start repository", e);
         }
@@ -76,10 +77,15 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     public void shutdownRepository(@Disposes Repository repository) {
 
         try {
-            if (repository != null && repository instanceof TransientRepository) {
-                ((TransientRepository) repository).shutdown();
+            if (repository == this.repository) {
+                if (adminSession != null) {
+                    adminSession.logout();
+                    adminSession = null;
+                }
+                this.repository.shutdown();
+                FileUtils.deleteDirectory(tempFolder.toFile());
             }
-            FileUtils.deleteDirectory(tempFolder.toFile());
+            // TODO else throw ... what?
         } catch (final IOException e) {
             throw new RuntimeException("Could not cleanup temp folder", e);
         }
@@ -120,12 +126,10 @@ public class TransientRepositoryProvider implements RepositoryProvider {
      * @throws ParseException
      */
     private void loadContentModel() throws RepositoryException, IOException, ParseException {
-        final Session adminSession = createAdminSession();
+        final Session adminSession = getAdminSession();
         if (cndFileURL != null) {
-            JCRUtil.initializeContentModel(adminSession);
+            JCRUtil.initializeContentModel(adminSession, resolveUrl(cndFileURL));
         }
-        adminSession.logout();
-
     }
 
     /**
@@ -134,8 +138,10 @@ public class TransientRepositoryProvider implements RepositoryProvider {
      * @return the session with admin privileges.
      * @throws RepositoryException
      */
-    private Session createAdminSession() throws RepositoryException {
-        final Session adminSession = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+    private Session getAdminSession() throws RepositoryException {
+        if (adminSession == null) {
+            adminSession = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+        }
         return adminSession;
     }
 

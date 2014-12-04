@@ -1,27 +1,39 @@
 package li.moskito.inkstand.http.undertow;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
+import io.undertow.Undertow;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
 public class UndertowWebServerTest {
 
-    @Before
-    public void setUp() throws Exception {
-    }
+    @Mock
+    private Undertow undertow;
+
+    @InjectMocks
+    private UndertowWebServer subject;
 
     @Test
     public void testStart() throws Exception {
-        throw new RuntimeException("not yet implemented");
+        subject.start();
+        verify(undertow).start();
     }
 
     @Test
     public void testStop() throws Exception {
-        throw new RuntimeException("not yet implemented");
+        subject.stop();
+        verify(undertow).stop();
     }
 
     @Test
     public void testGetUndertow() throws Exception {
-        throw new RuntimeException("not yet implemented");
+        assertEquals(undertow, subject.getUndertow());
     }
 
 }

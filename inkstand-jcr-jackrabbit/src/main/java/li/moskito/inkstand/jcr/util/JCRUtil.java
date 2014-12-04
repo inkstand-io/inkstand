@@ -55,13 +55,13 @@ public final class JCRUtil {
      * Loads the inque nodetype model to the session's repository
      * 
      * @param session
+     * @param url
      * @throws IOException
      * @throws RepositoryException
      * @throws ParseException
      */
-    public static void initializeContentModel(final Session session)
-            throws IOException, RepositoryException {
-        final URL cndFile = JCRUtil.class.getResource("/inbox_jcr_model.cnd.txt");
+    public static void initializeContentModel(final Session session, URL cndFile) throws IOException,
+            RepositoryException {
         LOG.info("Initializing JCR Model from File {}", cndFile.getPath());
 
         final Reader cndReader = new InputStreamReader(cndFile.openStream());
@@ -80,7 +80,7 @@ public final class JCRUtil {
         } catch (ParseException e) {
             throw new RuntimeException("Could not register node types", e);
         }
-        
+
     }
 
     private static void logRegisteredNodeTypes(final NodeType[] nodeTypes) {
@@ -96,48 +96,48 @@ public final class JCRUtil {
             for (final PropertyDefinition pd : nt.getDeclaredPropertyDefinitions()) {
                 buf.append("  - ").append(pd.getName()).append(' ');
                 switch (pd.getRequiredType()) {
-                case PropertyType.BINARY:
-                    buf.append("(BINARY)");
-                    break;
-                case PropertyType.BOOLEAN:
-                    buf.append("(BOOLEAN)");
-                    break;
-                case PropertyType.DATE:
-                    buf.append("(DATE)");
-                    break;
-                case PropertyType.DECIMAL:
-                    buf.append("(DECIMAL)");
-                    break;
-                case PropertyType.DOUBLE:
-                    buf.append("(DOUBLE)");
-                    break;
-                case PropertyType.LONG:
-                    buf.append("(LONG)");
-                    break;
-                case PropertyType.NAME:
-                    buf.append("(NAME)");
-                    break;
-                case PropertyType.PATH:
-                    buf.append("(PATH)");
-                    break;
-                case PropertyType.REFERENCE:
-                    buf.append("(REFERENCE)");
-                    break;
-                case PropertyType.WEAKREFERENCE:
-                    buf.append("(WEAKREFERENCE)");
-                    break;
-                case PropertyType.STRING:
-                    buf.append("(STRING)");
-                    break;
-                case PropertyType.UNDEFINED:
-                    buf.append("(UNDEFINED)");
-                    break;
-                case PropertyType.URI:
-                    buf.append("(URI)");
-                    break;
-                default:
-                    buf.append("!unknown!");
-                    break;
+                    case PropertyType.BINARY:
+                        buf.append("(BINARY)");
+                        break;
+                    case PropertyType.BOOLEAN:
+                        buf.append("(BOOLEAN)");
+                        break;
+                    case PropertyType.DATE:
+                        buf.append("(DATE)");
+                        break;
+                    case PropertyType.DECIMAL:
+                        buf.append("(DECIMAL)");
+                        break;
+                    case PropertyType.DOUBLE:
+                        buf.append("(DOUBLE)");
+                        break;
+                    case PropertyType.LONG:
+                        buf.append("(LONG)");
+                        break;
+                    case PropertyType.NAME:
+                        buf.append("(NAME)");
+                        break;
+                    case PropertyType.PATH:
+                        buf.append("(PATH)");
+                        break;
+                    case PropertyType.REFERENCE:
+                        buf.append("(REFERENCE)");
+                        break;
+                    case PropertyType.WEAKREFERENCE:
+                        buf.append("(WEAKREFERENCE)");
+                        break;
+                    case PropertyType.STRING:
+                        buf.append("(STRING)");
+                        break;
+                    case PropertyType.UNDEFINED:
+                        buf.append("(UNDEFINED)");
+                        break;
+                    case PropertyType.URI:
+                        buf.append("(URI)");
+                        break;
+                    default:
+                        buf.append("!unknown!");
+                        break;
                 }
                 buf.append("\n\t");
             }
