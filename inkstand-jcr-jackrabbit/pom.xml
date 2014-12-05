@@ -50,6 +50,11 @@
 			<artifactId>jcr</artifactId>
 		</dependency>
 		
+		<dependency>
+            <groupId>li.moskito</groupId>
+            <artifactId>inkstand-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 		<!-- JCR stereotypes -->
 		<dependency>
 			<groupId>li.moskito</groupId>

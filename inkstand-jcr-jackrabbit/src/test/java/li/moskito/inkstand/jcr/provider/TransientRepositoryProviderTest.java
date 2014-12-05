@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
 
+import li.moskito.inkstand.InkstandRuntimeException;
 import li.moskito.test.Scribble;
 
 import org.apache.jackrabbit.core.TransientRepository;
@@ -45,6 +46,14 @@ public class TransientRepositoryProviderTest {
     @Test
     public void testGetRepository() throws Exception {
         assertEquals(repository, subject.getRepository());
+    }
+
+    @Test(expected = InkstandRuntimeException.class)
+    public void testStartRepository_brokenRepositoryXml_exceptionOnStartup() throws Exception {
+        Scribble.injectInto(this.subject).configProperty("inkstand.jcr.transient.configURL",
+                getClass().getResource("/broken_repository.xml").toString());
+        // start the repository
+        this.subject.startRepository();
     }
 
     @Test
@@ -80,7 +89,7 @@ public class TransientRepositoryProviderTest {
         verify(repository).shutdown();
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = InkstandRuntimeException.class)
     public void testShutdownRepository_exceptionOnShutdown() throws Exception {
         doThrow(IOException.class).when(repository).shutdown();
         this.subject.shutdownRepository(repository);

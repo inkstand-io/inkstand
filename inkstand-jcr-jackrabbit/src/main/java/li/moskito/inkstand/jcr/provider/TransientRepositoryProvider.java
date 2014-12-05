@@ -17,6 +17,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import li.moskito.inkstand.InkstandRuntimeException;
 import li.moskito.inkstand.jcr.RepositoryProvider;
 import li.moskito.inkstand.jcr.util.JCRUtil;
 
@@ -68,7 +69,7 @@ public class TransientRepositoryProvider implements RepositoryProvider {
             initializeRepository();
             loadContentModel();
         } catch (IOException | RepositoryException | ParseException e) {
-            throw new RuntimeException("Could not start repository", e);
+            throw new InkstandRuntimeException("Could not start repository", e);
         }
 
     }
@@ -87,7 +88,7 @@ public class TransientRepositoryProvider implements RepositoryProvider {
             }
             // TODO else throw ... what?
         } catch (final IOException e) {
-            throw new RuntimeException("Could not cleanup temp folder", e);
+            throw new InkstandRuntimeException("Could not cleanup temp folder", e);
         }
     }
 
