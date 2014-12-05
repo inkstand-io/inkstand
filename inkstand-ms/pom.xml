@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>li.moskito</groupId>
 		<artifactId>inkstand</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>inkstand-ms</artifactId>
 	<name>${project.groupId}:${project.artifactId}</name>

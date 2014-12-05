@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>li.moskito</groupId>
 		<artifactId>inkstand-deployments</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>inkstand-deployment-resteasy</artifactId>
@@ -14,19 +14,19 @@
 	    <dependency>
             <groupId>li.moskito</groupId>
             <artifactId>inkstand-test-util</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.2-SNAPSHOT</version>
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-http-undertow</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Resteasy -->
