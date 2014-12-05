@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://www.moskito.li/schemas/inkstandJcrImport"
+	xmlns="http://www.moskito.li/schemas/inkstandJcrImport"
+	elementFormDefault="qualified">
+
+
+    <xs:element name="rootNode" type="nodeType">
+        
+    </xs:element>
+    
+    <xs:complexType name="nodeType">
+        <xs:sequence>
+            <xs:element name="property" type="propertyType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="node" type="nodeType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"></xs:attribute>
+        <xs:attribute name="path" type="xs:string" use="optional"></xs:attribute>
+        <xs:attribute name="jcrType" type="xs:string" use="required"/>
+        <xs:attribute name="id" type="xs:ID" />
+    </xs:complexType>
+    
+    <xs:complexType name="propertyType">
+        <xs:simpleContent>
+            <xs:extension base="xs:anySimpleType">
+                <xs:attribute name="name" type="xs:string" use="optional"/>
+                <xs:attribute name="jcrType" type="xs:string" use="required"/>
+                <xs:attribute name="valueType" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:simpleContent> 
+        
+    </xs:complexType>
+
+</xs:schema>
