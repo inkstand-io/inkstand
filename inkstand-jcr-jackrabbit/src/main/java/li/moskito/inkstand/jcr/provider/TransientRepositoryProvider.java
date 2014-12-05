@@ -127,9 +127,9 @@ public class TransientRepositoryProvider implements RepositoryProvider {
      * @throws ParseException
      */
     private void loadContentModel() throws RepositoryException, IOException, ParseException {
-        final Session adminSession = getAdminSession();
+        final Session session = getAdminSession();
         if (cndFileURL != null) {
-            JCRUtil.initializeContentModel(adminSession, resolveUrl(cndFileURL));
+            JCRUtil.initializeContentModel(session, resolveUrl(cndFileURL));
         }
     }
 

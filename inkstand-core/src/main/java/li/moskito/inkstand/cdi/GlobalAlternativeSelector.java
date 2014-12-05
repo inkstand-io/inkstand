@@ -26,10 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * CDI Extension that scans detects global alternatives (annotated with {@link Priority}) and disables those,
- * that are not defined as alternative or stereotype in the beans.xml of the application.
+ * CDI Extension that scans detects global alternatives (annotated with {@link Priority}) and disables those, that are
+ * not defined as alternative or stereotype in the beans.xml of the application.
+ * 
  * @author Gerald Muecke, gerald@moskito.li
- *
  */
 public class GlobalAlternativeSelector implements Extension {
 
@@ -85,13 +85,13 @@ public class GlobalAlternativeSelector implements Extension {
      * @return set of classes loaded from the metadata
      */
     @SuppressWarnings("unchecked")
-    private Collection<Class<? extends Annotation>> loadClasses(final Iterable<Metadata<String>> enabledAlternatives) {
-        final Set<Class<? extends Annotation>> classes = new HashSet<>();
+    private Collection<Class<Annotation>> loadClasses(final Iterable<Metadata<String>> enabledAlternatives) {
+        final Set<Class<Annotation>> classes = new HashSet<>();
         for (final Metadata<String> alternative : enabledAlternatives) {
             LOG.debug("Loading alternative {}", alternative);
             final String alternativeClassName = alternative.getValue();
             try {
-                classes.add((Class<? extends Annotation>) Class.forName(alternativeClassName));
+                classes.add((Class<Annotation>) Class.forName(alternativeClassName));
             } catch (final ClassNotFoundException e) {
                 throw new IllegalStateException("Alternative  " + alternativeClassName + " not found", e);
             }
@@ -106,21 +106,35 @@ public class GlobalAlternativeSelector implements Extension {
      * 
      * @param pat
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void watchAlternatives(
-            @Observes @WithAnnotations({ Stereotype.class, Alternative.class }) final ProcessAnnotatedType pat) {
+    @SuppressWarnings("rawtypes")
+    public void watchAlternatives(@Observes @WithAnnotations({
+            Stereotype.class, Alternative.class
+    }) final ProcessAnnotatedType pat) {
         final AnnotatedType type = pat.getAnnotatedType();
         // any non-priority alternative will be handles normally
-        if (!type.isAnnotationPresent(Priority.class)
-                || enabledAlternatives.contains(type.getJavaClass())
-                || matchesEnabledStereotypes(type)
-                || matchesEnabledStereotypes(type.getMethods())
-                || matchesEnabledStereotypes(type.getFields())) {
+        if (!type.isAnnotationPresent(Priority.class) || enabledAlternatives.contains(type.getJavaClass())
+                || matchesAnyEnabledStereotype(type)) {
             LOG.debug("Enable alternative {}", pat.getAnnotatedType());
             return;
         }
         LOG.debug("Disable alternative {}", pat.getAnnotatedType());
         pat.veto();
+    }
+
+    /**
+     * Checks, if the {@link AnnotatedType}, its fields or methods, matches any of the enabled stereotypes of the
+     * beans.xml
+     * 
+     * @param type
+     *            the type to verify
+     * @return <code>true</code> if it matches a type
+     */
+    @SuppressWarnings({
+            "rawtypes", "unchecked"
+    })
+    private boolean matchesAnyEnabledStereotype(final AnnotatedType type) {
+        return matchesEnabledStereotypes(type) || matchesEnabledStereotypes(type.getMethods())
+                || matchesEnabledStereotypes(type.getFields());
     }
 
     /**

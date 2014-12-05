@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
 
+import li.moskito.inkstand.InkstandRuntimeException;
 import li.moskito.inkstand.config.WebServerConfiguration;
 
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ public class UndertowWebServerProvider {
                 undertow = Undertow.builder().addHttpListener(config.getPort(), config.getBindAddress())
                         .setHandler(deploymentManager.start()).build();
             } catch (final ServletException e) {
-                throw new RuntimeException(e);
+                throw new InkstandRuntimeException(e);
             }
         }
         return undertow;
