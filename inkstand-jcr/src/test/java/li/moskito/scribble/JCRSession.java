@@ -1,4 +1,4 @@
-package li.moskito.test.jcr;
+package li.moskito.scribble;
 
 import java.util.HashMap;
 import java.util.Map;

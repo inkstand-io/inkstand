@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 
 import javax.jcr.Repository;
 
-import li.moskito.test.Scribble;
-import li.moskito.test.rules.ExternalFile;
+import li.moskito.scribble.Scribble;
+import li.moskito.scribble.rules.ExternalFile;
 
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.junit.After;

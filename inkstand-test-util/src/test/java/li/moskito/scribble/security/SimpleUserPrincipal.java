@@ -1,4 +1,4 @@
-package li.moskito.test.security;
+package li.moskito.scribble.security;
 
 import java.security.Principal;
 

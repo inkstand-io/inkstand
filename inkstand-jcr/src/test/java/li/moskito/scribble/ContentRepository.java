@@ -1,4 +1,4 @@
-package li.moskito.test.jcr;
+package li.moskito.scribble;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -9,9 +9,11 @@ import java.lang.reflect.Field;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
-import li.moskito.test.Scribble;
-import li.moskito.test.rules.ExternalResource;
+import li.moskito.scribble.rules.ExternalResource;
 
 import org.junit.rules.TemporaryFolder;
 
@@ -19,7 +21,6 @@ import org.junit.rules.TemporaryFolder;
  * Rule for testing with java content repositories
  * 
  * @author Gerald Muecke, gerald@moskito.li
- * 
  */
 public abstract class ContentRepository extends ExternalResource {
 
@@ -54,8 +55,7 @@ public abstract class ContentRepository extends ExternalResource {
      * Initializes the repository
      */
     @Override
-    protected void beforeClass()
-            throws Throwable {
+    protected void beforeClass() throws Throwable {
         super.before();
         this.testRunId = Scribble.generateRunId();
         this.repository = createRepository();
@@ -74,8 +74,7 @@ public abstract class ContentRepository extends ExternalResource {
     }
 
     @Override
-    protected void before()
-            throws Throwable {
+    protected void before() throws Throwable {
         if (!initialized) {
             beforeClass();
             this.beforeExecuted = true;
@@ -109,6 +108,21 @@ public abstract class ContentRepository extends ExternalResource {
     }
 
     /**
+     * Logs into the repository with the given credentials. The created session is not managed and be logged out after
+     * use by the caller.
+     * 
+     * @param userId
+     *            the user id to log in
+     * @param password
+     *            the password for the user
+     * @return the {@link Session} for the user
+     * @throws RepositoryException
+     */
+    public Session login(String userId, String password) throws RepositoryException {
+        return repository.login(new SimpleCredentials(userId, password.toCharArray()));
+    }
+
+    /**
      * @return the workingDirectory in which the repository and its configuration is located
      */
     protected TemporaryFolder getWorkingDirectory() {
@@ -119,12 +133,10 @@ public abstract class ContentRepository extends ExternalResource {
      * Creates a transient repository with files in the local temp directory.
      * 
      * @return the created repository
-     * 
      * @throws IOException
      * @throws ConfigurationException
      */
-    protected abstract Repository createRepository()
-            throws IOException;
+    protected abstract Repository createRepository() throws IOException;
 
     /**
      * Closes the admin session, and in case of local transient respository for unit test, shuts down the repository and
@@ -157,8 +169,7 @@ public abstract class ContentRepository extends ExternalResource {
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      */
-    public ContentRepository injectTo(final Object subject)
-            throws IllegalArgumentException, IllegalAccessException {
+    public ContentRepository injectTo(final Object subject) throws IllegalArgumentException, IllegalAccessException {
         assertNotNull("A jndiName must be defined", this.jndiName);
         Class<?> type = subject.getClass();
         while (!type.equals(Object.class)) {
@@ -183,8 +194,7 @@ public abstract class ContentRepository extends ExternalResource {
      * @return <code>true</code> when the injection was successful, false if not.
      * @throws IllegalAccessException
      */
-    private boolean findAndSetRepository(final Object subject, final Class<?> type)
-            throws IllegalAccessException {
+    private boolean findAndSetRepository(final Object subject, final Class<?> type) throws IllegalAccessException {
         boolean result = false;
         // loop through all fields and inject where possible
         for (final Field f : type.getDeclaredFields()) {
@@ -206,8 +216,7 @@ public abstract class ContentRepository extends ExternalResource {
      * @return <code>true</code> if the repository was injected
      * @throws IllegalAccessException
      */
-    private boolean checkAnnotationAndInject(final Object subject, final Field f)
-            throws IllegalAccessException {
+    private boolean checkAnnotationAndInject(final Object subject, final Field f) throws IllegalAccessException {
         boolean result = false;
         final javax.annotation.Resource resAn = f.getAnnotation(javax.annotation.Resource.class);
         if (resAn != null && this.jndiName.equals(resAn.mappedName())) {

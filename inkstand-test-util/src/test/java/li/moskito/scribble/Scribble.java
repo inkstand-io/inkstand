@@ -1,4 +1,4 @@
-package li.moskito.test;
+package li.moskito.scribble;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;

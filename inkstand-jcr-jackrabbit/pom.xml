@@ -39,6 +39,12 @@
 	</dependencyManagement>
 	
 	<dependencies>
+	        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+	
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
@@ -96,6 +102,8 @@
             <groupId>org.apache.deltaspike.core</groupId>
             <artifactId>deltaspike-core-impl</artifactId>
         </dependency>
+        
+        
 	</dependencies>
 
 	<build>
@@ -112,6 +120,46 @@
 					</execution>
 				</executions>
 			</plugin>
+            <!-- JAXB xjc plugin that invokes the xjc compiler to compile XML schema 
+                into Java classes. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <extension>true</extension>
+                    <failOnNoSchemas>false</failOnNoSchemas>
+                    <catalog>${xml.catalog.file}</catalog>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- Add the XSD folder as source -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9.1</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/main/xsd</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+			
 		</plugins>
 	</build>
 </project>

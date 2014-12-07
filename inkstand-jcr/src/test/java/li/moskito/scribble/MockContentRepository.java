@@ -1,4 +1,4 @@
-package li.moskito.test.jcr;
+package li.moskito.scribble;
 
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;

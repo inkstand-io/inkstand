@@ -7,7 +7,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collection;
 
 import li.moskito.inkstand.cdi.ResourcesAndProviders;
-import li.moskito.test.Scribble;
+import li.moskito.scribble.Scribble;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

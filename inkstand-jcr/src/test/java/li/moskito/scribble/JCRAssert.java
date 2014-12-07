@@ -1,4 +1,4 @@
-package li.moskito.test.jcr;
+package li.moskito.scribble;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -17,16 +18,51 @@ public final class JCRAssert {
     }
 
     /**
+     * Asserts that a specific node with the given absolute path exists in the session
+     * 
+     * @param session
+     *            the session to search for the node
+     * @param absPath
+     *            the absolute path to look for a node
+     * @throws RepositoryException
+     *             if the repository access failed
+     */
+    public static void assertNodeExist(Session session, String absPath) throws RepositoryException {
+        try {
+            session.getNode(absPath);
+        } catch (PathNotFoundException e) {
+            fail("Node " + absPath + " does not exist");
+        }
+    }
+
+    /**
+     * Asserts that a specific node exists under the root node, where the specific node is specified using its relative
+     * path
+     * 
+     * @param rootNode
+     *            the root Node to start the search
+     * @param relPath
+     *            the relative path of the node that is asserted to exist
+     * @throws RepositoryException
+     *             if the repository access failed
+     */
+    public static void assertNodeExist(Node rootNode, String relPath) throws RepositoryException {
+        try {
+            rootNode.getNode(relPath);
+        } catch (PathNotFoundException e) {
+            fail("Node " + relPath + " does not exist under " + rootNode.getPath());
+        }
+    }
+
+    /**
      * Asserts the equality of a property value of a node with an expected value
      * 
      * @param node
      *            the node containing the property to be verified
      * @param propertyName
      *            the property name to be verified
-     * 
      * @param actualValue
      *            the actual value that should be compared to the propert node
-     * 
      * @throws RepositoryException
      */
     public static void assertStringPropertyEquals(final Node node, final String propertyName, final String actualValue)

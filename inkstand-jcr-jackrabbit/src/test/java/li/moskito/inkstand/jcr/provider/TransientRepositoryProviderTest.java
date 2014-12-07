@@ -15,7 +15,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
 
 import li.moskito.inkstand.InkstandRuntimeException;
-import li.moskito.test.Scribble;
+import li.moskito.scribble.Scribble;
 
 import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.Before;

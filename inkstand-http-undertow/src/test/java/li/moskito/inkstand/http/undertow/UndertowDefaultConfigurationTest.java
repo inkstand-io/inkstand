@@ -1,7 +1,7 @@
 package li.moskito.inkstand.http.undertow;
 
 import static org.junit.Assert.assertEquals;
-import li.moskito.test.Scribble;
+import li.moskito.scribble.Scribble;
 
 import org.junit.Before;
 import org.junit.Test;

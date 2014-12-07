@@ -1,4 +1,4 @@
-package li.moskito.test.jcr;
+package li.moskito.scribble;
 
 import java.net.URL;
 

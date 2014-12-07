@@ -1,4 +1,4 @@
-package li.moskito.test.security;
+package li.moskito.scribble.security;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

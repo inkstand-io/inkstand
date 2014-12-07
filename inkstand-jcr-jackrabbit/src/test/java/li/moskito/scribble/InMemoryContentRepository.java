@@ -1,4 +1,4 @@
-package li.moskito.test.jcr;
+package li.moskito.scribble;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import li.moskito.inkstand.jcr.util.JCRUtil;
+import li.moskito.scribble.ContentRepository;
 
 import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.core.config.ConfigurationException;
@@ -21,7 +22,6 @@ import org.slf4j.LoggerFactory;
  * location to put the configuration file (repository.xml) to.
  * 
  * @author Gerald Muecke, gerald@moskito.li
- * 
  */
 public class InMemoryContentRepository extends ContentRepository {
 
@@ -38,15 +38,13 @@ public class InMemoryContentRepository extends ContentRepository {
      * Creates a transient repository with files in the local temp directory.
      * 
      * @return the created repository
-     * 
      * @throws IOException
      * @throws ConfigurationException
      */
     @Override
-    protected TransientRepository createRepository()
-            throws IOException {
+    protected TransientRepository createRepository() throws IOException {
         final File repositoryLocation = getWorkingDirectory().newFolder("test-jcr-repository");
-        final URL configUrl = getClass().getResource("/repository.xml");
+        final URL configUrl = getClass().getResource("inMemoryRepository.xml");
         assertNotNull("No Repository Configuration found", configUrl);
 
         try {

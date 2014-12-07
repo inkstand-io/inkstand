@@ -1,4 +1,4 @@
-package li.moskito.test.rules;
+package li.moskito.scribble.rules;
 
 import java.io.File;
 import java.io.FileOutputStream;
