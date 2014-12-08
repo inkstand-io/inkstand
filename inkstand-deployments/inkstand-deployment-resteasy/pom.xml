@@ -1,23 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>li.moskito</groupId>
 		<artifactId>inkstand-deployments</artifactId>
 		<version>0.0.2-SNAPSHOT</version>
 	</parent>
-	
+
 	<artifactId>inkstand-deployment-resteasy</artifactId>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>Simple Resteasy Deployment for Undertow.</description>
 
 	<dependencies>
-	    <dependency>
-            <groupId>li.moskito</groupId>
-            <artifactId>inkstand-test-util</artifactId>
-            <version>0.0.2-SNAPSHOT</version>
-            <scope>test</scope>
-            <type>test-jar</type>
-        </dependency>
+		<dependency>
+			<groupId>li.moskito</groupId>
+			<artifactId>scribble</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-core</artifactId>

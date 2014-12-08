@@ -8,23 +8,16 @@ import java.net.URL;
 import javax.jcr.Node;
 import javax.jcr.Session;
 
-import li.moskito.scribble.ContentRepository;
-import li.moskito.scribble.InMemoryContentRepository;
-import li.moskito.scribble.JCRSession;
+import li.moskito.scribble.ScribbleRule;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TemporaryFolder;
 
 public class JCRContentLoader2Test {
 
-    private static TemporaryFolder tempFolder = new TemporaryFolder();
-    private static ContentRepository repository = new InMemoryContentRepository(tempFolder);
-    private static JCRSession jcrSession = new JCRSession(repository);
     @ClassRule
-    public static RuleChain chain = RuleChain.outerRule(tempFolder).around(repository).around(jcrSession);
+    public static ScribbleRule SCRIBBLE = new ScribbleRule();
 
     private JCRContentLoader2 subject;
 
@@ -37,12 +30,12 @@ public class JCRContentLoader2Test {
     public void testLoadContent_validResource() throws Exception {
         // prepare
         URL resource = getClass().getResource("test01_inkstandJcrImport_v1-0.xml");
-        Session actSession = jcrSession.getAdminSession();
+        Session actSession = SCRIBBLE.getJcrSession().getAdminSession();
         // act
         this.subject.loadContent(actSession, resource);
         // assert
 
-        Session verifySession = jcrSession.login();
+        Session verifySession = SCRIBBLE.getJcrSession().login();
         assertNodeExist(verifySession, "/root");
         Node root = verifySession.getNode("/root");
         assertStringPropertyEquals(root, "jcr:title", "TestTitle");

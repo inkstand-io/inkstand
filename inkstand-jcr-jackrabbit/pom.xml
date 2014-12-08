@@ -75,9 +75,7 @@
 		</dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
-			<artifactId>inkstand-test-util</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-			<type>test-jar</type>
+			<artifactId>scribble</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<!-- Jackrabbit -->

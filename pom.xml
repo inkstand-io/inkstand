@@ -6,7 +6,8 @@
 	WARRANTIES OR CONDITIONS OF ANY KIND, either express or ~ implied. ~ ~ See 
 	the License for the specific language governing permissions and ~ limitations 
 	under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>li.moskito</groupId>
 	<artifactId>inkstand</artifactId>
@@ -37,12 +38,12 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
+
 	<issueManagement>
 		<system>GitHub</system>
 		<url>https://github.com/moskitoli/inkstand/issues</url>
 	</issueManagement>
-	
+
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
@@ -53,23 +54,22 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
-	
+
 	<scm>
 		<developerConnection>scm:git:git@github.com:moskitoli/inkstand.git</developerConnection>
 		<url>https://github.com/moskitoli/inkstand</url>
 		<connection>scm:git:https://github.com/moskitoli/inkstand.git</connection>
 	</scm>
-	
-    <modules>
-        <module>inkstand-core</module>
-        <module>inkstand-jcr</module>
-        <module>inkstand-jcr-jackrabbit</module>
-        <module>inkstand-http-undertow</module>
-        <module>inkstand-deployments</module>
-        <module>inkstand-test-util</module>
-        <module>inkstand-ms</module>
-    </modules>
-	
+
+	<modules>
+		<module>inkstand-core</module>
+		<module>inkstand-jcr</module>
+		<module>inkstand-jcr-jackrabbit</module>
+		<module>inkstand-http-undertow</module>
+		<module>inkstand-deployments</module>
+		<module>inkstand-ms</module>
+	</modules>
+
 	<properties>
 		<!-- Common Libraries Versions -->
 		<slf4j.version>1.7.6</slf4j.version>
@@ -88,6 +88,7 @@
 		<test.junit.version>4.11</test.junit.version>
 		<test.mockito.version>1.9.5</test.mockito.version>
 		<test.htmlunit.version>2.8</test.htmlunit.version>
+		<test.scribble.version>0.0.1</test.scribble.version>
 		<test.jsonassert.version>1.2.3</test.jsonassert.version>
 		<test.arquillian.version>1.1.5.Final</test.arquillian.version>
 		<test.arquillian.weld.version>1.0.0.CR8</test.arquillian.weld.version>
@@ -353,37 +354,44 @@
 				<version>${test.arquillian.weld.version}</version>
 				<scope>test</scope>
 			</dependency>
-			
-		<!-- Code Coverage -->
-        <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>${jacoco.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <!-- Binding for Log4J -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <!-- Log4j API and Core implementation required for binding -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
+
+			<!-- Code Coverage -->
+			<dependency>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- Logging -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<!-- Binding for Log4J -->
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<!-- Log4j API and Core implementation required for binding -->
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<!-- Test Dependencies -->
+			<dependency>
+			    <groupId>li.moskito</groupId>
+			    <artifactId>scribble</artifactId>
+			    <version>${test.scribble.version}</version>
+			    <scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
