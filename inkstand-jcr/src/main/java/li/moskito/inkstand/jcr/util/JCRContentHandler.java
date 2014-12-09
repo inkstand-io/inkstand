@@ -3,6 +3,8 @@ package li.moskito.inkstand.jcr.util;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -23,12 +25,15 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 /**
  * Implementation of the {@link DefaultHandler} that creates {@link Node} in a JCR {@link Repository} that are defined
  * in an xml file.
  * 
  * @author Gerald Muecke, gerald@moskito.li
  */
+@SuppressWarnings("unchecked")
 public class JCRContentHandler extends DefaultHandler {
 
     /**
@@ -68,6 +73,30 @@ public class JCRContentHandler extends DefaultHandler {
      * A stack fo the created property descriptors.
      */
     private Deque<PropertyDescriptor> propertyStack;
+
+    /**
+     * Map of {@link PropertyValueType} to the int values of the {@link PropertyType}
+     */
+    private static final Map<PropertyValueType, Integer> JCR_PROPERTIES;
+
+    static {
+        Map<PropertyValueType, Integer> properties = new HashMap<>();
+        //@formatter:off
+        properties.put(PropertyValueType.BINARY,        PropertyType.BINARY);
+        properties.put(PropertyValueType.DATE,          PropertyType.DATE);
+        properties.put(PropertyValueType.DECIMAL,       PropertyType.DECIMAL);
+        properties.put(PropertyValueType.DOUBLE,        PropertyType.DOUBLE);
+        properties.put(PropertyValueType.LONG,          PropertyType.LONG);
+        properties.put(PropertyValueType.NAME,          PropertyType.NAME);
+        properties.put(PropertyValueType.PATH,          PropertyType.PATH);
+        properties.put(PropertyValueType.REFERENCE,     PropertyType.REFERENCE);
+        properties.put(PropertyValueType.STRING,        PropertyType.STRING);
+        properties.put(PropertyValueType.UNDEFINED,     PropertyType.UNDEFINED);
+        properties.put(PropertyValueType.URI,           PropertyType.URI);
+        properties.put(PropertyValueType.WEAKREFERENCE, PropertyType.WEAKREFERENCE);
+        // @formatter:on
+        JCR_PROPERTIES = Collections.unmodifiableMap(properties);
+    }
 
     // TODO verify if propertyStack could be replaced by lastProperty
 
@@ -118,40 +147,80 @@ public class JCRContentHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         LOG.trace("startElement uri={} localName={} qName={} attributes={}", uri, localName, qName, attributes);
 
-        if (isInkstandNamespace(uri)) {
-            switch (localName) {
-                case "rootNode":
-                    LOG.debug("Found rootNode");
-                    try {
-                        this.nodeStack.push(newNode(null, attributes));
-                    } catch (RepositoryException e) {
-                        throw new SAXException("Could not create node", e);
-                    }
-                    break;
-                case "node":
-                    LOG.debug("Found node");
-                    try {
-                        this.nodeStack.push(newNode(this.nodeStack.peek(), attributes));
-                    } catch (RepositoryException e) {
-                        throw new SAXException("Could not create node", e);
-                    }
-                    break;
-                case "mixin":
-                    LOG.debug("Found mixin declaration");
-                    try {
-                        addMixin(this.nodeStack.peek(), attributes);
-                    } catch (RepositoryException e) {
-                        throw new SAXException("Could not add mixin type", e);
-                    }
-                    break;
-                case "property":
-                    LOG.debug("Found property");
-                    propertyStack.push(newPropertyDescriptor(attributes));
-                    break;
-                default:
-                    break;
-            }
+        if (!isInkstandNamespace(uri)) {
+            return;
         }
+        switch (localName) {
+            case "rootNode":
+                startElementRootNode(attributes);
+                break;
+            case "node":
+                startElementNode(attributes);
+                break;
+            case "mixin":
+                startElementMixin(attributes);
+                break;
+            case "property":
+                startElementProperty(attributes);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Invoked on rootNode element
+     * 
+     * @param attributes
+     * @throws SAXException
+     */
+    private void startElementRootNode(Attributes attributes) throws SAXException {
+        LOG.debug("Found rootNode");
+        try {
+            this.nodeStack.push(newNode(null, attributes));
+        } catch (RepositoryException e) {
+            throw new SAXException("Could not create node", e);
+        }
+    }
+
+    /**
+     * Invoked on node element
+     * 
+     * @param attributes
+     * @throws SAXException
+     */
+    private void startElementNode(Attributes attributes) throws SAXException {
+        LOG.debug("Found node");
+        try {
+            this.nodeStack.push(newNode(this.nodeStack.peek(), attributes));
+        } catch (RepositoryException e) {
+            throw new SAXException("Could not create node", e);
+        }
+    }
+
+    /**
+     * Invoked on mixin element
+     * 
+     * @param attributes
+     * @throws SAXException
+     */
+    private void startElementMixin(Attributes attributes) throws SAXException {
+        LOG.debug("Found mixin declaration");
+        try {
+            addMixin(this.nodeStack.peek(), attributes);
+        } catch (RepositoryException e) {
+            throw new SAXException("Could not add mixin type", e);
+        }
+    }
+
+    /**
+     * Invoked on property element
+     * 
+     * @param attributes
+     */
+    private void startElementProperty(Attributes attributes) {
+        LOG.debug("Found property");
+        propertyStack.push(newPropertyDescriptor(attributes));
     }
 
     /**
@@ -175,18 +244,22 @@ public class JCRContentHandler extends DefaultHandler {
                     LOG.debug("Closing mixin");
                     break;
                 case "property":
-                    LOG.debug("Closing property");
-                    PropertyDescriptor pd = propertyStack.pop();
-                    try {
-                        pd.setValue(parseValue(pd.getJcrType(), textStack.pop()));
-                        addProperty(this.nodeStack.peek(), pd);
-                    } catch (RepositoryException e) {
-                        throw new SAXException("Could set property value", e);
-                    }
+                    endElementProperty();
                     break;
                 default:
                     break;
             }
+        }
+    }
+
+    private void endElementProperty() throws SAXException {
+        LOG.debug("Closing property");
+        PropertyDescriptor pd = propertyStack.pop();
+        try {
+            pd.setValue(parseValue(pd.getJcrType(), textStack.pop()));
+            addProperty(this.nodeStack.peek(), pd);
+        } catch (RepositoryException e) {
+            throw new SAXException("Could set property value", e);
         }
     }
 
@@ -286,46 +359,7 @@ public class JCRContentHandler extends DefaultHandler {
      * @return the int value of the corresponding {@link PropertyType}
      */
     private int getPropertyType(PropertyValueType valueType) {
-        int returnValue = 0;
-        switch (valueType) {
-            case BINARY:
-                returnValue = PropertyType.BINARY;
-                break;
-            case DATE:
-                returnValue = PropertyType.DATE;
-                break;
-            case DECIMAL:
-                returnValue = PropertyType.DECIMAL;
-                break;
-            case DOUBLE:
-                returnValue = PropertyType.DOUBLE;
-                break;
-            case LONG:
-                returnValue = PropertyType.LONG;
-                break;
-            case NAME:
-                returnValue = PropertyType.NAME;
-                break;
-            case PATH:
-                returnValue = PropertyType.PATH;
-                break;
-            case REFERENCE:
-                returnValue = PropertyType.REFERENCE;
-                break;
-            case STRING:
-                returnValue = PropertyType.STRING;
-                break;
-            case UNDEFINED:
-                returnValue = PropertyType.UNDEFINED;
-                break;
-            case URI:
-                returnValue = PropertyType.URI;
-                break;
-            case WEAKREFERENCE:
-                returnValue = PropertyType.WEAKREFERENCE;
-                break;
-        }
-        return returnValue;
+        return JCR_PROPERTIES.get(valueType).intValue();
     }
 
     /**
