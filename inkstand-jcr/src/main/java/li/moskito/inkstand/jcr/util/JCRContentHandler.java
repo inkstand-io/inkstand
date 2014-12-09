@@ -2,6 +2,7 @@ package li.moskito.inkstand.jcr.util;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +26,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import edu.emory.mathcs.backport.java.util.Collections;
-
 /**
  * Implementation of the {@link DefaultHandler} that creates {@link Node} in a JCR {@link Repository} that are defined
  * in an xml file.
  * 
  * @author Gerald Muecke, gerald@moskito.li
  */
-@SuppressWarnings("unchecked")
 public class JCRContentHandler extends DefaultHandler {
 
     /**
