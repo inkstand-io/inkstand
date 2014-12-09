@@ -1,6 +1,8 @@
 package li.moskito.inkstand.jcr.util;
 
-import static li.moskito.scribble.JCRAssert.assertNodeExist;
+import static li.moskito.scribble.JCRAssert.assertMixinNodeType;
+import static li.moskito.scribble.JCRAssert.assertNodeExistByPath;
+import static li.moskito.scribble.JCRAssert.assertPrimaryNodeType;
 import static li.moskito.scribble.JCRAssert.assertStringPropertyEquals;
 
 import java.net.URL;
@@ -14,16 +16,16 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-public class JCRContentLoader2Test {
+public class JCRContentLoaderTest {
 
     @ClassRule
     public static ScribbleRule SCRIBBLE = new ScribbleRule();
 
-    private JCRContentLoader2 subject;
+    private JCRContentLoader subject;
 
     @Before
     public void setUp() throws Exception {
-        this.subject = new JCRContentLoader2();
+        this.subject = new JCRContentLoader();
     }
 
     @Test
@@ -34,10 +36,11 @@ public class JCRContentLoader2Test {
         // act
         this.subject.loadContent(actSession, resource);
         // assert
-
         Session verifySession = SCRIBBLE.getJcrSession().login();
-        assertNodeExist(verifySession, "/root");
+        assertNodeExistByPath(verifySession, "/root");
         Node root = verifySession.getNode("/root");
+        assertPrimaryNodeType(root, "nt:unstructured");
+        assertMixinNodeType(root, "mix:title");
         assertStringPropertyEquals(root, "jcr:title", "TestTitle");
         verifySession.logout();
 

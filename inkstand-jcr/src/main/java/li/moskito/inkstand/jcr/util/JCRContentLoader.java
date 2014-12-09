@@ -19,7 +19,7 @@ import org.xml.sax.SAXException;
  * 
  * @author Gerald Muecke, gerald@moskito.li
  */
-public class JCRContentLoader2 {
+public class JCRContentLoader {
 
     private boolean validateInput = false;
     private boolean namespaceAware = true;

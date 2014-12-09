@@ -260,7 +260,8 @@ public class JCRContentHandler extends DefaultHandler {
         Value value = null;
         switch (valueType) {
             case BINARY:
-                value = vf.createValue(vf.createBinary(new ByteArrayInputStream(Base64.decodeBase64(valueAsText))));
+                value = vf.createValue(vf.createBinary(new ByteArrayInputStream(Base64.decodeBase64(valueAsText
+                        .getBytes()))));
                 break;
             case REFERENCE:
                 // TODO resolve IDs

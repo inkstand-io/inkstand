@@ -19,7 +19,6 @@ import javax.jcr.SimpleCredentials;
 
 import li.moskito.inkstand.InkstandRuntimeException;
 import li.moskito.inkstand.jcr.RepositoryProvider;
-import li.moskito.inkstand.jcr.util.JCRUtil;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
@@ -101,7 +100,7 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     private void initializeRepository() throws IOException, ConfigurationException {
         this.tempFolder = Files.createTempDirectory("inque");
         final URL configLocation = getConfigURL();
-        repository = JCRUtil.createTransientRepository(tempFolder.toFile(), configLocation);
+        repository = JackrabbitUtil.createTransientRepository(tempFolder.toFile(), configLocation);
     }
 
     /**
@@ -129,7 +128,7 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     private void loadContentModel() throws RepositoryException, IOException, ParseException {
         final Session session = getAdminSession();
         if (cndFileURL != null) {
-            JCRUtil.initializeContentModel(session, resolveUrl(cndFileURL));
+            JackrabbitUtil.initializeContentModel(session, resolveUrl(cndFileURL));
         }
     }
 

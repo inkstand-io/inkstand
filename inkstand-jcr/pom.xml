@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>li.moskito</groupId>
@@ -19,11 +20,20 @@
 			<groupId>javax.jcr</groupId>
 			<artifactId>jcr</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		
+		<dependency>
+            <groupId>li.moskito</groupId>
+            <artifactId>inkstand-core</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+        </dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
-			<artifactId>inkstand-test-util</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-			<type>test-jar</type>
+			<artifactId>scribble</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -39,6 +49,45 @@
 						<goals>
 							<goal>test-jar</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- JAXB xjc plugin that invokes the xjc compiler to compile XML schema 
+				into Java classes. -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<extension>true</extension>
+					<failOnNoSchemas>false</failOnNoSchemas>
+					<catalog>${xml.catalog.file}</catalog>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Add the XSD folder as source -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/main/xsd</source>
+							</sources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

@@ -1,4 +1,4 @@
-package li.moskito.inkstand.jcr.util;
+package li.moskito.inkstand.jcr.provider;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,8 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.xml.parsers.ParserConfigurationException;
 
+import li.moskito.inkstand.jcr.util.JCRContentLoader;
+
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.TransientRepository;
@@ -22,14 +24,14 @@ import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class JCRUtil {
+public final class JackrabbitUtil {
 
     /**
      * SLF4J Logger for this class
      */
-    private static final Logger LOG = LoggerFactory.getLogger(JCRUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JackrabbitUtil.class);
 
-    private JCRUtil() {
+    private JackrabbitUtil() {
 
     }
 
@@ -148,7 +150,8 @@ public final class JCRUtil {
 
     public static void loadContent(final Session session, final URL contentDescription)
             throws ParserConfigurationException {
-        JCRContentLoader.loadContent(session, contentDescription);
+        JCRContentLoader loader = new JCRContentLoader();
+        loader.loadContent(session, contentDescription);
     }
 
 }
