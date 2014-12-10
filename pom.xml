@@ -71,8 +71,9 @@
 
 	<properties>
 		<!-- Common Libraries Versions -->
-		<slf4j.version>1.7.6</slf4j.version>
-		<log4j.version>2.0-rc1</log4j.version>
+		<logging.slf4j.version>1.7.6</logging.slf4j.version>
+		<logging.log4j.version>2.0-rc1</logging.log4j.version>
+		
 		<!-- Sonar and Code Coverage -->
 		<coverage.unit.test.path>${project.basedir}/../target/jacoco-ut.exec</coverage.unit.test.path>
 		<coverage.integration.test.path>${project.basedir}/../target/jacoco-it.exec</coverage.integration.test.path>
@@ -81,7 +82,7 @@
 		<sonar.jacoco.reportPath>${coverage.unit.test.path}</sonar.jacoco.reportPath>
 		<sonar.jacoco.itReportPath>${coverage.integration.test.path}</sonar.jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
-		<jacoco.version>0.7.2.201409121644</jacoco.version>
+		<coverage.jacoco.version>0.7.2.201409121644</coverage.jacoco.version>
 
 		<!-- Test lib versions -->
 		<test.junit.version>4.11</test.junit.version>
@@ -129,7 +130,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>${jacoco.version}</version>
+						<version>${coverage.jacoco.version}</version>
 						<configuration>
 							<skip>${skipTests}</skip>
 							<includes>
@@ -358,31 +359,31 @@
 			<dependency>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
+				<version>${coverage.jacoco.version}</version>
 				<scope>provided</scope>
 			</dependency>
 			<!-- Logging -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j.version}</version>
+				<version>${logging.slf4j.version}</version>
 			</dependency>
 			<!-- Binding for Log4J -->
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-slf4j-impl</artifactId>
-				<version>${log4j.version}</version>
+				<version>${logging.log4j.version}</version>
 			</dependency>
 			<!-- Log4j API and Core implementation required for binding -->
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-api</artifactId>
-				<version>${log4j.version}</version>
+				<version>${logging.log4j.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
-				<version>${log4j.version}</version>
+				<version>${logging.log4j.version}</version>
 			</dependency>
 			<!-- Test Dependencies -->
 			<dependency>
@@ -472,7 +473,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
+				<version>${coverage.jacoco.version}</version>
 				<configuration>
 					<skip>${skipTests}</skip>
 					<includes>

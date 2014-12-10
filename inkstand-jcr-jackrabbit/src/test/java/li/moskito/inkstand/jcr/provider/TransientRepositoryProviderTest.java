@@ -39,7 +39,7 @@ public class TransientRepositoryProviderTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        Scribble.injectInto(this.subject).configProperty("inkstand.jcr.transient.configURL",
+        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.configURL",
                 getClass().getResource("/repository.xml").toString());
     }
 
@@ -50,49 +50,50 @@ public class TransientRepositoryProviderTest {
 
     @Test(expected = InkstandRuntimeException.class)
     public void testStartRepository_brokenRepositoryXml_exceptionOnStartup() throws Exception {
-        Scribble.injectInto(this.subject).configProperty("inkstand.jcr.transient.configURL",
+        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.configURL",
                 getClass().getResource("/broken_repository.xml").toString());
         // start the repository
-        this.subject.startRepository();
+        subject.startRepository();
     }
 
     @Test
     public void testStartRepository_noCndFile() throws Exception {
         // check the repository does not perform a login as it is still a mock
-        assertNull(this.subject.getRepository().login());
+        assertNull(subject.getRepository().login());
         // start the repository
-        this.subject.startRepository();
+        subject.startRepository();
         // the repository should be working
-        Session session = subject.getRepository().login();
+        final Session session = subject.getRepository().login();
         assertNotNull(session);
-        NodeTypeManager ntm = session.getWorkspace().getNodeTypeManager();
+        final NodeTypeManager ntm = session.getWorkspace().getNodeTypeManager();
         assertFalse(ntm.hasNodeType("test:testType"));
     }
 
     @Test
     public void testStartRepository_withCndFile() throws Exception {
         // check the repository does not perform a login as it is still a mock
-        assertNull(this.subject.getRepository().login());
-        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.cndFileURL", "transient_jcr_model.cnd.txt");
+        assertNull(subject.getRepository().login());
+        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.cndFileURL",
+                "TransientRepositoryProviderTest_testStartRepository.cnd");
         // start the repository
-        this.subject.startRepository();
+        subject.startRepository();
         // the repository should be working
-        Session session = subject.getRepository().login();
+        final Session session = subject.getRepository().login();
         assertNotNull(session);
-        NodeTypeManager ntm = session.getWorkspace().getNodeTypeManager();
+        final NodeTypeManager ntm = session.getWorkspace().getNodeTypeManager();
         assertTrue(ntm.hasNodeType("test:testType"));
     }
 
     @Test
     public void testShutdownRepository_success() throws Exception {
-        this.subject.shutdownRepository(repository);
+        subject.shutdownRepository(repository);
         verify(repository).shutdown();
     }
 
     @Test(expected = InkstandRuntimeException.class)
     public void testShutdownRepository_exceptionOnShutdown() throws Exception {
         doThrow(IOException.class).when(repository).shutdown();
-        this.subject.shutdownRepository(repository);
+        subject.shutdownRepository(repository);
     }
 
 }

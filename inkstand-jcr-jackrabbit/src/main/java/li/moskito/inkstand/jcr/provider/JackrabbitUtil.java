@@ -39,8 +39,10 @@ public final class JackrabbitUtil {
      * Creates a transient repository at the specified path using the specified configuration file
      * 
      * @param repositoryLocation
+     *            the home directory of the repository
      * @param configUrl
-     * @return
+     *            the URL to the configuraiton file
+     * @return an instance of a transient repsository
      * @throws ConfigurationException
      * @throws IOException
      */
@@ -96,51 +98,8 @@ public final class JackrabbitUtil {
             }
             buf.append("\n\t");
             for (final PropertyDefinition pd : nt.getDeclaredPropertyDefinitions()) {
-                buf.append("  - ").append(pd.getName()).append(' ');
-                switch (pd.getRequiredType()) {
-                    case PropertyType.BINARY:
-                        buf.append("(BINARY)");
-                        break;
-                    case PropertyType.BOOLEAN:
-                        buf.append("(BOOLEAN)");
-                        break;
-                    case PropertyType.DATE:
-                        buf.append("(DATE)");
-                        break;
-                    case PropertyType.DECIMAL:
-                        buf.append("(DECIMAL)");
-                        break;
-                    case PropertyType.DOUBLE:
-                        buf.append("(DOUBLE)");
-                        break;
-                    case PropertyType.LONG:
-                        buf.append("(LONG)");
-                        break;
-                    case PropertyType.NAME:
-                        buf.append("(NAME)");
-                        break;
-                    case PropertyType.PATH:
-                        buf.append("(PATH)");
-                        break;
-                    case PropertyType.REFERENCE:
-                        buf.append("(REFERENCE)");
-                        break;
-                    case PropertyType.WEAKREFERENCE:
-                        buf.append("(WEAKREFERENCE)");
-                        break;
-                    case PropertyType.STRING:
-                        buf.append("(STRING)");
-                        break;
-                    case PropertyType.UNDEFINED:
-                        buf.append("(UNDEFINED)");
-                        break;
-                    case PropertyType.URI:
-                        buf.append("(URI)");
-                        break;
-                    default:
-                        buf.append("!unknown!");
-                        break;
-                }
+                buf.append("  - ").append(pd.getName()).append(" (");
+                buf.append(PropertyType.nameFromValue(pd.getRequiredType())).append(')');
                 buf.append("\n\t");
             }
         }
@@ -148,10 +107,18 @@ public final class JackrabbitUtil {
         LOG.debug("Registered Node Types: [\n\t{}]", buf.toString());
     }
 
+    /**
+     * Loads content into the repository.
+     * 
+     * @param session
+     *            the session to load the content into the repository
+     * @param contentDescription
+     *            the URL of the content description file
+     * @throws ParserConfigurationException
+     */
     public static void loadContent(final Session session, final URL contentDescription)
             throws ParserConfigurationException {
-        JCRContentLoader loader = new JCRContentLoader();
-        loader.loadContent(session, contentDescription);
+        new JCRContentLoader().loadContent(session, contentDescription);
     }
 
 }

@@ -78,4 +78,5 @@ public class JCRContentHandlerTest {
         assertMixinNodeType(rootNode, "mix:title");
         assertStringPropertyEquals(rootNode, "jcr:title", "TestTitle");
     }
+
 }
