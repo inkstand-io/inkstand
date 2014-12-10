@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import javax.jcr.PropertyType;
 import javax.jcr.Repository;
@@ -14,6 +15,7 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.xml.parsers.ParserConfigurationException;
 
+import li.moskito.inkstand.InkstandRuntimeException;
 import li.moskito.inkstand.jcr.util.JCRContentLoader;
 
 import org.apache.jackrabbit.commons.cnd.CndImporter;
@@ -37,7 +39,7 @@ public final class JackrabbitUtil {
 
     /**
      * Creates a transient repository at the specified path using the specified configuration file
-     * 
+     *
      * @param repositoryLocation
      *            the home directory of the repository
      * @param configUrl
@@ -47,28 +49,36 @@ public final class JackrabbitUtil {
      * @throws IOException
      */
     public static TransientRepository createTransientRepository(final File repositoryLocation, final URL configUrl)
-            throws ConfigurationException, IOException {
+            throws ConfigurationException {
         LOG.info("Creating transient repository at location {}", repositoryLocation.getAbsolutePath());
 
-        final RepositoryConfig config = RepositoryConfig.create(configUrl.openStream(),
-                repositoryLocation.getAbsolutePath());
+        RepositoryConfig config;
+        try {
+            config = RepositoryConfig.create(configUrl.openStream(), repositoryLocation.getAbsolutePath());
+        } catch (final IOException e) {
+            throw new InkstandRuntimeException("Could not read config url " + configUrl, e);
+        }
         return new TransientRepository(config);
     }
 
     /**
      * Loads the inque nodetype model to the session's repository
-     * 
+     *
      * @param session
      * @param url
      * @throws IOException
      * @throws RepositoryException
      * @throws ParseException
      */
-    public static void initializeContentModel(final Session session, URL cndFile) throws IOException,
-            RepositoryException {
+    public static void initializeContentModel(final Session session, final URL cndFile) throws RepositoryException {
         LOG.info("Initializing JCR Model from File {}", cndFile.getPath());
 
-        final Reader cndReader = new InputStreamReader(cndFile.openStream());
+        Reader cndReader;
+        try {
+            cndReader = new InputStreamReader(cndFile.openStream(), StandardCharsets.UTF_8);
+        } catch (final IOException e) {
+            throw new InkstandRuntimeException("Could not read cndFile " + cndFile, e);
+        }
         final Repository repository = session.getRepository();
 
         final String user = session.getUserID();
@@ -81,8 +91,8 @@ public final class JackrabbitUtil {
             if (LOG.isDebugEnabled()) {
                 logRegisteredNodeTypes(nodeTypes);
             }
-        } catch (ParseException e) {
-            throw new RuntimeException("Could not register node types", e);
+        } catch (final ParseException | IOException e) {
+            throw new InkstandRuntimeException("Could not register node types", e);
         }
 
     }
@@ -109,7 +119,7 @@ public final class JackrabbitUtil {
 
     /**
      * Loads content into the repository.
-     * 
+     *
      * @param session
      *            the session to load the content into the repository
      * @param contentDescription

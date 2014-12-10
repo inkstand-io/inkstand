@@ -1,6 +1,7 @@
 package li.moskito.inkstand.jcr.util;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
@@ -29,7 +30,7 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Implementation of the {@link DefaultHandler} that creates {@link Node} in a JCR {@link Repository} that are defined
  * in an xml file.
- * 
+ *
  * @author Gerald Muecke, gerald@moskito.li
  */
 public class JCRContentHandler extends DefaultHandler {
@@ -51,7 +52,7 @@ public class JCRContentHandler extends DefaultHandler {
     /**
      * The session used for import operations
      */
-    private Session session;
+    private final Session session;
 
     /**
      * The start time in ns.
@@ -61,16 +62,16 @@ public class JCRContentHandler extends DefaultHandler {
     /**
      * A stack of the created nodes.
      */
-    private Deque<Node> nodeStack;
+    private final Deque<Node> nodeStack;
     /**
      * A stack of the created text elements
      */
-    private Deque<String> textStack;
+    private final Deque<String> textStack;
     // TODO verify if text stack could be replaced by lastText
     /**
      * A stack fo the created property descriptors.
      */
-    private Deque<PropertyDescriptor> propertyStack;
+    private final Deque<PropertyDescriptor> propertyStack;
 
     /**
      * Map of {@link PropertyValueType} to the int values of the {@link PropertyType}
@@ -78,7 +79,7 @@ public class JCRContentHandler extends DefaultHandler {
     private static final Map<PropertyValueType, Integer> JCR_PROPERTIES;
 
     static {
-        Map<PropertyValueType, Integer> properties = new HashMap<>();
+        final Map<PropertyValueType, Integer> properties = new HashMap<>();
         //@formatter:off
         properties.put(PropertyValueType.BINARY,        PropertyType.BINARY);
         properties.put(PropertyValueType.DATE,          PropertyType.DATE);
@@ -100,14 +101,14 @@ public class JCRContentHandler extends DefaultHandler {
 
     /**
      * Creates a new content handler using the specified session for performing the input
-     * 
+     *
      * @param session
      */
-    public JCRContentHandler(Session session) {
+    public JCRContentHandler(final Session session) {
         this.session = session;
-        this.nodeStack = new ArrayDeque<>();
-        this.textStack = new ArrayDeque<>();
-        this.propertyStack = new ArrayDeque<>();
+        nodeStack = new ArrayDeque<>();
+        textStack = new ArrayDeque<>();
+        propertyStack = new ArrayDeque<>();
     }
 
     /**
@@ -117,7 +118,7 @@ public class JCRContentHandler extends DefaultHandler {
     public void startDocument() throws SAXException {
         LOG.info("BEGIN ContentImport");
         LOG.info("IMPORT USER: {}", session.getUserID());
-        this.startTime = System.nanoTime();
+        startTime = System.nanoTime();
     }
 
     /**
@@ -128,11 +129,11 @@ public class JCRContentHandler extends DefaultHandler {
         LOG.info("Content Processing finished, saving...");
         try {
             session.save();
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             throw new SAXException("Saving failed", e);
         }
-        long endTime = System.nanoTime();
-        long processingTime = endTime - startTime;
+        final long endTime = System.nanoTime();
+        final long processingTime = endTime - startTime;
         LOG.info("Content imported in {} ms", processingTime / 1_000_000);
         LOG.info("END ContentImport");
     }
@@ -142,7 +143,8 @@ public class JCRContentHandler extends DefaultHandler {
      * mixin type or creates a property (properties are not yet written to the node)
      */
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+            throws SAXException {
         LOG.trace("startElement uri={} localName={} qName={} attributes={}", uri, localName, qName, attributes);
 
         if (!isInkstandNamespace(uri)) {
@@ -168,55 +170,55 @@ public class JCRContentHandler extends DefaultHandler {
 
     /**
      * Invoked on rootNode element
-     * 
+     *
      * @param attributes
      * @throws SAXException
      */
-    private void startElementRootNode(Attributes attributes) throws SAXException {
+    private void startElementRootNode(final Attributes attributes) throws SAXException {
         LOG.debug("Found rootNode");
         try {
-            this.nodeStack.push(newNode(null, attributes));
-        } catch (RepositoryException e) {
+            nodeStack.push(newNode(null, attributes));
+        } catch (final RepositoryException e) {
             throw new SAXException("Could not create node", e);
         }
     }
 
     /**
      * Invoked on node element
-     * 
+     *
      * @param attributes
      * @throws SAXException
      */
-    private void startElementNode(Attributes attributes) throws SAXException {
+    private void startElementNode(final Attributes attributes) throws SAXException {
         LOG.debug("Found node");
         try {
-            this.nodeStack.push(newNode(this.nodeStack.peek(), attributes));
-        } catch (RepositoryException e) {
+            nodeStack.push(newNode(nodeStack.peek(), attributes));
+        } catch (final RepositoryException e) {
             throw new SAXException("Could not create node", e);
         }
     }
 
     /**
      * Invoked on mixin element
-     * 
+     *
      * @param attributes
      * @throws SAXException
      */
-    private void startElementMixin(Attributes attributes) throws SAXException {
+    private void startElementMixin(final Attributes attributes) throws SAXException {
         LOG.debug("Found mixin declaration");
         try {
-            addMixin(this.nodeStack.peek(), attributes);
-        } catch (RepositoryException e) {
+            addMixin(nodeStack.peek(), attributes);
+        } catch (final RepositoryException e) {
             throw new SAXException("Could not add mixin type", e);
         }
     }
 
     /**
      * Invoked on property element
-     * 
+     *
      * @param attributes
      */
-    private void startElementProperty(Attributes attributes) {
+    private void startElementProperty(final Attributes attributes) {
         LOG.debug("Found property");
         propertyStack.push(newPropertyDescriptor(attributes));
     }
@@ -226,17 +228,17 @@ public class JCRContentHandler extends DefaultHandler {
      * removes completed nodes from the node stack.
      */
     @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
+    public void endElement(final String uri, final String localName, final String qName) throws SAXException {
         LOG.trace("endElement uri={} localName={} qName={}", uri, localName, qName);
         if (isInkstandNamespace(uri)) {
             switch (localName) {
                 case "rootNode":
                     LOG.debug("Closing rootNode");
-                    this.nodeStack.pop();
+                    nodeStack.pop();
                     break;
                 case "node":
                     LOG.debug("Closing node");
-                    this.nodeStack.pop();
+                    nodeStack.pop();
                     break;
                 case "mixin":
                     LOG.debug("Closing mixin");
@@ -252,18 +254,18 @@ public class JCRContentHandler extends DefaultHandler {
 
     private void endElementProperty() throws SAXException {
         LOG.debug("Closing property");
-        PropertyDescriptor pd = propertyStack.pop();
+        final PropertyDescriptor pd = propertyStack.pop();
         try {
             pd.setValue(parseValue(pd.getJcrType(), textStack.pop()));
-            addProperty(this.nodeStack.peek(), pd);
-        } catch (RepositoryException e) {
+            addProperty(nodeStack.peek(), pd);
+        } catch (final RepositoryException e) {
             throw new SAXException("Could set property value", e);
         }
     }
 
     /**
      * Creates the {@link Node} in the repository from the given attributes
-     * 
+     *
      * @param parent
      *            the parent node of the node to be created. If this is null, a root-level node will be created.
      * @param attributes
@@ -271,7 +273,7 @@ public class JCRContentHandler extends DefaultHandler {
      * @return the newly creates {@link Node}
      * @throws RepositoryException
      */
-    private Node newNode(Node parent, Attributes attributes) throws RepositoryException {
+    private Node newNode(final Node parent, final Attributes attributes) throws RepositoryException {
         Node parentNode;
         if (parent == null) {
             parentNode = session.getRootNode();
@@ -280,43 +282,43 @@ public class JCRContentHandler extends DefaultHandler {
         }
         // TODO handle path paramters
 
-        String name = attributes.getValue("name");
-        String primaryType = attributes.getValue("primaryType");
+        final String name = attributes.getValue("name");
+        final String primaryType = attributes.getValue("primaryType");
 
         LOG.info("Node {} adding child node {}(type={})", parentNode.getPath(), name, primaryType);
-        Node node = parentNode.addNode(name, primaryType);
+        final Node node = parentNode.addNode(name, primaryType);
         return node;
     }
 
-    private void addMixin(Node node, Attributes attributes) throws RepositoryException {
-        String mixinType = attributes.getValue("name");
+    private void addMixin(final Node node, final Attributes attributes) throws RepositoryException {
+        final String mixinType = attributes.getValue("name");
         LOG.info("Node {} adding mixin {}", node.getPath(), mixinType);
         node.addMixin(mixinType);
     }
 
     /**
      * Adds a property to the node. The property's name, type and value is defined in the {@link PropertyDescriptor}
-     * 
+     *
      * @param node
      *            the node to which the property should be added
      * @param pd
      *            the {@link PropertyDescriptor} containing the details of the property
      * @throws RepositoryException
      */
-    private void addProperty(Node node, PropertyDescriptor pd) throws RepositoryException {
+    private void addProperty(final Node node, final PropertyDescriptor pd) throws RepositoryException {
         LOG.info("Node {} adding property {}", node.getPath(), pd.getName());
         node.setProperty(pd.getName(), (Value) pd.getValue());
     }
 
     /**
      * Creates a new {@link PropertyDescriptor} from the attributes
-     * 
+     *
      * @param attributes
      *            the attributes defining the name and jcrType of the property
      * @return a {@link PropertyDescriptor} instance
      */
-    private PropertyDescriptor newPropertyDescriptor(Attributes attributes) {
-        PropertyDescriptor pd = FACTORY.createPropertyDescriptor();
+    private PropertyDescriptor newPropertyDescriptor(final Attributes attributes) {
+        final PropertyDescriptor pd = FACTORY.createPropertyDescriptor();
         LOG.debug("property name={}", attributes.getValue("name"));
         LOG.debug("property jcrType={}", attributes.getValue("jcrType"));
         pd.setName(attributes.getValue("name"));
@@ -324,7 +326,7 @@ public class JCRContentHandler extends DefaultHandler {
         return pd;
     }
 
-    private Object parseValue(PropertyValueType valueType, String valueAsText) throws RepositoryException {
+    private Object parseValue(final PropertyValueType valueType, final String valueAsText) throws RepositoryException {
         // TODO handle ref property
         LOG.debug("Parsing type={} from='{}'", valueType, valueAsText);
         final ValueFactory vf = session.getValueFactory();
@@ -332,7 +334,7 @@ public class JCRContentHandler extends DefaultHandler {
         switch (valueType) {
             case BINARY:
                 value = vf.createValue(vf.createBinary(new ByteArrayInputStream(Base64.decodeBase64(valueAsText
-                        .getBytes()))));
+                        .getBytes(StandardCharsets.UTF_8)))));
                 break;
             case REFERENCE:
                 // TODO resolve IDs
@@ -351,23 +353,23 @@ public class JCRContentHandler extends DefaultHandler {
 
     /**
      * Converts the valueType to an int representing the {@link PropertyType} of the property.
-     * 
+     *
      * @param valueType
      *            the value type to be converted
      * @return the int value of the corresponding {@link PropertyType}
      */
-    private int getPropertyType(PropertyValueType valueType) {
+    private int getPropertyType(final PropertyValueType valueType) {
         return JCR_PROPERTIES.get(valueType).intValue();
     }
 
     /**
      * Checks if the specified uri is of the namesspace this {@link JCRContentHandler} is able to process
-     * 
+     *
      * @param uri
      *            the uri to check
      * @return <code>true</code> if the namespace is processable by this {@link JCRContentHandler}
      */
-    private boolean isInkstandNamespace(String uri) {
+    private boolean isInkstandNamespace(final String uri) {
         return INKSTAND_IMPORT_NAMESPACE.equals(uri);
     }
 
@@ -375,13 +377,13 @@ public class JCRContentHandler extends DefaultHandler {
      * Detects text by trimming the effective content of the char array.
      */
     @Override
-    public void characters(char[] ch, int start, int length) throws SAXException {
-        String text = new String(ch).substring(start, start + length);
+    public void characters(final char[] ch, final int start, final int length) throws SAXException {
+        final String text = new String(ch).substring(start, start + length);
         LOG.trace("characters; '{}'", text);
-        String trimmedText = text.trim();
+        final String trimmedText = text.trim();
         if (!trimmedText.isEmpty()) {
             LOG.info("text: '{}'", trimmedText);
-            this.textStack.push(trimmedText);
+            textStack.push(trimmedText);
         }
     }
 }
