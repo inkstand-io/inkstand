@@ -230,25 +230,26 @@ public class JCRContentHandler extends DefaultHandler {
     @Override
     public void endElement(final String uri, final String localName, final String qName) throws SAXException {
         LOG.trace("endElement uri={} localName={} qName={}", uri, localName, qName);
-        if (isInkstandNamespace(uri)) {
-            switch (localName) {
-                case "rootNode":
-                    LOG.debug("Closing rootNode");
-                    nodeStack.pop();
-                    break;
-                case "node":
-                    LOG.debug("Closing node");
-                    nodeStack.pop();
-                    break;
-                case "mixin":
-                    LOG.debug("Closing mixin");
-                    break;
-                case "property":
-                    endElementProperty();
-                    break;
-                default:
-                    break;
-            }
+        if (!isInkstandNamespace(uri)) {
+            return;
+        }
+        switch (localName) {
+            case "rootNode":
+                LOG.debug("Closing rootNode");
+                nodeStack.pop();
+                break;
+            case "node":
+                LOG.debug("Closing node");
+                nodeStack.pop();
+                break;
+            case "mixin":
+                LOG.debug("Closing mixin");
+                break;
+            case "property":
+                endElementProperty();
+                break;
+            default:
+                break;
         }
     }
 
