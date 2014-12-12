@@ -13,7 +13,7 @@ import javax.jcr.Session;
 import li.moskito.scribble.ScribbleRule;
 
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -21,14 +21,16 @@ import org.xml.sax.helpers.AttributesImpl;
 
 public class JCRContentHandlerTest {
 
+    private static final String INK_NODE = "ink:node";
+    private static final String NODE = "node";
     private static final String PROPERTY = "property";
     private static final String INK_PROPERTY = "ink:property";
     private static final String MIXIN = "mixin";
     private static final String INK_MIXIN = "ink:mixin";
     private static final String INK_ROOT_NODE = "ink:rootNode";
     private static final String ROOT_NODE = "rootNode";
-    @ClassRule
-    public static ScribbleRule SCRIBBLE = new ScribbleRule();
+    @Rule
+    public ScribbleRule SCRIBBLE = new ScribbleRule();
     private JCRContentHandler subject;
 
     private static final String INKSTAND_IMPORT_NAMESPACE = "http://www.moskito.li/schemas/jcr-import";
@@ -59,6 +61,45 @@ public class JCRContentHandlerTest {
                 createAttributes("name", "jcr:title", "jcrType", "STRING"));
         subject.characters("TestTitle".toCharArray(), 0, 9);
         subject.endElement(namespace, PROPERTY, INK_PROPERTY);
+
+        subject.endElement(namespace, ROOT_NODE, INK_ROOT_NODE);
+        subject.endPrefixMapping("ink");
+        subject.endDocument();
+    }
+
+    /**
+     * A simple flow of events that creates an unstructured root node with one child node
+     *
+     * @param namespace
+     *            the namespace for all element events
+     * @throws SAXException
+     */
+    protected void ns_eventflow_rootAndChildNode(final String namespace) throws SAXException {
+        subject.startDocument();
+        subject.startPrefixMapping("ink", namespace);
+
+        subject.startElement(namespace, ROOT_NODE, INK_ROOT_NODE,
+                createAttributes("name", "root", "primaryType", "nt:unstructured"));
+
+        subject.startElement(namespace, MIXIN, INK_MIXIN, createAttributes("name", "mix:title"));
+        subject.endElement(namespace, MIXIN, INK_MIXIN);
+
+        subject.startElement(namespace, PROPERTY, INK_PROPERTY,
+                createAttributes("name", "jcr:title", "jcrType", "STRING"));
+        subject.characters("TestTitle".toCharArray(), 0, 9);
+        subject.endElement(namespace, PROPERTY, INK_PROPERTY);
+
+        // start child node
+        subject.startElement(namespace, NODE, INK_NODE,
+                createAttributes("name", "child", "primaryType", "nt:unstructured"));
+        subject.startElement(namespace, MIXIN, INK_MIXIN, createAttributes("name", "mix:title"));
+        subject.endElement(namespace, MIXIN, INK_MIXIN);
+        subject.startElement(namespace, PROPERTY, INK_PROPERTY,
+                createAttributes("name", "jcr:title", "jcrType", "STRING"));
+        subject.characters("ChildNode".toCharArray(), 0, 9);
+        subject.endElement(namespace, PROPERTY, INK_PROPERTY);
+        subject.endElement(namespace, NODE, INK_NODE);
+        // end child node
 
         subject.endElement(namespace, ROOT_NODE, INK_ROOT_NODE);
         subject.endPrefixMapping("ink");
@@ -135,7 +176,7 @@ public class JCRContentHandlerTest {
     }
 
     @Test
-    public void testEventFlow_02_ignoredNamespace() throws Exception {
+    public void testEventFlow_01_ignoredNamespace() throws Exception {
         // act
         ns_eventflow_rootNode("ignore");
         // assert
@@ -152,6 +193,25 @@ public class JCRContentHandlerTest {
         final Session session = SCRIBBLE.getRepository().login("admin", "admin");
         // nothing is created at all
         assertNodeNotExistByPath(session, "/root");
+    }
+
+    @Test
+    public void testEventFlow_03_simpleNestedStructure() throws Exception {
+        // act
+        ns_eventflow_rootAndChildNode(INKSTAND_IMPORT_NAMESPACE);
+        // assert
+        final Session session = SCRIBBLE.getRepository().login("admin", "admin");
+        assertNodeExistByPath(session, "/root");
+        assertNodeExistByPath(session, "/root/child");
+        final Node rootNode = session.getNode("/root");
+        assertPrimaryNodeType(rootNode, "nt:unstructured");
+        assertMixinNodeType(rootNode, "mix:title");
+        assertStringPropertyEquals(rootNode, "jcr:title", "TestTitle");
+
+        final Node childNode = session.getNode("/root/child");
+        assertPrimaryNodeType(childNode, "nt:unstructured");
+        assertMixinNodeType(childNode, "mix:title");
+        assertStringPropertyEquals(childNode, "jcr:title", "ChildNode");
     }
 
 }
