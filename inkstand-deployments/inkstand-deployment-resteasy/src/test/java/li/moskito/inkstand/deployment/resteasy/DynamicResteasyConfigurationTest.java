@@ -25,28 +25,28 @@ public class DynamicResteasyConfigurationTest {
     private DynamicResteasyConfiguration subject;
 
     @SuppressWarnings({
-            "unchecked", "rawtypes"
+        "unchecked", "rawtypes"
     })
     @Test
     public void testGetProviderClasses() throws Exception {
-        Collection<Class> providers = mock(Collection.class);
+        final Collection<Class> providers = mock(Collection.class);
         when(scanner.getProviderClasses()).thenReturn(providers);
         assertEquals(providers, subject.getProviderClasses());
     }
 
     @SuppressWarnings({
-            "unchecked", "rawtypes"
+        "unchecked", "rawtypes"
     })
     @Test
     public void testGetResourceClasses() throws Exception {
-        Collection<Class> resources = mock(Collection.class);
+        final Collection<Class> resources = mock(Collection.class);
         when(scanner.getResourceClasses()).thenReturn(resources);
         assertEquals(resources, subject.getResourceClasses());
     }
 
     @Test
     public void testGetContextRoot_configured() throws Exception {
-        Scribble.injectInto(subject).configProperty("inkstand.rest.contextRoot", "root");
+        Scribble.injectInto(subject).configProperty("inkstand.rest.contextRoot").value("root");
         assertEquals("root", subject.getContextRoot());
     }
 

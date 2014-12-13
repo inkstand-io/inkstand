@@ -29,24 +29,19 @@ public class UndertowWebServerProvider {
     @Inject
     private DeploymentInfo deploymentInfo;
 
-    private Undertow undertow;
-
     @Produces
     public Undertow getUndertow() {
-        if (undertow == null) {
 
-            final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
-            deploymentManager.deploy();
+        final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
+        deploymentManager.deploy();
 
-            try {
-                LOG.info("Creating service endpoint {}:{}/{} for {} at ", config.getBindAddress(), config.getPort(),
-                        deploymentInfo.getContextPath(), deploymentInfo.getDeploymentName());
-                undertow = Undertow.builder().addHttpListener(config.getPort(), config.getBindAddress())
-                        .setHandler(deploymentManager.start()).build();
-            } catch (final ServletException e) {
-                throw new InkstandRuntimeException(e);
-            }
+        try {
+            LOG.info("Creating service endpoint {}:{}/{} for {} at ", config.getBindAddress(), config.getPort(),
+                    deploymentInfo.getContextPath(), deploymentInfo.getDeploymentName());
+            return Undertow.builder().addHttpListener(config.getPort(), config.getBindAddress())
+                    .setHandler(deploymentManager.start()).build();
+        } catch (final ServletException e) {
+            throw new InkstandRuntimeException(e);
         }
-        return undertow;
     }
 }

@@ -24,36 +24,31 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
     @Inject
     private ApplicationConfiguration appConfig;
 
-    private DeploymentInfo deploymentInfo;
-
     @Override
     @Produces
     public DeploymentInfo getDeployment() {
-        if (deploymentInfo == null) {
-            final ResteasyDeployment deployment = new ResteasyDeployment();
-            deployment.getActualResourceClasses().addAll(appConfig.getResourceClasses());
-            deployment.getActualProviderClasses().addAll(appConfig.getProviderClasses());
-            deployment.setInjectorFactoryClass(CdiInjectorFactory.class.getName());
+        final ResteasyDeployment deployment = new ResteasyDeployment();
+        deployment.getActualResourceClasses().addAll(appConfig.getResourceClasses());
+        deployment.getActualProviderClasses().addAll(appConfig.getProviderClasses());
+        deployment.setInjectorFactoryClass(CdiInjectorFactory.class.getName());
 
-            final ListenerInfo listener = Servlets.listener(CDIListener.class);
+        final ListenerInfo listener = Servlets.listener(CDIListener.class);
 
-            //@formatter:off
-            final ServletInfo resteasyServlet = Servlets.servlet("ResteasyServlet", HttpServlet30Dispatcher.class)
-                    .setAsyncSupported(true)
-                    .setLoadOnStartup(1)
-                    .addInitParam("org.jboss.weld.environment.servlet.archive.isolation", "true")
-                    .addMapping("/*");
+        //@formatter:off
+        final ServletInfo resteasyServlet = Servlets.servlet("ResteasyServlet", HttpServlet30Dispatcher.class)
+                .setAsyncSupported(true)
+                .setLoadOnStartup(1)
+                .addInitParam("org.jboss.weld.environment.servlet.archive.isolation", "true")
+                .addMapping("/*");
 
-            deploymentInfo = new DeploymentInfo()
-                    .addListener(listener)
-                    .setContextPath(appConfig.getContextRoot())
-                    .addServletContextAttribute(ResteasyDeployment.class.getName(), deployment)
-                    .addServlet(resteasyServlet)
-                    .setDeploymentName("ResteasyUndertow")
-                    .setClassLoader(ClassLoader.getSystemClassLoader());
-            // @formatter:on
-        }
-        return deploymentInfo;
+        return new DeploymentInfo()
+        .addListener(listener)
+        .setContextPath(appConfig.getContextRoot())
+        .addServletContextAttribute(ResteasyDeployment.class.getName(), deployment)
+        .addServlet(resteasyServlet)
+        .setDeploymentName("ResteasyUndertow")
+        .setClassLoader(ClassLoader.getSystemClassLoader());
+        // @formatter:on
 
     }
 }

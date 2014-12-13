@@ -30,22 +30,22 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Provider that provides a transient, in-memory repository that is not persisted
- * 
+ *
  * @author Gerald Muecke, gerald@moskito.li
  */
 @Priority(1)
-public class TransientRepositoryProvider implements RepositoryProvider {
+public class InMemoryRepositoryProvider implements RepositoryProvider {
 
     /**
      * SLF4J Logger for this class
      */
-    private static final Logger LOG = LoggerFactory.getLogger(TransientRepositoryProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InMemoryRepositoryProvider.class);
 
     private TransientRepository repository;
     private Path tempFolder;
 
     @Inject
-    @ConfigProperty(name = "inkstand.jcr.transient.configURL")
+    @ConfigProperty(name = "inkstand.jcr.transient.configURL", defaultValue = "defaultInMemoryRepository.xml")
     private String configURL;
 
     @Inject
@@ -74,7 +74,7 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     }
 
     @PreDestroy
-    public void shutdownRepository(@Disposes Repository repository) {
+    public void shutdownRepository(@Disposes final Repository repository) {
 
         try {
             if (repository == this.repository) {
@@ -93,12 +93,12 @@ public class TransientRepositoryProvider implements RepositoryProvider {
 
     /**
      * Creates a transient test repository for integration testing
-     * 
+     *
      * @throws IOException
      * @throws ConfigurationException
      */
     private void initializeRepository() throws IOException, ConfigurationException {
-        this.tempFolder = Files.createTempDirectory("inque");
+        tempFolder = Files.createTempDirectory("inque");
         final URL configLocation = getConfigURL();
         repository = JackrabbitUtil.createTransientRepository(tempFolder.toFile(), configLocation);
     }
@@ -106,21 +106,18 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     /**
      * Retrieves the configuration URL for the TransientRepository. The method tries to resolve the the configured
      * configURL in the classpath. If that fails, it tries to create an URL from the string directly.
-     * 
+     *
      * @return the configuration URL
      * @throws MalformedURLException
      *             if the config URL is no valid URL and could not be found in the classpath
      */
     private URL getConfigURL() throws MalformedURLException {
-
-        String strUrl = configURL;
-        URL url = resolveUrl(strUrl);
-        return url;
+        return resolveUrl(configURL);
     }
 
     /**
      * Initializes the Test Repository with the Inque nodetype model
-     * 
+     *
      * @throws RepositoryException
      * @throws IOException
      * @throws ParseException
@@ -134,7 +131,7 @@ public class TransientRepositoryProvider implements RepositoryProvider {
 
     /**
      * Logs into the repository as administrator
-     * 
+     *
      * @return the session with admin privileges.
      * @throws RepositoryException
      */
@@ -148,15 +145,15 @@ public class TransientRepositoryProvider implements RepositoryProvider {
     /**
      * Resolves the given String URL by searching the classpath using the context class loader and this class'
      * classloader. If not such resources can be found, the URL is accessed directly.
-     * 
+     *
      * @param strUrl
      *            the URL as a string
      * @return the resolved URL
      * @throws MalformedURLException
      *             if the resource was not found in classpath and is not valid URL either.
      */
-    private URL resolveUrl(String strUrl) throws MalformedURLException {
-        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+    private URL resolveUrl(final String strUrl) throws MalformedURLException {
+        final ClassLoader ccl = Thread.currentThread().getContextClassLoader();
         URL url = null;
         if (ccl != null) {
             url = ccl.getResource(strUrl);

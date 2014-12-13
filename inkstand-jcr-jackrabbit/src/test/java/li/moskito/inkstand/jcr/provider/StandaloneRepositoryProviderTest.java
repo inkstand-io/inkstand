@@ -32,34 +32,34 @@ public class StandaloneRepositoryProviderTest {
 
     @Before
     public void setUp() throws Exception {
-        this.subject = new StandaloneRepositoryProvider();
-        Scribble.injectInto(this.subject).configProperty("inkstand.jcr.home", folder.getRoot().getAbsolutePath());
+        subject = new StandaloneRepositoryProvider();
+        Scribble.injectInto(subject).configProperty("inkstand.jcr.home").value(folder.getRoot().getAbsolutePath());
     }
 
     @After
     public void tearDown() throws Exception {
-        if (this.repository != null && this.repository instanceof RepositoryImpl) {
-            ((RepositoryImpl) this.repository).shutdown();
+        if (repository != null && repository instanceof RepositoryImpl) {
+            ((RepositoryImpl) repository).shutdown();
         }
     }
 
     @Test
     public void testGetRepository_and_Close() throws Exception {
-        this.repository = this.subject.getRepository();
+        repository = subject.getRepository();
         assertNotNull(repository);
     }
 
     @Test
     public void testClose_RepositoryImpl_shutdown() throws Exception {
-        RepositoryImpl repo = mock(RepositoryImpl.class);
-        this.subject.close(repo);
+        final RepositoryImpl repo = mock(RepositoryImpl.class);
+        subject.close(repo);
         verify(repo).shutdown();
     }
 
     @Test
     public void testClose_NoRepositoryImpl_noShutdown() throws Exception {
-        org.apache.jackrabbit.core.TransientRepository repo = mock(org.apache.jackrabbit.core.TransientRepository.class);
-        this.subject.close(repo);
+        final org.apache.jackrabbit.core.TransientRepository repo = mock(org.apache.jackrabbit.core.TransientRepository.class);
+        subject.close(repo);
         verify(repo, times(0)).shutdown();
     }
 

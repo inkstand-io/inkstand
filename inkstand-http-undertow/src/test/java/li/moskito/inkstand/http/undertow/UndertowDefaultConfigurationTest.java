@@ -12,9 +12,9 @@ public class UndertowDefaultConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.subject = new UndertowDefaultConfiguration();
-        Scribble.injectInto(subject).configProperty("inkstand.http.port", 1024);
-        Scribble.injectInto(subject).configProperty("inkstand.http.listenaddress", "foreign.host");
+        subject = new UndertowDefaultConfiguration();
+        Scribble.injectInto(subject).configProperty("inkstand.http.port").value(1024);
+        Scribble.injectInto(subject).configProperty("inkstand.http.listenaddress").value("foreign.host");
     }
 
     @Test
