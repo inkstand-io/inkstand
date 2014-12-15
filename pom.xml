@@ -75,8 +75,8 @@
 		<logging.log4j.version>2.0-rc1</logging.log4j.version>
 		
 		<!-- Sonar and Code Coverage -->
-		<coverage.unit.test.path>target/jacoco-ut.exec</coverage.unit.test.path>
-		<coverage.integration.test.path>target/jacoco-it.exec</coverage.integration.test.path>
+		<coverage.unit.test.path>${project.basedir}/../target/jacoco-ut.exec</coverage.unit.test.path>
+		<coverage.integration.test.path>${project.basedir}/../target/jacoco-it.exec</coverage.integration.test.path>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${coverage.unit.test.path}</sonar.jacoco.reportPath>
