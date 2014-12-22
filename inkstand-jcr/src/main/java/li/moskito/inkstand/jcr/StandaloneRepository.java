@@ -9,6 +9,12 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Stereotype;
 
+/**
+ * Annotation to annotate a repository implementation or producer to indicate it will produce a standalone repository
+ * that has it's own and exclusive repository configuration and home directory.
+ *
+ * @author Gerald Muecke, gerald@moskito.li
+ */
 @Stereotype
 @ApplicationScoped
 @Alternative

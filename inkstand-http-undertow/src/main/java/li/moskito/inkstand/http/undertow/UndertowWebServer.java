@@ -8,9 +8,8 @@ import li.moskito.inkstand.MicroService;
 
 /**
  * Undertow based WebServer implementation
- * 
+ *
  * @author Gerald Muecke, gerald@moskito.li
- * 
  */
 public class UndertowWebServer implements MicroService {
 
@@ -27,6 +26,9 @@ public class UndertowWebServer implements MicroService {
         undertow.stop();
     }
 
+    /**
+     * @return the {@link Undertow} server instance.
+     */
     public Undertow getUndertow() {
         return undertow;
     }

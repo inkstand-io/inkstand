@@ -1,5 +1,6 @@
 package li.moskito.inkstand.deployment.resteasy;
 
+import io.undertow.Undertow;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.ListenerInfo;
@@ -18,6 +19,12 @@ import org.jboss.resteasy.spi.ResteasyDeployment;
 
 import ws.ament.hammock.core.impl.CDIListener;
 
+/**
+ * Provider for producing an {@link DeploymentInfo} for an {@link Undertow} web server that provides Jax-RS support
+ * based on RestEasy. The deployment allows to host Jax-RS resources and providers in a webserver.
+ *
+ * @author Gerald Muecke, gerald@moskito.li
+ */
 @Singleton
 public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProvider {
 

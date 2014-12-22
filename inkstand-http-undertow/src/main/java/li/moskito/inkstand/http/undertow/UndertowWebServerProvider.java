@@ -16,6 +16,13 @@ import li.moskito.inkstand.config.WebServerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provider of an Undertow WebServer instance with a specific deployment configuration. The deployment configuration is
+ * injected itself and may be provided by an implementation of {@link UndertowDeploymentProvider}. The {@link Undertow}
+ * instance provided by this provider is only configured, but not started.
+ *
+ * @author Gerald Muecke, gerald@moskito.li
+ */
 @Singleton
 public class UndertowWebServerProvider {
 

@@ -9,12 +9,18 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Stereotype;
 
+/**
+ * Annotation to annotate a repository implementation or producer to indicate it will produce a repository that is
+ * transient and will be shutdown one the last user logs off from it.
+ *
+ * @author Gerald Muecke, gerald@moskito.li
+ */
 @Stereotype
 @ApplicationScoped
 @Alternative
 @Retention(RetentionPolicy.RUNTIME)
 @Target({
-        ElementType.TYPE, ElementType.METHOD, ElementType.FIELD
+    ElementType.TYPE, ElementType.METHOD, ElementType.FIELD
 })
 public @interface TransientRepository {
 

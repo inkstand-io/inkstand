@@ -9,11 +9,20 @@ import li.moskito.inkstand.config.ApplicationConfiguration;
 
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
+/**
+ * {@link ApplicationConfiguration} for setting up the Resteasy deployment configuration (i.e. the
+ * {@link DefaultResteasyDeploymentProvider}). This implentation provides a context root (property
+ * <code>inkstand.rest.contextRoot</code>) that is injected as DeltaSpike {@link ConfigProperty} and which is an empty
+ * string as default value. <br>
+ * The Resource and Provider classes are injected by the {@link ResourcesAndProviders} CDI extension that scans the
+ * classpath and detects matching classes on bootstrap automatically.
+ * 
+ * @author Gerald Muecke, gerald@moskito.li
+ */
 public class DynamicResteasyConfiguration implements ApplicationConfiguration {
 
     @Inject
-    @ConfigProperty(name = "inkstand.rest.contextRoot",
-            defaultValue = "")
+    @ConfigProperty(name = "inkstand.rest.contextRoot", defaultValue = "")
     private String contexRoot;
 
     @Inject
@@ -33,7 +42,9 @@ public class DynamicResteasyConfiguration implements ApplicationConfiguration {
 
     @Override
     public String getContextRoot() {
-        return contexRoot == null ? "" : contexRoot;
+        return contexRoot == null
+                ? ""
+                : contexRoot;
     }
 
 }
