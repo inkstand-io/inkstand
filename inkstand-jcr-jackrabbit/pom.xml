@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>li.moskito</groupId>
 		<artifactId>inkstand</artifactId>
-		<version>0.0.3-SNAPSHOT</version>
+		<version>0.1.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>inkstand-jcr-jackrabbit</artifactId>
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -58,18 +58,18 @@
 		<dependency>
             <groupId>li.moskito</groupId>
             <artifactId>inkstand-core</artifactId>
-            <version>0.0.3-SNAPSHOT</version>
+            <version>0.1.1-SNAPSHOT</version>
         </dependency>
 		<!-- JCR stereotypes -->
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-jcr</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.1.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-jcr</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.1.1-SNAPSHOT</version>
 			<scope>test</scope>
 			<type>test-jar</type>
 		</dependency>
