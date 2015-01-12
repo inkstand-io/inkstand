@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>li.moskito</groupId>
@@ -11,11 +12,11 @@
 	<description>Undertow Web Container for Inkstand.</description>
 
 	<dependencies>
-        <dependency>
-            <groupId>li.moskito</groupId>
-            <artifactId>scribble</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>li.moskito</groupId>
+			<artifactId>scribble</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-core</artifactId>
@@ -24,6 +25,11 @@
 		<dependency>
 			<groupId>li.moskito</groupId>
 			<artifactId>inkstand-ms</artifactId>
+			<version>0.1.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>li.moskito</groupId>
+			<artifactId>inkstand-security</artifactId>
 			<version>0.1.1-SNAPSHOT</version>
 		</dependency>
 		<!-- Undertow -->
@@ -43,6 +49,11 @@
 		<dependency>
 			<groupId>org.apache.deltaspike.core</groupId>
 			<artifactId>deltaspike-core-impl</artifactId>
+		</dependency>
+		<!-- Apache DS -->
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-all</artifactId>
 		</dependency>
 	</dependencies>
 </project>

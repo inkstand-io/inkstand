@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import li.moskito.inkstand.config.ApplicationConfiguration;
-import li.moskito.inkstand.http.undertow.NoAuthentication;
+import li.moskito.inkstand.http.undertow.AuthenticationEnabled;
 import li.moskito.inkstand.http.undertow.UndertowDeploymentProvider;
 
 import org.jboss.resteasy.cdi.CdiInjectorFactory;
@@ -28,9 +28,9 @@ import ws.ament.hammock.core.impl.CDIListener;
  * @author Gerald Muecke, gerald@moskito.li
  */
 @Singleton
-@NoAuthentication
+@AuthenticationEnabled
 @Priority(0)
-public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProvider {
+public class BasicSecurityResteasyDeploymentProvider implements UndertowDeploymentProvider {
 
     @Inject
     private ApplicationConfiguration appConfig;
@@ -38,10 +38,14 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
     @Override
     @Produces
     public DeploymentInfo getDeployment() {
+
+        // new UndertowJaxrsServer();
+
         final ResteasyDeployment deployment = new ResteasyDeployment();
         deployment.getActualResourceClasses().addAll(appConfig.getResourceClasses());
         deployment.getActualProviderClasses().addAll(appConfig.getProviderClasses());
         deployment.setInjectorFactoryClass(CdiInjectorFactory.class.getName());
+        deployment.setSecurityEnabled(true);
 
         final ListenerInfo listener = Servlets.listener(CDIListener.class);
 
@@ -51,15 +55,23 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
                 .setLoadOnStartup(1)
                 .addInitParam("org.jboss.weld.environment.servlet.archive.isolation", "true")
                 .addMapping("/*");
+        resteasyServlet.addSecurityRoleRef("User", null);
 
-        return new DeploymentInfo()
-        .addListener(listener)
-        .setContextPath(appConfig.getContextRoot())
-        .addServletContextAttribute(ResteasyDeployment.class.getName(), deployment)
-        .addServlet(resteasyServlet)
-        .setDeploymentName("ResteasyUndertow")
-        .setClassLoader(ClassLoader.getSystemClassLoader());
+        final DeploymentInfo di =  new DeploymentInfo()
+            .setClassLoader(ClassLoader.getSystemClassLoader())
+            .addListener(listener)
+            .setDeploymentName("ResteasyUndertow")
+            .setContextPath(appConfig.getContextRoot())
+            .addServletContextAttribute(ResteasyDeployment.class.getName(), deployment)
+            .addServlet(resteasyServlet)
+            .setLoginConfig(Servlets.loginConfig("My Realm").addFirstAuthMethod("BASIC"))
+            .addSecurityRole("Users")
+            .addSecurityConstraint(Servlets.securityConstraint().addRoleAllowed("Users")
+            .addWebResourceCollection(Servlets.webResourceCollection().addUrlPattern("/*")));
+
         // @formatter:on
+
+        return di;
 
     }
 }

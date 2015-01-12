@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * Provider for a JCR {@link Repository} that uses a local repository configuration. The repository home directory is
  * configured using the {@code inque.jcr.home} property, either defined in the inque.properties file or via JVM
  * argument.
- * 
+ *
  * @author Gerald Muecke, gerald@moskito.li
  */
 @Priority(2)
@@ -38,6 +38,10 @@ public class StandaloneRepositoryProvider implements RepositoryProvider {
     @ConfigProperty(name = "inkstand.jcr.home")
     private String repositoryHome;
 
+    @Inject
+    @ConfigProperty(name = "inkstand.jcr.config")
+    private String configFile;
+
     private RepositoryImpl repository;
 
     @Override
@@ -46,14 +50,14 @@ public class StandaloneRepositoryProvider implements RepositoryProvider {
     public Repository getRepository() throws RepositoryException {
         if (repository == null) {
             LOG.info("Connecting to local repository at {}", repositoryHome);
-            final RepositoryConfig config = RepositoryConfig.create(new File(repositoryHome));
+            final RepositoryConfig config = RepositoryConfig.create(new File(configFile), new File(repositoryHome));
             repository = RepositoryImpl.create(config);
         }
         return repository;
     }
 
     @PreDestroy
-    public void close(@Disposes Repository repository) {
+    public void close(@Disposes final Repository repository) {
         if (repository instanceof RepositoryImpl) {
             ((RepositoryImpl) repository).shutdown();
         }

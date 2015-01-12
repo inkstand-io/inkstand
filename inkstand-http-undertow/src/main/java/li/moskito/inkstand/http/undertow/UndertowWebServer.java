@@ -33,4 +33,9 @@ public class UndertowWebServer implements MicroService {
         return undertow;
     }
 
+    @Override
+    public String toString() {
+        return "[Undertow]";
+    }
+
 }

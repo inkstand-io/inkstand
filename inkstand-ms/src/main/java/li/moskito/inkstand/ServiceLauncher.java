@@ -6,16 +6,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Launcher for an injectable microservice.  
- * 
+ * Launcher for an injectable microservice.
+ *
  * @author Gerald Muecke, gerald@moskito.li
- * 
  */
 @ApplicationScoped
 public class ServiceLauncher {
@@ -36,6 +34,7 @@ public class ServiceLauncher {
 
     void watch(@Observes final ContainerInitialized containerInitialized) {
         LOG.debug("Container initialized");
+        LOG.info("Inkstand microservice {} running", microService);
     }
 
     @PreDestroy
