@@ -3,6 +3,7 @@ package li.moskito.inkstand.http.undertow.auth.ldap;
 import io.undertow.security.idm.Account;
 
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +12,7 @@ import li.moskito.inkstand.security.SimplePrincipal;
 
 /**
  * A user account that is backed by an ldap entry.
- * 
+ *
  * @author Gerald Muecke, gerald@moskito.li
  */
 public class LdapAccount implements Account {
@@ -55,6 +56,16 @@ public class LdapAccount implements Account {
      */
     protected void addRole(final String roleName) {
         roles.add(roleName);
+    }
+
+    /**
+     * Adds a collection of roles to the account
+     * 
+     * @param roles
+     *            the role names to be added to the account
+     */
+    protected void addRoles(final Collection<String> roles) {
+        this.roles.addAll(roles);
     }
 
     /**

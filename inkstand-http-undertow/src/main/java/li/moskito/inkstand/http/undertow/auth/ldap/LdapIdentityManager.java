@@ -76,21 +76,10 @@ public class LdapIdentityManager implements IdentityManager {
         bind();
         try {
             final EntryCursor result = connection.search(ldapConfig.getUserContextDn(), getUserFilter(id),
-                    getSearchScope(), "uid");
+                    getSearchScope());
             if (result.next()) {
                 final Entry user = result.get();
-                LOG.debug("User {} found, trying to authenticate ", id);
-
-                final char[] password = ((PasswordCredential) credential).getPassword();
-                connection.bind(user.getDn(), String.valueOf(password));
-                final LdapAccount account = new LdapAccount(id, user.getDn().toString());
-
-                final Set<String> roles = getRoles(id, user.getDn().toString());
-                for (final String role : roles) {
-                    account.addRole(role);
-                }
-
-                return account;
+                return createUserAccout(user, credential, id);
             }
             // TODO replace with authentication exception
             throw new InkstandRuntimeException("No user with id " + id + " found");
@@ -101,17 +90,21 @@ public class LdapIdentityManager implements IdentityManager {
         }
     }
 
-    private Set<String> getRoles(final String uid, final String dn) throws LdapException, CursorException {
-        bind();
-        final EntryCursor result = connection.search(ldapConfig.getRoleContextDn(), getRoleFilter(uid, dn),
-                getSearchScope(), ldapConfig.getRoleNameAttribute());
-        final Set<String> roles = new HashSet<>();
-        if (result.next()) {
-            final Entry role = result.get();
-            roles.add(role.get(ldapConfig.getRoleNameAttribute()).getString());
-        }
+    private LdapAccount createUserAccout(final Entry user, final Credential credential, final String id)
+            throws LdapException, CursorException {
 
-        return roles;
+        LOG.debug("User {} found, collecting user groups", id);
+        final Set<String> roles = getRoles(id, user.getDn().toString());
+        LOG.debug("User {} has roles {}", id, roles);
+        LOG.debug("Authenticating user {}", id);
+        final char[] password = ((PasswordCredential) credential).getPassword();
+        connection.bind(user.getDn(), String.valueOf(password));
+        LOG.debug("User {} authenticated", id);
+        final LdapAccount account = new LdapAccount(id, user.getDn().toString());
+        for (final String role : roles) {
+            account.addRole(role);
+        }
+        return account;
     }
 
     @Override
@@ -137,6 +130,18 @@ public class LdapIdentityManager implements IdentityManager {
         } catch (final LdapException e) {
             throw new InkstandRuntimeException("Ldap unbind failed", e);
         }
+    }
+
+    private Set<String> getRoles(final String uid, final String dn) throws LdapException, CursorException {
+        bind();
+        final EntryCursor result = connection.search(ldapConfig.getRoleContextDn(), getRoleFilter(uid, dn),
+                getSearchScope(), ldapConfig.getRoleNameAttribute());
+        final Set<String> roles = new HashSet<>();
+        while (result.next()) {
+            roles.add(result.get().get(ldapConfig.getRoleNameAttribute()).getString());
+        }
+
+        return roles;
     }
 
     /**
