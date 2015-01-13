@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
 
+import li.moskito.inkstand.ProtectedService;
 import li.moskito.inkstand.InkstandRuntimeException;
 import li.moskito.inkstand.config.WebServerConfiguration;
 
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 @Priority(0)
-@AuthenticationEnabled
+@ProtectedService
 public class AuthenticatingUndertowWebServerProvider {
 
     /**

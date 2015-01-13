@@ -11,8 +11,8 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import li.moskito.inkstand.ProtectedService;
 import li.moskito.inkstand.config.ApplicationConfiguration;
-import li.moskito.inkstand.http.undertow.AuthenticationEnabled;
 import li.moskito.inkstand.http.undertow.UndertowDeploymentProvider;
 
 import org.jboss.resteasy.cdi.CdiInjectorFactory;
@@ -28,9 +28,11 @@ import ws.ament.hammock.core.impl.CDIListener;
  * @author Gerald Muecke, gerald@moskito.li
  */
 @Singleton
-@AuthenticationEnabled
+@ProtectedService
 @Priority(0)
 public class BasicSecurityResteasyDeploymentProvider implements UndertowDeploymentProvider {
+
+    // TODO make security configuraiton configurable
 
     @Inject
     private ApplicationConfiguration appConfig;

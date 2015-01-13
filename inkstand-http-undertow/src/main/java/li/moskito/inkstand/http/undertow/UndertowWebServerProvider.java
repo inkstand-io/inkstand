@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 import javax.servlet.ServletException;
 
 import li.moskito.inkstand.InkstandRuntimeException;
+import li.moskito.inkstand.PublicService;
 import li.moskito.inkstand.config.WebServerConfiguration;
 
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 @Priority(0)
-@NoAuthentication
+@PublicService
 public class UndertowWebServerProvider {
 
     /**
