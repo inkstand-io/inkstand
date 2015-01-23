@@ -4,11 +4,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import io.inkstand.scribble.Scribble;
+import io.inkstand.scribble.rules.TemporaryFile;
 
 import javax.jcr.Repository;
-
-import li.moskito.scribble.Scribble;
-import li.moskito.scribble.rules.ExternalFile;
 
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.junit.After;
@@ -21,7 +20,7 @@ import org.junit.rules.TemporaryFolder;
 public class StandaloneRepositoryProviderTest {
 
     public TemporaryFolder folder = new TemporaryFolder();
-    public ExternalFile file = new ExternalFile(folder, "repository.xml").withContent().fromResource(
+    public TemporaryFile file = new TemporaryFile(folder, "repository.xml").withContent().fromResource(
             getClass().getResource("/repository.xml"));
 
     @Rule

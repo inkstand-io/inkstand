@@ -3,11 +3,11 @@ package li.moskito.inkstand.deployment.resteasy;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import io.inkstand.scribble.Scribble;
 
 import java.util.Collection;
 
 import li.moskito.inkstand.cdi.ResourcesAndProviders;
-import li.moskito.scribble.Scribble;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import io.inkstand.scribble.Scribble;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,7 +20,6 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
 
 import li.moskito.inkstand.InkstandRuntimeException;
-import li.moskito.scribble.Scribble;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.SessionListener;

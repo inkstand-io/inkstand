@@ -1,16 +1,15 @@
 package li.moskito.inkstand.jcr.util;
 
-import static li.moskito.scribble.JCRAssert.assertMixinNodeType;
-import static li.moskito.scribble.JCRAssert.assertNodeExistByPath;
-import static li.moskito.scribble.JCRAssert.assertNodeNotExistByPath;
-import static li.moskito.scribble.JCRAssert.assertPrimaryNodeType;
-import static li.moskito.scribble.JCRAssert.assertStringPropertyEquals;
+import static io.inkstand.scribble.JCRAssert.assertMixinNodeType;
+import static io.inkstand.scribble.JCRAssert.assertNodeExistByPath;
+import static io.inkstand.scribble.JCRAssert.assertNodeNotExistByPath;
+import static io.inkstand.scribble.JCRAssert.assertPrimaryNodeType;
+import static io.inkstand.scribble.JCRAssert.assertStringPropertyEquals;
 import static org.junit.Assert.assertEquals;
+import io.inkstand.scribble.ScribbleRule;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-
-import li.moskito.scribble.ScribbleRule;
 
 import org.junit.Before;
 import org.junit.Rule;

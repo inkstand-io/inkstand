@@ -101,6 +101,7 @@ public class LdapIdentityManager implements IdentityManager {
         connection.bind(user.getDn(), String.valueOf(password));
         LOG.debug("User {} authenticated", id);
         final LdapAccount account = new LdapAccount(id, user.getDn().toString());
+        account.addRoles(roles);
         for (final String role : roles) {
             account.addRole(role);
         }

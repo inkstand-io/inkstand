@@ -1,12 +1,13 @@
 package li.moskito.inkstand.jcr.provider;
 
-import static li.moskito.scribble.JCRAssert.assertMixinNodeType;
-import static li.moskito.scribble.JCRAssert.assertNodeExistByPath;
-import static li.moskito.scribble.JCRAssert.assertNodeTypeExists;
-import static li.moskito.scribble.JCRAssert.assertPrimaryNodeType;
-import static li.moskito.scribble.JCRAssert.assertStringPropertyEquals;
+import static io.inkstand.scribble.JCRAssert.assertMixinNodeType;
+import static io.inkstand.scribble.JCRAssert.assertNodeExistByPath;
+import static io.inkstand.scribble.JCRAssert.assertNodeTypeExists;
+import static io.inkstand.scribble.JCRAssert.assertPrimaryNodeType;
+import static io.inkstand.scribble.JCRAssert.assertStringPropertyEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import io.inkstand.scribble.ScribbleRule;
 
 import java.net.URL;
 
@@ -14,7 +15,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import li.moskito.inkstand.InkstandRuntimeException;
-import li.moskito.scribble.ScribbleRule;
 
 import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.After;

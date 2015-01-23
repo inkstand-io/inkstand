@@ -6,7 +6,8 @@
 	WARRANTIES OR CONDITIONS OF ANY KIND, either express or ~ implied. ~ ~ See 
 	the License for the specific language governing permissions and ~ limitations 
 	under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>li.moskito</groupId>
 	<artifactId>inkstand</artifactId>
@@ -74,7 +75,7 @@
 		<!-- Common Libraries Versions -->
 		<logging.slf4j.version>1.7.6</logging.slf4j.version>
 		<logging.log4j.version>2.0-rc1</logging.log4j.version>
-		
+
 		<!-- Sonar and Code Coverage -->
 		<coverage.unit.test.path>${project.basedir}/../target/jacoco-ut.exec</coverage.unit.test.path>
 		<coverage.integration.test.path>${project.basedir}/../target/jacoco-it.exec</coverage.integration.test.path>
@@ -89,7 +90,7 @@
 		<test.junit.version>4.11</test.junit.version>
 		<test.mockito.version>1.9.5</test.mockito.version>
 		<test.htmlunit.version>2.8</test.htmlunit.version>
-		<test.scribble.version>0.0.4</test.scribble.version>
+		<test.scribble.version>0.0.5-SNAPSHOT</test.scribble.version>
 		<test.jsonassert.version>1.2.3</test.jsonassert.version>
 		<test.arquillian.version>1.1.5.Final</test.arquillian.version>
 		<test.arquillian.weld.version>1.0.0.CR8</test.arquillian.weld.version>
@@ -291,16 +292,17 @@
 			</dependency>
 			<!-- Apache DS -->
 			<dependency>
-			    <groupId>org.apache.directory.api</groupId>
-			    <artifactId>api-all</artifactId>
-			    <version>${apache.ds.ldap.api.version}</version>
+				<groupId>org.apache.directory.api</groupId>
+				<artifactId>api-ldap-client-api</artifactId>
+				<version>${apache.ds.ldap.api.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.apache.directory.api</groupId>
+						<artifactId>api-ldap-schema-data</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
-			<dependency>
-			    <groupId>org.apache.directory.server</groupId>
-			    <artifactId>apacheds-all</artifactId>
-			    <version>${apache.ds.server.version}</version>
-			</dependency>
-						
+
 			<!-- JBoss Resteasy -->
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
@@ -402,10 +404,10 @@
 			</dependency>
 			<!-- Test Dependencies -->
 			<dependency>
-			    <groupId>li.moskito</groupId>
-			    <artifactId>scribble</artifactId>
-			    <version>${test.scribble.version}</version>
-			    <scope>test</scope>
+				<groupId>li.moskito</groupId>
+				<artifactId>scribble</artifactId>
+				<version>${test.scribble.version}</version>
+				<scope>test</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

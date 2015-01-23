@@ -53,7 +53,7 @@
 		<!-- Apache DS -->
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-all</artifactId>
+			<artifactId>api-ldap-client-api</artifactId>
 		</dependency>
 	</dependencies>
 </project>
