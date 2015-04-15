@@ -1,26 +1,18 @@
 package li.moskito.inkstand.jcr.provider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static io.inkstand.scribble.Scribble.inject;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import io.inkstand.scribble.Scribble;
 
 import java.io.IOException;
 import java.nio.file.Path;
-
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
-
-import li.moskito.inkstand.InkstandRuntimeException;
-
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.SessionListener;
 import org.apache.jackrabbit.core.TransientRepository;
@@ -32,6 +24,8 @@ import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import li.moskito.inkstand.InkstandRuntimeException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InMemoryRepositoryProviderTest {
@@ -49,9 +43,13 @@ public class InMemoryRepositoryProviderTest {
 
     @Before
     public void setUp() throws Exception {
-        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.configURL")
-        .value(getClass().getResource("/repository.xml").toString());
+        inject(getResourceUrl("/repository.xml")).asConfigProperty("inkstand.jcr.transient.configURL").into(subject);
         contextClassLoader = Thread.currentThread().getContextClassLoader();
+    }
+
+    private String getResourceUrl(final String resourceName) {
+
+        return getClass().getResource(resourceName).toString();
     }
 
     @After
@@ -67,8 +65,8 @@ public class InMemoryRepositoryProviderTest {
     @Test(expected = InkstandRuntimeException.class)
     public void testStartRepository_brokenRepositoryXml_exceptionOnStartup() throws Exception {
         // prepare
-        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.configURL")
-        .value(getClass().getResource("/broken_repository.xml").toString());
+        inject(getResourceUrl("/broken_repository.xml")).asConfigProperty("inkstand.jcr.transient.configURL").into(
+                subject);
         // act
         subject.startRepository();
         // assert
@@ -78,7 +76,7 @@ public class InMemoryRepositoryProviderTest {
 
     @Test
     public void testStartRepository_defaultConfigurationXml() throws Exception {
-        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.configURL").defaultValue();
+        inject(null).asConfigProperty("inkstand.jcr.transient.configURL").into(subject);
         Thread.currentThread().setContextClassLoader(null);
         // start the repository
         subject.startRepository();
@@ -86,8 +84,7 @@ public class InMemoryRepositoryProviderTest {
 
     @Test
     public void testStartRepository_externalConfigXml() throws Exception {
-        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.configURL")
-        .value(getClass().getResource("InMemoryRepositoryProviderTest_externalConfig.xml").toString());
+        inject(getResourceUrl("InMemoryRepositoryProviderTest_externalConfig.xml")).asConfigProperty("inkstand.jcr.transient.configURL").into(subject);
         Thread.currentThread().setContextClassLoader(null);
         // start the repository
         subject.startRepository();
@@ -110,8 +107,7 @@ public class InMemoryRepositoryProviderTest {
     public void testStartRepository_withCndFile() throws Exception {
         // check the repository does not perform a login as it is still a mock
         assertNull(subject.getRepository().login());
-        Scribble.injectInto(subject).configProperty("inkstand.jcr.transient.cndFileURL")
-        .value("InMemoryRepositoryProviderTest_testStartRepository.cnd");
+        inject(getResourceUrl("InMemoryRepositoryProviderTest_testStartRepository.cnd")).asConfigProperty("inkstand.jcr.transient.cndFileURL").into(subject);
         // start the repository
         subject.startRepository();
         // the repository should be working

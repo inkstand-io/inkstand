@@ -4,27 +4,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import io.inkstand.scribble.Scribble;
-import io.inkstand.scribble.rules.TemporaryFile;
 
 import javax.jcr.Repository;
-
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TemporaryFolder;
+
+import io.inkstand.scribble.Scribble;
+import io.inkstand.scribble.rules.TemporaryFile;
 
 public class StandaloneRepositoryProviderTest {
 
-    public TemporaryFolder folder = new TemporaryFolder();
-    public TemporaryFile file = new TemporaryFile(folder, "repository.xml").withContent().fromResource(
-            getClass().getResource("/repository.xml"));
-
     @Rule
-    public RuleChain chain = RuleChain.outerRule(folder).around(file);
+    public TemporaryFile file = Scribble.newTempFolder().aroundTempFile("repository.xml").fromClasspathResource(
+            "/repository.xml").build();
 
     private StandaloneRepositoryProvider subject;
     private Repository repository;
@@ -32,7 +27,8 @@ public class StandaloneRepositoryProviderTest {
     @Before
     public void setUp() throws Exception {
         subject = new StandaloneRepositoryProvider();
-        Scribble.injectInto(subject).configProperty("inkstand.jcr.home").value(folder.getRoot().getAbsolutePath());
+        Scribble.inject(file.getFile().getParentFile().getAbsolutePath()).asConfigProperty("inkstand.jcr.home").into(subject);
+        Scribble.inject(file.getFile().getAbsolutePath()).asConfigProperty("inkstand.jcr.config").into(subject);
     }
 
     @After

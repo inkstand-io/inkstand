@@ -1,22 +1,20 @@
 package li.moskito.inkstand.jcr.util;
 
-import static io.inkstand.scribble.JCRAssert.assertMixinNodeType;
-import static io.inkstand.scribble.JCRAssert.assertNodeExistByPath;
-import static io.inkstand.scribble.JCRAssert.assertNodeNotExistByPath;
-import static io.inkstand.scribble.JCRAssert.assertPrimaryNodeType;
-import static io.inkstand.scribble.JCRAssert.assertStringPropertyEquals;
+import static io.inkstand.scribble.JCRAssert.*;
 import static org.junit.Assert.assertEquals;
-import io.inkstand.scribble.ScribbleRule;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
-
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
+
+import io.inkstand.scribble.Scribble;
+import io.inkstand.scribble.rules.jcr.ContentRepository;
 
 public class JCRContentHandlerTest {
 
@@ -29,14 +27,23 @@ public class JCRContentHandlerTest {
     private static final String INK_ROOT_NODE = "ink:rootNode";
     private static final String ROOT_NODE = "rootNode";
     @Rule
-    public ScribbleRule SCRIBBLE = new ScribbleRule();
+    public ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
+    private Session adminSession = null;
     private JCRContentHandler subject;
 
     private static final String INKSTAND_IMPORT_NAMESPACE = "http://www.moskito.li/schemas/jcr-import";
 
     @Before
     public void setUp() throws Exception {
-        subject = new JCRContentHandler(SCRIBBLE.getJcrSession().getAdminSession());
+        adminSession = repository.login("admin", "admin");
+        subject = new JCRContentHandler(adminSession);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        if(adminSession != null) {
+            adminSession.logout();
+        }
     }
 
     /**
@@ -166,7 +173,7 @@ public class JCRContentHandlerTest {
         // act
         ns_eventflow_rootNode(INKSTAND_IMPORT_NAMESPACE);
         // assert
-        final Session session = SCRIBBLE.getRepository().login("admin", "admin");
+        final Session session = repository.login("admin", "admin");
         assertNodeExistByPath(session, "/root");
         final Node rootNode = session.getNode("/root");
         assertPrimaryNodeType(rootNode, "nt:unstructured");
@@ -179,7 +186,7 @@ public class JCRContentHandlerTest {
         // act
         ns_eventflow_rootNode("ignore");
         // assert
-        final Session session = SCRIBBLE.getRepository().login("admin", "admin");
+        final Session session = repository.login("admin", "admin");
         // nothing is created at all
         assertNodeNotExistByPath(session, "/root");
     }
@@ -189,7 +196,7 @@ public class JCRContentHandlerTest {
         // act
         ns_eventFlow_ignoredElements();
         // assert
-        final Session session = SCRIBBLE.getRepository().login("admin", "admin");
+        final Session session = repository.login("admin", "admin");
         // nothing is created at all
         assertNodeNotExistByPath(session, "/root");
     }
@@ -199,7 +206,7 @@ public class JCRContentHandlerTest {
         // act
         ns_eventflow_rootAndChildNode(INKSTAND_IMPORT_NAMESPACE);
         // assert
-        final Session session = SCRIBBLE.getRepository().login("admin", "admin");
+        final Session session = repository.login("admin", "admin");
         assertNodeExistByPath(session, "/root");
         assertNodeExistByPath(session, "/root/child");
         final Node rootNode = session.getNode("/root");

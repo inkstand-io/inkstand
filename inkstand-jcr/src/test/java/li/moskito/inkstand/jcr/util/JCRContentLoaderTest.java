@@ -4,27 +4,26 @@ import static io.inkstand.scribble.JCRAssert.assertMixinNodeType;
 import static io.inkstand.scribble.JCRAssert.assertNodeExistByPath;
 import static io.inkstand.scribble.JCRAssert.assertPrimaryNodeType;
 import static io.inkstand.scribble.JCRAssert.assertStringPropertyEquals;
-import io.inkstand.scribble.ScribbleRule;
 
 import java.net.URL;
-
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-
-import li.moskito.inkstand.InkstandRuntimeException;
-
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import io.inkstand.scribble.Scribble;
+import io.inkstand.scribble.rules.jcr.ContentRepository;
+import li.moskito.inkstand.InkstandRuntimeException;
+
 public class JCRContentLoaderTest {
 
     @ClassRule
-    public static ScribbleRule SCRIBBLE = new ScribbleRule();
+    public static ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
 
     private JCRContentLoader subject;
 
@@ -37,11 +36,11 @@ public class JCRContentLoaderTest {
     public void testLoadContent_validResource() throws Exception {
         // prepare
         final URL resource = getClass().getResource("test01_inkstandJcrImport_v1-0.xml");
-        final Session actSession = SCRIBBLE.getJcrSession().getAdminSession();
+        final Session actSession = repository.login("admin","admin");
         // act
         subject.loadContent(actSession, resource);
         // assert
-        final Session verifySession = SCRIBBLE.getJcrSession().login();
+        final Session verifySession = repository.getRepository().login();
         verifySession.refresh(true);
         assertNodeExistByPath(verifySession, "/root");
         final Node root = verifySession.getNode("/root");
@@ -54,14 +53,14 @@ public class JCRContentLoaderTest {
     public void testLoadContent_validating_validResource() throws Exception {
         // prepare
         final URL resource = getClass().getResource("test01_inkstandJcrImport_v1-0.xml");
-        final Session actSession = SCRIBBLE.getJcrSession().getAdminSession();
+        final Session actSession = repository.login("admin", "admin");
         final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         final Schema schema = schemaFactory.newSchema(getClass().getResource("inkstandJcrImport_v1-0.xsd"));
         // act
         subject.setSchema(schema);
         subject.loadContent(actSession, resource);
         // assert
-        final Session verifySession = SCRIBBLE.getJcrSession().login();
+        final Session verifySession = repository.getRepository().login();
         verifySession.refresh(true);
         assertNodeExistByPath(verifySession, "/root");
         final Node root = verifySession.getNode("/root");
@@ -76,7 +75,7 @@ public class JCRContentLoaderTest {
     public void testLoadContent_validating_invalidResource() throws Exception {
         // prepare
         final URL resource = getClass().getResource("test01_inkstandJcrImport_v1-0_invalid.xml");
-        final Session actSession = SCRIBBLE.getJcrSession().getAdminSession();
+        final Session actSession = repository.login("admin", "admin");
         final SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         final Schema schema = schemaFactory.newSchema(getClass().getResource("inkstandJcrImport_v1-0.xsd"));
         // act
