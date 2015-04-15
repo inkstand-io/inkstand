@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/inkstand-io/inkstand.svg?branch=development)](https://travis-ci.org/inkstand-io/inkstand)
+
 Inkstand
 =======
 
