@@ -3,17 +3,16 @@ package li.moskito.inkstand.deployment.resteasy;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import io.inkstand.scribble.Scribble;
 
 import java.util.Collection;
-
-import li.moskito.inkstand.cdi.ResourcesAndProviders;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import io.inkstand.scribble.Scribble;
+import li.moskito.inkstand.cdi.ResourcesAndProviders;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicResteasyConfigurationTest {
@@ -46,7 +45,7 @@ public class DynamicResteasyConfigurationTest {
 
     @Test
     public void testGetContextRoot_configured() throws Exception {
-        Scribble.injectInto(subject).configProperty("inkstand.rest.contextRoot").value("root");
+        Scribble.inject("root").asConfigProperty("inkstand.rest.contextRoot").into(subject);
         assertEquals("root", subject.getContextRoot());
     }
 

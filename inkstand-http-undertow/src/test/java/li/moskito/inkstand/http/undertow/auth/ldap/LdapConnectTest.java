@@ -7,11 +7,13 @@ import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.message.SearchScope;
 import org.apache.directory.ldap.client.api.LdapConnection;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class LdapConnectTest {
 
     @Test
+    @Ignore
     public void test() throws Exception {
 
         final LdapConnection connection = new LdapNetworkConnection("localhost", 10389);

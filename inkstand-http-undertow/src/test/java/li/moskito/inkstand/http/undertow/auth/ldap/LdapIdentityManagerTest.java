@@ -1,12 +1,10 @@
 package li.moskito.inkstand.http.undertow.auth.ldap;
 
 import static org.mockito.Mockito.when;
-import io.inkstand.scribble.rules.ldap.Directory;
-import io.inkstand.scribble.rules.ldap.DirectoryServer;
-import li.moskito.inkstand.security.LdapAuthConfiguration;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
@@ -15,6 +13,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import io.inkstand.scribble.rules.ldap.Directory;
+import io.inkstand.scribble.rules.ldap.DirectoryServer;
+import li.moskito.inkstand.security.LdapAuthConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LdapIdentityManagerTest {
@@ -41,6 +43,7 @@ public class LdapIdentityManagerTest {
     }
 
     @Test
+    @Ignore
     public void testConnect() throws Exception {
 
         Thread.sleep(10000);
