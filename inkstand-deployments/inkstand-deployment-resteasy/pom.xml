@@ -12,7 +12,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>li.moskito</groupId>
+            <groupId>io.inkstand</groupId>
 			<artifactId>scribble</artifactId>
 			<scope>test</scope>
 		</dependency>
