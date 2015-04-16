@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ink:rootNode xmlns:ink="http://inkstand.io/schemas/jcr-import"
+	primaryType="nt:unstructured" name="root">
+	<ink:mixin name="mix:title"/>
+	<ink:property name="jcr:title" jcrType="STRING">TestTitle</ink:property>
+</ink:rootNode>

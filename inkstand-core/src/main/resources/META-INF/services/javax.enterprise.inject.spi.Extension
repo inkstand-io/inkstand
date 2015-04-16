@@ -1,3 +1,3 @@
 org.jboss.resteasy.cdi.ResteasyCdiExtension
-li.moskito.inkstand.cdi.GlobalAlternativeSelector
-li.moskito.inkstand.cdi.ResourcesAndProviders
+io.inkstand.cdi.GlobalAlternativeSelector
+io.inkstand.cdi.ResourcesAndProviders

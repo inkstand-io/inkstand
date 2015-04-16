@@ -6,14 +6,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>li.moskito</groupId>
+		<groupId>io.inkstand</groupId>
 		<artifactId>inkstand</artifactId>
 		<version>0.1.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>inkstand-core</artifactId>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<packaging>jar</packaging>
-	<url>https://github.com/moskitoli/inkstand/wiki</url>
+	<url>https://github.com/inkstand.io/inkstand/wiki</url>
 	<description>
 	The core package contains the configuration API, a launcher class and CDI extensions that are
 	required for configuration and auto-discovery. The CDI extensions can be used without the full inkstand

@@ -9,7 +9,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>li.moskito</groupId>
+	<groupId>io.inkstand</groupId>
 	<artifactId>inkstand</artifactId>
 	<version>0.1.1-SNAPSHOT</version>
 
@@ -20,14 +20,14 @@
 	a CDI container (Weld), a WebServer/Servlet Container (Undertow) and Jax-RS implementation and webapp (RestEasy).
 	It provides auto resource and provider discovery and base support for JCR-based persistence.
 	</description>
-	<url>https://github.com/moskitoli/inkstand/wiki</url>
+	<url>https://inkstand.io/</url>
 
 	<developers>
 		<developer>
 			<name>Gerald Muecke</name>
-			<email>gerald@moskito.li</email>
-			<organization>Moskito.li</organization>
-			<organizationUrl>https://github.com/moskitoli</organizationUrl>
+			<email>gerald@inkstand.io</email>
+			<organization>Inkstand.io</organization>
+			<organizationUrl>https://github.com/inkstand-io</organizationUrl>
 		</developer>
 	</developers>
 
@@ -40,8 +40,8 @@
 	</licenses>
 
 	<issueManagement>
-		<system>GitHub</system>
-		<url>https://github.com/moskitoli/inkstand/issues</url>
+		<system>Jira</system>
+		<url>https://inkstand.atlassian.net/</url>
 	</issueManagement>
 
 	<distributionManagement>
@@ -56,9 +56,9 @@
 	</distributionManagement>
 
 	<scm>
-		<developerConnection>scm:git:git@github.com:moskitoli/inkstand.git</developerConnection>
-		<url>https://github.com/moskitoli/inkstand</url>
-		<connection>scm:git:https://github.com/moskitoli/inkstand.git</connection>
+		<developerConnection>scm:git:git@github.com:inkstand-io/inkstand.git</developerConnection>
+		<url>https://github.com/inkstand-io/inkstand</url>
+		<connection>scm:git:https://github.com/inkstand-io/inkstand.git</connection>
 	</scm>
 
 	<modules>
@@ -77,8 +77,8 @@
 		<logging.log4j.version>2.0-rc1</logging.log4j.version>
 
 		<!-- Sonar and Code Coverage -->
-		<coverage.unit.test.path>${project.basedir}/../target/jacoco-ut.exec</coverage.unit.test.path>
-		<coverage.integration.test.path>${project.basedir}/../target/jacoco-it.exec</coverage.integration.test.path>
+		<coverage.unit.test.path>${project.basedir}/target/jacoco-ut.exec</coverage.unit.test.path>
+		<coverage.integration.test.path>${project.basedir}/target/jacoco-it.exec</coverage.integration.test.path>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${coverage.unit.test.path}</sonar.jacoco.reportPath>
@@ -138,8 +138,11 @@
 						<configuration>
 							<skip>${skipTests}</skip>
 							<includes>
-								<include>li.moskito.inkstand.*</include>
+								<include>io.inkstand.*</include>
 							</includes>
+							<excludes>
+								<exclude>io.inkstand.scribble.*</exclude>
+							</excludes>
 						</configuration>
 						<executions>
 							<execution>
@@ -467,7 +470,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>li.moskito.inkstand.Inkstand</mainClass>
+							<mainClass>Inkstand</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -494,8 +497,11 @@
 				<configuration>
 					<skip>${skipTests}</skip>
 					<includes>
-						<include>li.moskito.inkstand.*</include>
+						<include>io.inkstand.*</include>
 					</includes>
+					<excludes>
+						<exclude>io.inkstand.scribble.*</exclude>
+					</excludes>
 				</configuration>
 				<executions>
 					<execution>
