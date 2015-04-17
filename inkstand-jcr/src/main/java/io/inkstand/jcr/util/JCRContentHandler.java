@@ -21,9 +21,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import li.moskito.schemas.jcr_import.ObjectFactory;
-import li.moskito.schemas.jcr_import.PropertyDescriptor;
-import li.moskito.schemas.jcr_import.PropertyValueType;
+import io.inkstand.schemas.jcr_import.ObjectFactory;
+import io.inkstand.schemas.jcr_import.PropertyDescriptor;
+import io.inkstand.schemas.jcr_import.PropertyValueType;
 
 /**
  * Implementation of the {@link DefaultHandler} that creates {@link Node} in a JCR {@link Repository} that are defined
@@ -103,6 +103,7 @@ public class JCRContentHandler extends DefaultHandler {
      * @param session
      */
     public JCRContentHandler(final Session session) {
+
         this.session = session;
         nodeStack = new ArrayDeque<>();
         textStack = new ArrayDeque<>();
@@ -114,6 +115,7 @@ public class JCRContentHandler extends DefaultHandler {
      */
     @Override
     public void startDocument() throws SAXException {
+
         LOG.info("BEGIN ContentImport");
         LOG.info("IMPORT USER: {}", session.getUserID());
         startTime = System.nanoTime();
@@ -124,6 +126,7 @@ public class JCRContentHandler extends DefaultHandler {
      */
     @Override
     public void endDocument() throws SAXException {
+
         LOG.info("Content Processing finished, saving...");
         try {
             session.save();
@@ -143,6 +146,7 @@ public class JCRContentHandler extends DefaultHandler {
     @Override
     public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
             throws SAXException {
+
         LOG.trace("startElement uri={} localName={} qName={} attributes={}", uri, localName, qName, attributes);
 
         if (!isInkstandNamespace(uri)) {
@@ -170,9 +174,11 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on rootNode element
      *
      * @param attributes
+     *
      * @throws SAXException
      */
     private void startElementRootNode(final Attributes attributes) throws SAXException {
+
         LOG.debug("Found rootNode");
         try {
             nodeStack.push(newNode(null, attributes));
@@ -185,9 +191,11 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on node element
      *
      * @param attributes
+     *
      * @throws SAXException
      */
     private void startElementNode(final Attributes attributes) throws SAXException {
+
         LOG.debug("Found node");
         try {
             nodeStack.push(newNode(nodeStack.peek(), attributes));
@@ -200,9 +208,11 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on mixin element
      *
      * @param attributes
+     *
      * @throws SAXException
      */
     private void startElementMixin(final Attributes attributes) throws SAXException {
+
         LOG.debug("Found mixin declaration");
         try {
             addMixin(nodeStack.peek(), attributes);
@@ -217,6 +227,7 @@ public class JCRContentHandler extends DefaultHandler {
      * @param attributes
      */
     private void startElementProperty(final Attributes attributes) {
+
         LOG.debug("Found property");
         propertyStack.push(newPropertyDescriptor(attributes));
     }
@@ -227,6 +238,7 @@ public class JCRContentHandler extends DefaultHandler {
      */
     @Override
     public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+
         LOG.trace("endElement uri={} localName={} qName={}", uri, localName, qName);
         if (!isInkstandNamespace(uri)) {
             return;
@@ -252,6 +264,7 @@ public class JCRContentHandler extends DefaultHandler {
     }
 
     private void endElementProperty() throws SAXException {
+
         LOG.debug("Closing property");
         final PropertyDescriptor pd = propertyStack.pop();
         try {
@@ -266,13 +279,16 @@ public class JCRContentHandler extends DefaultHandler {
      * Creates the {@link Node} in the repository from the given attributes
      *
      * @param parent
-     *            the parent node of the node to be created. If this is null, a root-level node will be created.
+     *         the parent node of the node to be created. If this is null, a root-level node will be created.
      * @param attributes
-     *            the attributes containing the basic information required to create the node
+     *         the attributes containing the basic information required to create the node
+     *
      * @return the newly creates {@link Node}
+     *
      * @throws RepositoryException
      */
     private Node newNode(final Node parent, final Attributes attributes) throws RepositoryException {
+
         Node parentNode;
         if (parent == null) {
             parentNode = session.getRootNode();
@@ -290,6 +306,7 @@ public class JCRContentHandler extends DefaultHandler {
     }
 
     private void addMixin(final Node node, final Attributes attributes) throws RepositoryException {
+
         final String mixinType = attributes.getValue("name");
         LOG.info("Node {} adding mixin {}", node.getPath(), mixinType);
         node.addMixin(mixinType);
@@ -299,12 +316,14 @@ public class JCRContentHandler extends DefaultHandler {
      * Adds a property to the node. The property's name, type and value is defined in the {@link PropertyDescriptor}
      *
      * @param node
-     *            the node to which the property should be added
+     *         the node to which the property should be added
      * @param pd
-     *            the {@link PropertyDescriptor} containing the details of the property
+     *         the {@link PropertyDescriptor} containing the details of the property
+     *
      * @throws RepositoryException
      */
     private void addProperty(final Node node, final PropertyDescriptor pd) throws RepositoryException {
+
         LOG.info("Node {} adding property {}", node.getPath(), pd.getName());
         node.setProperty(pd.getName(), (Value) pd.getValue());
     }
@@ -313,10 +332,12 @@ public class JCRContentHandler extends DefaultHandler {
      * Creates a new {@link PropertyDescriptor} from the attributes
      *
      * @param attributes
-     *            the attributes defining the name and jcrType of the property
+     *         the attributes defining the name and jcrType of the property
+     *
      * @return a {@link PropertyDescriptor} instance
      */
     private PropertyDescriptor newPropertyDescriptor(final Attributes attributes) {
+
         final PropertyDescriptor pd = FACTORY.createPropertyDescriptor();
         LOG.debug("property name={}", attributes.getValue("name"));
         LOG.debug("property jcrType={}", attributes.getValue("jcrType"));
@@ -332,8 +353,8 @@ public class JCRContentHandler extends DefaultHandler {
         Value value = null;
         switch (valueType) {
             case BINARY:
-                value = vf.createValue(vf.createBinary(new ByteArrayInputStream(Base64.decodeBase64(valueAsText
-                        .getBytes(StandardCharsets.UTF_8)))));
+                value = vf.createValue(vf.createBinary(new ByteArrayInputStream(Base64.decodeBase64(valueAsText.getBytes(
+                        StandardCharsets.UTF_8)))));
                 break;
             case REFERENCE:
                 // TODO resolve IDs
@@ -354,10 +375,12 @@ public class JCRContentHandler extends DefaultHandler {
      * Converts the valueType to an int representing the {@link PropertyType} of the property.
      *
      * @param valueType
-     *            the value type to be converted
+     *         the value type to be converted
+     *
      * @return the int value of the corresponding {@link PropertyType}
      */
     private int getPropertyType(final PropertyValueType valueType) {
+
         return JCR_PROPERTIES.get(valueType).intValue();
     }
 
@@ -365,10 +388,12 @@ public class JCRContentHandler extends DefaultHandler {
      * Checks if the specified uri is of the namesspace this {@link JCRContentHandler} is able to process
      *
      * @param uri
-     *            the uri to check
+     *         the uri to check
+     *
      * @return <code>true</code> if the namespace is processable by this {@link JCRContentHandler}
      */
     private boolean isInkstandNamespace(final String uri) {
+
         return INKSTAND_IMPORT_NAMESPACE.equals(uri);
     }
 
@@ -377,6 +402,7 @@ public class JCRContentHandler extends DefaultHandler {
      */
     @Override
     public void characters(final char[] ch, final int start, final int length) throws SAXException {
+
         final String text = new String(ch).substring(start, start + length);
         LOG.trace("characters; '{}'", text);
         final String trimmedText = text.trim();
