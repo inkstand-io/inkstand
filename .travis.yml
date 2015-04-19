@@ -1,0 +1,7 @@
+language: java
+jdk:
+  - oraclejdk7
+notifications:
+   hipchat:
+      rooms:
+        secure: lISgSyuMq2aYqEhe0QppeyP4hrKFsC7ACfN6AThXeVsRjbt0QfnJhfJSzY8YWkHipw8H1mmG3MI3IAIsQFK0JNBIcHgMTwlU7mYhIDHkG42sBk44BbZxrCzL4yZJWBeQl37ozaj8hI3XKBtctQbFtuRqQ2yU7dZlxBWk5nzeF5Q=

@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.inkstand</groupId>
+		<artifactId>inkstand</artifactId>
+		<version>0.1.2</version>
+	</parent>
+
+	<artifactId>inkstand-http-undertow</artifactId>
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Undertow Web Container for Inkstand.</description>
+
+	<dependencies>
+		<dependency>
+            <groupId>io.inkstand</groupId>
+			<artifactId>scribble</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.inkstand</groupId>
+			<artifactId>inkstand-core</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.inkstand</groupId>
+			<artifactId>inkstand-ms</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.inkstand</groupId>
+			<artifactId>inkstand-security</artifactId>
+			<version>0.1.2</version>
+		</dependency>
+		<!-- Undertow -->
+		<dependency>
+			<groupId>io.undertow</groupId>
+			<artifactId>undertow-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.undertow</groupId>
+			<artifactId>undertow-servlet</artifactId>
+		</dependency>
+		<!-- Deltaspike -->
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.deltaspike.core</groupId>
+			<artifactId>deltaspike-core-impl</artifactId>
+		</dependency>
+		<!-- Apache DS -->
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-client-api</artifactId>
+		</dependency>
+	</dependencies>
+</project>

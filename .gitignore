@@ -6,3 +6,6 @@ target
 .project
 .classpath
 .settings
+inkstand-jcr/.factorypath
+inkstand-jcr-jackrabbit/derby.log
+inkstand-jcr-jackrabbit/.factorypath
