@@ -32,6 +32,14 @@
 		<module>inkstand-parent</module>
 	</modules>
 
+	<properties>
+		<slf4j.version>1.7.6</slf4j.version>
+		<log4j.version>2.0-rc1</log4j.version>
+		<jacoco.version>0.7.2.201409121644</jacoco.version>
+		<junit.version>4.11</junit.version>
+		<mockito.version>1.9.5</mockito.version>
+	</properties>
+
 	<dependencies>
 		<!-- Code Coverage -->
 		<dependency>
