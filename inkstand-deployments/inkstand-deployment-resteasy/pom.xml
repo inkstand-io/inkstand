@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>io.inkstand</groupId>
 		<artifactId>inkstand-deployments</artifactId>
-		<version>0.1.2-SNAPSHOT</version>
+		<version>0.1.2</version>
 	</parent>
 
 	<artifactId>inkstand-deployment-resteasy</artifactId>
@@ -19,12 +19,12 @@
 		<dependency>
 			<groupId>io.inkstand</groupId>
 			<artifactId>inkstand-core</artifactId>
-			<version>0.1.2-SNAPSHOT</version>
+			<version>0.1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>io.inkstand</groupId>
 			<artifactId>inkstand-http-undertow</artifactId>
-			<version>0.1.2-SNAPSHOT</version>
+			<version>0.1.2</version>
 		</dependency>
 
 		<!-- Resteasy -->
