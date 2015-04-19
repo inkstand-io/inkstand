@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.inkstand</groupId>
         <artifactId>inkstand</artifactId>
-        <version>0.2.0-SNAPSHOT</version>
+        <version>0.1.2</version>
     </parent>
 
     <artifactId>inkstand-security</artifactId>
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>io.inkstand</groupId>
             <artifactId>inkstand-core</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>0.1.2</version>
         </dependency>
     </dependencies>
 </project>
