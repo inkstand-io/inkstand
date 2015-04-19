@@ -75,54 +75,76 @@
 	
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>test</scope>
+			</dependency>
 			<!-- Single JEE Requirements -->
 			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
+				<version>${javax.validation-api.version}</version>
 			</dependency>
 			<!-- Deltaspike -->
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
 				<artifactId>deltaspike-core-api</artifactId>
+				<version>${apache.deltaspike.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.deltaspike.core</groupId>
 				<artifactId>deltaspike-core-impl</artifactId>
+				<version>${apache.deltaspike.version}</version>
 			</dependency>
 			<!-- Weld -->
 			<dependency>
 				<groupId>org.jboss.weld.se</groupId>
 				<artifactId>weld-se</artifactId>
+				<version>${jboss.weld.se.version}</version>
 			</dependency>
 			<!-- Resteasy -->
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>jaxrs-api</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-jaxrs</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-cdi</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>async-http-servlet-3.0</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jboss.resteasy</groupId>
 				<artifactId>resteasy-client</artifactId>
+				<version>${jboss.resteasy.version}</version>
 			</dependency>
 			<!-- Servlet/Web Container -->
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-core</artifactId>
+				<version>${jboss.undertow.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.undertow</groupId>
 				<artifactId>undertow-servlet</artifactId>
+				<version>${jboss.undertow.version}</version>
 			</dependency>
 			<!-- Test Dependencies -->
 			<dependency>
