@@ -12,12 +12,12 @@
 	<parent>
 		<groupId>io.inkstand</groupId>
 		<artifactId>inkstand-parent</artifactId>
-		<version>0.1.2</version>
+		<version>0.2.0-SNAPSHOT</version>
 		<relativePath>inkstand-parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>inkstand</artifactId>
-	<version>0.1.2</version>
+	<version>0.2.0-SNAPSHOT</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<packaging>pom</packaging>
 
