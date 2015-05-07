@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Gerald Muecke, gerald.muecke@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.inkstand.jcr.util;
 
 import java.io.ByteArrayInputStream;
@@ -278,7 +294,10 @@ public class JCRContentHandler extends DefaultHandler {
     /**
      * Creates the {@link Node} in the repository from the given attributes
      *
-     * @param parent
+     * @param parent    inkstand.jcr.config - the absolute path to your configuration file for the cluster node
+    inkstand.jcr.home - the absolute path to the working directory of the cluster node
+
+More on Jackrabbit configuration can be found on the Apache Jackrabbit project page.
      *         the parent node of the node to be created. If this is null, a root-level node will be created.
      * @param attributes
      *         the attributes containing the basic information required to create the node
