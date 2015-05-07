@@ -36,6 +36,7 @@ public class CDIListener implements ServletRequestListener {
     @Override
     public void requestDestroyed(ServletRequestEvent servletRequestEvent) {
         BoundRequestContext requestContext = (BoundRequestContext)servletRequestEvent.getServletRequest().getAttribute("cdiRequestContext");
+        @SuppressWarnings("unchecked")
         Map<String,Object> requestMap = (Map<String,Object>)servletRequestEvent.getServletRequest().getAttribute("cdiRequestMap");
         requestContext.invalidate();
         requestContext.deactivate();
