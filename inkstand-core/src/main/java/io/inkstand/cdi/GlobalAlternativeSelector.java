@@ -75,7 +75,7 @@ public class GlobalAlternativeSelector implements Extension {
     public void loadApplicationAlternatives(@Observes final BeforeBeanDiscovery bbd) {
         LOG.debug("starting bean discovery");
 
-        final URL beansXmlUrl = getResource(BEANS_XML);
+        final URL beansXmlUrl = getBeansXmlResource();
         if (beansXmlUrl == null) {
             throw new IllegalStateException("No beans.xml found");
         }
@@ -84,12 +84,12 @@ public class GlobalAlternativeSelector implements Extension {
         enabledAlternatives.addAll(loadClasses(beansXml.getEnabledAlternativeClasses()));
     }
 
-    private URL getResource(final String name) {
+    private URL getBeansXmlResource() {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
         if (cl != null) {
-            return cl.getResource(name);
+            return cl.getResource(BEANS_XML);
         } else {
-            return getClass().getResource(name);
+            return getClass().getResource(BEANS_XML);
         }
     }
 
