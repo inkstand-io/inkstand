@@ -320,8 +320,7 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
         final String primaryType = attributes.getValue("primaryType");
 
         LOG.info("Node {} adding child node {}(type={})", parentNode.getPath(), name, primaryType);
-        final Node node = parentNode.addNode(name, primaryType);
-        return node;
+        return parentNode.addNode(name, primaryType);
     }
 
     private void addMixin(final Node node, final Attributes attributes) throws RepositoryException {
