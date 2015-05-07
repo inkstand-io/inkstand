@@ -165,7 +165,7 @@ public class JCRContentHandler extends DefaultHandler {
 
         LOG.trace("startElement uri={} localName={} qName={} attributes={}", uri, localName, qName, attributes);
 
-        if (!isInkstandNamespace(uri)) {
+        if (isNotInkstandNamespace(uri)) {
             return;
         }
         switch (localName) {
@@ -256,7 +256,7 @@ public class JCRContentHandler extends DefaultHandler {
     public void endElement(final String uri, final String localName, final String qName) throws SAXException {
 
         LOG.trace("endElement uri={} localName={} qName={}", uri, localName, qName);
-        if (!isInkstandNamespace(uri)) {
+        if (isNotInkstandNamespace(uri)) {
             return;
         }
         switch (localName) {
@@ -404,16 +404,16 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
     }
 
     /**
-     * Checks if the specified uri is of the namesspace this {@link JCRContentHandler} is able to process
+     * Checks if the specified uri is not of the namespace this {@link JCRContentHandler} is able to process
      *
      * @param uri
      *         the uri to check
      *
-     * @return <code>true</code> if the namespace is processable by this {@link JCRContentHandler}
+     * @return <code>false</code> if the namespace is processable by this {@link JCRContentHandler}
      */
-    private boolean isInkstandNamespace(final String uri) {
+    private boolean isNotInkstandNamespace(final String uri) {
 
-        return INKSTAND_IMPORT_NAMESPACE.equals(uri);
+        return !INKSTAND_IMPORT_NAMESPACE.equals(uri);
     }
 
     /**
