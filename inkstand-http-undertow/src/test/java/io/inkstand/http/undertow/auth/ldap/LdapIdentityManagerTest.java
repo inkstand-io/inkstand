@@ -54,9 +54,6 @@ public class LdapIdentityManagerTest {
         when(authConfig.getHostname()).thenReturn("localhost");
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     @Ignore

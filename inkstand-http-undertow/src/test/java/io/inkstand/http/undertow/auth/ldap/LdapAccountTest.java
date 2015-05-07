@@ -38,10 +38,6 @@ public class LdapAccountTest {
         subject = new LdapAccount(TEST_USER_ID, TEST_USER_DN);
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
-
     @Test
     public void testGetPrincipal() throws Exception {
         final Principal p = subject.getPrincipal();

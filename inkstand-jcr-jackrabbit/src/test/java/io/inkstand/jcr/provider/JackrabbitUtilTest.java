@@ -42,13 +42,6 @@ public class JackrabbitUtilTest {
     @Rule
     public ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void testCreateTransientRepository() throws Exception {
