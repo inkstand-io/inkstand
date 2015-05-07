@@ -75,7 +75,7 @@ public class BasicSecurityResteasyDeploymentProvider implements UndertowDeployme
                 .addMapping("/*");
         resteasyServlet.addSecurityRoleRef("User", null);
 
-        final DeploymentInfo di =  new DeploymentInfo()
+        return   new DeploymentInfo()
             .setClassLoader(ClassLoader.getSystemClassLoader())
             .addListener(listener)
             .setDeploymentName("ResteasyUndertow")
@@ -88,8 +88,6 @@ public class BasicSecurityResteasyDeploymentProvider implements UndertowDeployme
             .addWebResourceCollection(Servlets.webResourceCollection().addUrlPattern("/*")));
 
         // @formatter:on
-
-        return di;
 
     }
 }
