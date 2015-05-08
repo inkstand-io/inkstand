@@ -329,6 +329,48 @@
             </build>
         </profile>
         <profile>
+            <id>pit</id>
+            <properties>
+                <tests.json.strict.validation.disabled>true</tests.json.strict.validation.disabled>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>1.1.3</version>
+                        <configuration>
+                            <targetClasses>
+                                <param>io.inkstand.*</param>
+                            </targetClasses>
+                            <targetTests>
+                                <param>io.inkstand.*</param>
+                            </targetTests>
+                            <mutators>
+                                <mutator>DEFAULTS</mutator>
+                                <mutator>REMOVE_CONDITIONALS</mutator>
+                            </mutators>
+                            <timestampedReports>
+                                false
+                            </timestampedReports>
+                            <outputFormats>
+                                <param>XML</param>
+                                <param>HTML</param>
+                            </outputFormats>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>release</id>
             <properties>
                 <surefireArgLine />
