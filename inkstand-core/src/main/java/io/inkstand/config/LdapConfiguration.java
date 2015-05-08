@@ -27,28 +27,29 @@ public interface LdapConfiguration {
      * The credential used to authenticate the bind user
      * 
      * @return
+     *  the secret credential for the bind user
      */
-    public abstract String getBindCredentials();
+    String getBindCredentials();
 
     /**
      * The DN used for binding to the server.
      * 
      * @return a distinguished name
      */
-    public abstract String getBindDn();
+    String getBindDn();
 
     /**
      * The hostname of the ldap server
      * 
      * @return the hostname
      */
-    public abstract String getHostname();
+    String getHostname();
 
     /**
      * The port number of the ldap server. IANA Default port number is 389.
      * 
      * @return the ldap server port
      */
-    public abstract int getPort();
+    int getPort();
 
 }

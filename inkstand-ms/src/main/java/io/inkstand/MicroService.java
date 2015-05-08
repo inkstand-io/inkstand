@@ -17,7 +17,7 @@
 package io.inkstand;
 
 /**
- * Interface to for a webserver. Inkstand is extensible to support various embeddable webservers.
+ * Interface to for a web server. Inkstand is extensible to support various embeddable web servers.
  * 
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  * 
@@ -25,12 +25,12 @@ package io.inkstand;
 public interface MicroService {
 
     /**
-     * Starts the webserver
+     * Starts the web server
      */
     void start();
 
     /**
-     * Stops the webserver
+     * Stops the web server
      */
     void stop();
 }

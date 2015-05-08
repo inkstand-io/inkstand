@@ -49,6 +49,7 @@ public class ResourcesAndProviders implements Extension {
      * Collects a found {@link Path} resource
      *
      * @param pat
+     *  the event for the type that is annotated with the {@link Path}  annotation
      */
     public void pathFound(@Observes @WithAnnotations(Path.class) final ProcessAnnotatedType pat) {
         LOG.debug("Discovered resource {}", pat.getAnnotatedType().getJavaClass());
@@ -59,6 +60,7 @@ public class ResourcesAndProviders implements Extension {
      * Collects a found {@link Provider} .
      *
      * @param pat
+     *  the event for the type that is annotated with the {@link Provider} annotation
      */
     public void providerFound(@Observes @WithAnnotations(Provider.class) final ProcessAnnotatedType pat) {
         LOG.debug("Discovered provider {}", pat.getAnnotatedType().getJavaClass());

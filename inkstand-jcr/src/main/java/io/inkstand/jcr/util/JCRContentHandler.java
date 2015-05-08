@@ -117,6 +117,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Creates a new content handler using the specified session for performing the input
      *
      * @param session
+     *  the JCR session bound to a user with sufficient privileges to perform the content loader operation
      */
     public JCRContentHandler(final Session session) {
 
@@ -190,6 +191,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on rootNode element
      *
      * @param attributes
+     *  the DOM attributes of the root node element
      *
      * @throws SAXException
      */
@@ -207,6 +209,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on node element
      *
      * @param attributes
+     *  the DOM attributes of the node element
      *
      * @throws SAXException
      */
@@ -224,6 +227,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on mixin element
      *
      * @param attributes
+     *  the DOM attributes of the mixin element
      *
      * @throws SAXException
      */
@@ -241,6 +245,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on property element
      *
      * @param attributes
+     *  the DOM attributes of the property element
      */
     private void startElementProperty(final Attributes attributes) {
 
@@ -314,7 +319,7 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
         } else {
             parentNode = parent;
         }
-        // TODO handle path paramters
+        // TODO handle path parameters
 
         final String name = attributes.getValue("name");
         final String primaryType = attributes.getValue("primaryType");

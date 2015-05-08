@@ -28,13 +28,15 @@ public interface WebServerConfiguration {
      * The port to listen on
      * 
      * @return
+     *  the tcp port number of webserver
      */
-    public int getPort();
+    int getPort();
 
     /**
      * The bind address this server.
      * 
      * @return
+     *  the bind address as string for the webserver
      */
-    public String getBindAddress();
+    String getBindAddress();
 }

@@ -59,8 +59,8 @@ public final class JackrabbitUtil {
      * @param repositoryLocation
      *            the home directory of the repository
      * @param configUrl
-     *            the URL to the configuraiton file
-     * @return an instance of a transient repsository
+     *            the URL to the configuration file
+     * @return an instance of a transient repository
      * @throws ConfigurationException
      *   when the configuration file is was invalid
      */
@@ -118,8 +118,8 @@ public final class JackrabbitUtil {
         for (final NodeType nt : nodeTypes) {
             buf.append(nt.getName()).append("\n\t  > ");
             String sep = "";
-            for (final NodeType supert : nt.getSupertypes()) {
-                buf.append(sep).append(supert.getName());
+            for (final NodeType supertype : nt.getSupertypes()) {
+                buf.append(sep).append(supertype.getName());
                 sep = ", ";
             }
             buf.append("\n\t");

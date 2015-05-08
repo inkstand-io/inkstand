@@ -66,6 +66,8 @@ public class JCRContentLoader {
      * Creates a new {@link SAXParserFactory} using the configured parameters.
      *
      * @return
+     *  an instance of a SAXParserFactory to create new SAX parsers. The factory is configured according to
+     *  the settings for input schema validation and namespace awareness.
      */
     private SAXParserFactory getSAXParserFactory() {
         final SAXParserFactory factory = SAXParserFactory.newInstance();

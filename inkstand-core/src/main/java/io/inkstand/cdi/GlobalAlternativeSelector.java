@@ -71,6 +71,7 @@ public class GlobalAlternativeSelector implements Extension {
      * Loads the application-level alternative classes and stereotypes.
      * 
      * @param bbd
+     *  the event that is fired before the discovery of beans begin
      */
     public void loadApplicationAlternatives(@Observes final BeforeBeanDiscovery bbd) {
         LOG.debug("starting bean discovery");
@@ -94,7 +95,7 @@ public class GlobalAlternativeSelector implements Extension {
     }
 
     /**
-     * Loads the clases from the set of set of metadata
+     * Loads the classes from the set of set of metadata
      * 
      * @param enabledAlternatives
      *            metadata definitions of the alternative classes
@@ -117,10 +118,11 @@ public class GlobalAlternativeSelector implements Extension {
 
     /**
      * Watches all alternatives. If a cross-bda alternative is marked with the {@link Priority} annotation it will be
-     * consideres as Application-Scoped alternative. If the alternative class itself or its stereotype matches the
+     * considered as Application-Scoped alternative. If the alternative class itself or its stereotype matches the
      * enabled alternative, it will be accepted, otherwise it will be vetoed.
      * 
      * @param pat
+     *  the CDI descriptor of a annotated type that is processed by the CDI container on initialization
      */
     @SuppressWarnings("rawtypes")
     public void watchAlternatives(@Observes @WithAnnotations({
@@ -173,8 +175,8 @@ public class GlobalAlternativeSelector implements Extension {
     /**
      * Checks an annotated element if it is are annotated with any of the enabled {@link Stereotype}s
      * 
-     * @param annotated
-     *            the annotated elemens to check
+     * @param type
+     *            the annotated element to check
      * @return <code>true</code> if the annotated element matches the enabled stereotypes
      */
     private boolean matchesEnabledStereotypes(final Annotated type) {

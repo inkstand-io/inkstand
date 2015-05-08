@@ -95,7 +95,7 @@ public class LdapIdentityManager implements IdentityManager {
                     getSearchScope());
             if (result.next()) {
                 final Entry user = result.get();
-                return createUserAccout(user, credential, id);
+                return createUserAccount(user, credential, id);
             }
             // TODO replace with authentication exception
             throw new InkstandRuntimeException("No user with id " + id + " found");
@@ -106,7 +106,7 @@ public class LdapIdentityManager implements IdentityManager {
         }
     }
 
-    private LdapAccount createUserAccout(final Entry user, final Credential credential, final String id)
+    private LdapAccount createUserAccount(final Entry user, final Credential credential, final String id)
             throws LdapException, CursorException {
 
         LOG.debug("User {} found, collecting user groups", id);

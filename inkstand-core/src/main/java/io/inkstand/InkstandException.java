@@ -57,7 +57,7 @@ public class InkstandException extends Exception {
     }
 
     /**
-     * Constructor that may be used to wrap an existing exception withouth additional high-level information
+     * Constructor that may be used to wrap an existing exception without additional high-level information
      *
      * @param cause
      *            the root cause of the exception.

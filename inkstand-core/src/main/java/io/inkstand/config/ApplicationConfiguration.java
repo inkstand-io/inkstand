@@ -30,22 +30,25 @@ public interface ApplicationConfiguration {
      * Context root
      * 
      * @return
+     *  the context root the application runs in. Could be empty.
      */
-    public String getContextRoot();
+    String getContextRoot();
 
     /**
      * The list of provider classes to register.
      * 
      * @return
+     *  the Classes that denote a Jax-RS {@link javax.ws.rs.ext.Provider}
      */
     @SuppressWarnings("rawtypes")
-    public Collection<Class> getProviderClasses();
+    Collection<Class> getProviderClasses();
 
     /**
      * The list of resource classes to load.
      * 
      * @return
+     *   the Classes that denote a Jax-RS {@link javax.ws.rs.Path} resource
      */
     @SuppressWarnings("rawtypes")
-    public Collection<Class> getResourceClasses();
+    Collection<Class> getResourceClasses();
 }
