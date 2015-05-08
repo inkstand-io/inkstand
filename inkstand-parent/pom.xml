@@ -357,6 +357,7 @@
                                 <param>XML</param>
                                 <param>HTML</param>
                             </outputFormats>
+                            <timeoutConstant>10000</timeoutConstant>
                         </configuration>
                         <executions>
                             <execution>
