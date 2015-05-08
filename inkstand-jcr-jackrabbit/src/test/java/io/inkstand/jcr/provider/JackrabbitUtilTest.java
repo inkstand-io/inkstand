@@ -35,10 +35,10 @@ import io.inkstand.InkstandRuntimeException;
 public class JackrabbitUtilTest {
 
     @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    public final TemporaryFolder folder = new TemporaryFolder();
 
     @Rule
-    public ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
+    public final ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
 
 
     @Test

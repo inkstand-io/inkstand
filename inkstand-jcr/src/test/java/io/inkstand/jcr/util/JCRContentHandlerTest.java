@@ -43,7 +43,7 @@ public class JCRContentHandlerTest {
     private static final String INK_ROOT_NODE = "ink:rootNode";
     private static final String ROOT_NODE = "rootNode";
     @Rule
-    public ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
+    public final ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
     private Session adminSession = null;
     private JCRContentHandler subject;
 

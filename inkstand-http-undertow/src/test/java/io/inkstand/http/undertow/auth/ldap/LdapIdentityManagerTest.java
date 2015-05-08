@@ -42,9 +42,9 @@ public class LdapIdentityManagerTest {
     @InjectMocks
     private LdapIdentityManager subject;
 
-    public TemporaryFolder folder = new TemporaryFolder();
-    public Directory directory = new Directory(folder);
-    public DirectoryServer ldapServer = new DirectoryServer(directory);
+    public final TemporaryFolder folder = new TemporaryFolder();
+    public final Directory directory = new Directory(folder);
+    public final DirectoryServer ldapServer = new DirectoryServer(directory);
     @Rule
     public RuleChain ruleChain = RuleChain.outerRule(folder).around(directory).around(ldapServer);
 

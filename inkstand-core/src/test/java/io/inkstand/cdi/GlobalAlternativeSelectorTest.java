@@ -252,7 +252,7 @@ public class GlobalAlternativeSelectorTest {
     @Target({
             ElementType.TYPE, ElementType.METHOD, ElementType.FIELD
     })
-    public static @interface TestStereotype {
+    public @interface TestStereotype {
 
     }
 

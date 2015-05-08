@@ -28,5 +28,5 @@ public interface DynamicProxy<T> {
      * @return
      *  the object proxied by the proxy
      */
-    public T getProxiedObject();
+    T getProxiedObject();
 }

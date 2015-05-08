@@ -136,9 +136,8 @@ public class InMemoryRepositoryProvider implements RepositoryProvider {
      *
      * @throws RepositoryException
      * @throws IOException
-     * @throws ParseException
      */
-    private void loadContentModel() throws RepositoryException, IOException, ParseException {
+    private void loadContentModel() throws RepositoryException, IOException {
         final Session session = getAdminSession();
         if (cndFileURL != null) {
             JackrabbitUtil.initializeContentModel(session, resolveUrl(cndFileURL));

@@ -140,10 +140,8 @@ public final class JackrabbitUtil {
      *            the session to load the content into the repository
      * @param contentDescription
      *            the URL of the content description file
-     * @throws ParserConfigurationException
      */
-    public static void loadContent(final Session session, final URL contentDescription)
-            throws ParserConfigurationException {
+    public static void loadContent(final Session session, final URL contentDescription) {
         new JCRContentLoader().loadContent(session, contentDescription);
     }
 

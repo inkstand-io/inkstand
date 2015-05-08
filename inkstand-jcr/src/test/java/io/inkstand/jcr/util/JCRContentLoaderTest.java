@@ -39,7 +39,7 @@ import io.inkstand.scribble.rules.jcr.ContentRepository;
 public class JCRContentLoaderTest {
 
     @ClassRule
-    public static ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
+    public static final ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
 
     private JCRContentLoader subject;
 

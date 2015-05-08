@@ -34,7 +34,7 @@ import io.inkstand.scribble.rules.TemporaryFile;
 public class StandaloneRepositoryProviderTest {
 
     @Rule
-    public TemporaryFile file = Scribble.newTempFolder().aroundTempFile("repository.xml").fromClasspathResource(
+    public final TemporaryFile file = Scribble.newTempFolder().aroundTempFile("repository.xml").fromClasspathResource(
             "/repository.xml").build();
 
     private StandaloneRepositoryProvider subject;
