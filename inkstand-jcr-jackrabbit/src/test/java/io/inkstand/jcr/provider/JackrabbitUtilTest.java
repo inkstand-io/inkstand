@@ -24,8 +24,6 @@ import java.net.URL;
 import javax.jcr.Node;
 import javax.jcr.Session;
 import org.apache.jackrabbit.core.TransientRepository;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;

@@ -18,7 +18,6 @@ package io.inkstand.http.undertow.auth.ldap;
 
 import static org.mockito.Mockito.when;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
