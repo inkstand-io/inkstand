@@ -32,6 +32,7 @@ public interface UndertowDeploymentProvider {
      * Produces the deployment information required by the deployment manager
      *
      * @return
+     *  a deployment information descriptor for the undertow server
      */
     @Produces
     DeploymentInfo getDeployment();

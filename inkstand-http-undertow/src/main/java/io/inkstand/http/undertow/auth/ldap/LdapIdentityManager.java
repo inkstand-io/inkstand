@@ -165,7 +165,9 @@ public class LdapIdentityManager implements IdentityManager {
      * Retrieves the filter string where the placeholder for the user id is replaced with the given id.
      *
      * @param userId
+     *  the unique identifier of a user
      * @return
+     *  a filter expression for filtering entries for users
      */
     private String getUserFilter(final String userId) {
         return ldapConfig.getUserFilter().replaceAll("\\{0\\}", userId);

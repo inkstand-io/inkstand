@@ -62,7 +62,7 @@ public final class JackrabbitUtil {
      *            the URL to the configuraiton file
      * @return an instance of a transient repsository
      * @throws ConfigurationException
-     * @throws IOException
+     *   when the configuration file is was invalid
      */
     public static TransientRepository createTransientRepository(final File repositoryLocation, final URL configUrl)
             throws ConfigurationException {
@@ -81,10 +81,10 @@ public final class JackrabbitUtil {
      * Loads the inque nodetype model to the session's repository
      *
      * @param session
-     * @param url
-     * @throws IOException
+     *  a session with a user with sufficient privileges
+     * @param cndFile
+     *  the url to the file containing the node type definitions in CND syntax
      * @throws RepositoryException
-     * @throws ParseException
      */
     public static void initializeContentModel(final Session session, final URL cndFile) throws RepositoryException {
         LOG.info("Initializing JCR Model from File {}", cndFile.getPath());
