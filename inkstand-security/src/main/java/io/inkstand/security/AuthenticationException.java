@@ -59,7 +59,7 @@ public class AuthenticationException extends InkstandException {
     }
 
     private String getMessage(final String message, final String user) {
-        return new StringBuilder(32).append(message).append("[user=").append(user).append(']').toString();
+        return message + "[user=" + user+ ']';
     }
 
     /**

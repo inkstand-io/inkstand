@@ -58,6 +58,7 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
      * The scope for user or group searches
      *
      * @return
+     *  the scope for the ldap search
      */
     public abstract SearchScope getSearchScope();
 

@@ -373,7 +373,7 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
         // TODO handle ref property
         LOG.debug("Parsing type={} from='{}'", valueType, valueAsText);
         final ValueFactory vf = session.getValueFactory();
-        Value value = null;
+        Value value;
         switch (valueType) {
             case BINARY:
                 value = vf.createValue(vf.createBinary(new ByteArrayInputStream(Base64.decodeBase64(valueAsText.getBytes(
@@ -404,7 +404,7 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
      */
     private int getPropertyType(final PropertyValueType valueType) {
 
-        return JCR_PROPERTIES.get(valueType).intValue();
+        return JCR_PROPERTIES.get(valueType);
     }
 
     /**
