@@ -29,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
-import javax.xml.parsers.ParserConfigurationException;
 
 import io.inkstand.InkstandRuntimeException;
 import io.inkstand.jcr.util.JCRContentLoader;

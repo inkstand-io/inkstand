@@ -83,7 +83,7 @@ public class InMemoryRepositoryProvider implements RepositoryProvider {
         try {
             initializeRepository();
             loadContentModel();
-        } catch (IOException | RepositoryException | ParseException e) {
+        } catch (IOException | RepositoryException e) {
             throw new InkstandRuntimeException("Could not start repository", e);
         }
 
