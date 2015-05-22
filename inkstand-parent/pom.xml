@@ -88,7 +88,7 @@
         <test.junit.version>4.11</test.junit.version>
         <test.mockito.version>1.9.5</test.mockito.version>
         <test.htmlunit.version>2.8</test.htmlunit.version>
-        <test.scribble.version>0.1.0</test.scribble.version>
+        <test.scribble.version>0.1.2</test.scribble.version>
         <test.jsonassert.version>1.2.3</test.jsonassert.version>
         <test.arquillian.version>1.1.5.Final</test.arquillian.version>
         <test.arquillian.weld.version>1.0.0.CR8</test.arquillian.weld.version>
