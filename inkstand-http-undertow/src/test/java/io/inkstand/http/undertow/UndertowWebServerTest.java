@@ -16,36 +16,60 @@
 
 package io.inkstand.http.undertow;
 
+import static io.inkstand.scribble.Scribble.inject;
+import static io.inkstand.scribble.net.NetworkMatchers.isReachable;
+import static io.inkstand.scribble.net.NetworkMatchers.remotePort;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import io.undertow.Undertow;
+import static org.junit.Assert.assertThat;
 
+import java.util.concurrent.TimeUnit;
+
+import io.inkstand.scribble.net.NetworkUtils;
+import io.undertow.Undertow;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.HttpServerExchange;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UndertowWebServerTest {
 
-    @Mock
+
     private Undertow undertow;
 
-    @InjectMocks
     private UndertowWebServer subject;
 
-    @Test
-    public void testStart() throws Exception {
-        subject.start();
-        verify(undertow).start();
+    private int port;
+
+    @Before
+    public void setUp() throws Exception {
+
+        subject = new UndertowWebServer();
+        port = NetworkUtils.findAvailablePort();
+        undertow = Undertow.builder().addHttpListener(port, "localhost", new HttpHandler() {
+
+            @Override
+            public void handleRequest(final HttpServerExchange httpServerExchange) throws Exception {
+
+                System.out.println(httpServerExchange.getRequestMethod() + " " + httpServerExchange.getRequestPath());
+            }
+        }).build();
+        inject(undertow).into(subject);
     }
 
     @Test
-    public void testStop() throws Exception {
+    public void testStartStop() throws Exception {
+
+        System.out.println("starting server on port " + port);
+        subject.start();
+        assertThat(remotePort("localhost", port), isReachable().within(10, TimeUnit.SECONDS));
         subject.stop();
-        verify(undertow).stop();
+        assertThat(remotePort("localhost", port), not(isReachable().within(10, TimeUnit.SECONDS)));
     }
+
 
     @Test
     public void testGetUndertow() throws Exception {
