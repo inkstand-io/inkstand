@@ -106,7 +106,7 @@
         <!-- JBoss Library Version -->
         <jboss.resteasy.version>3.0.10.Final</jboss.resteasy.version>
         <jboss.weld.se.version>2.2.6.Final</jboss.weld.se.version>
-        <jboss.undertow.version>1.2.0.Beta3</jboss.undertow.version>
+        <jboss.undertow.version>1.2.6.Final</jboss.undertow.version>
         <!-- Library Versions -->
         <halite.version>0.0.15</halite.version>
     </properties>
