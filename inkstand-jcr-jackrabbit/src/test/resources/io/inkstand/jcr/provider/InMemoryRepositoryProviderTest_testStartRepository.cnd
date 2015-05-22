@@ -1,4 +1,4 @@
 <nt='http://www.jcp.org/jcr/nt/1.0'>
-<test='http://www.inacta.ch/jcr/inbox/model'>
+                                <test='http://www.inacta.ch/jcr/inbox/model'>
 
-[test:testType]>nt:hierarchyNode
+                                [test:testType]>nt:hierarchyNode
