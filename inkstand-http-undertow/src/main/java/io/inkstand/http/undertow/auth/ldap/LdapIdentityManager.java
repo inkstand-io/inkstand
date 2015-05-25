@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Gerald Muecke, gerald.muecke@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.inkstand.http.undertow.auth.ldap;
 
 import io.undertow.security.idm.Account;
@@ -79,7 +95,7 @@ public class LdapIdentityManager implements IdentityManager {
                     getSearchScope());
             if (result.next()) {
                 final Entry user = result.get();
-                return createUserAccout(user, credential, id);
+                return createUserAccount(user, credential, id);
             }
             // TODO replace with authentication exception
             throw new InkstandRuntimeException("No user with id " + id + " found");
@@ -90,7 +106,7 @@ public class LdapIdentityManager implements IdentityManager {
         }
     }
 
-    private LdapAccount createUserAccout(final Entry user, final Credential credential, final String id)
+    private LdapAccount createUserAccount(final Entry user, final Credential credential, final String id)
             throws LdapException, CursorException {
 
         LOG.debug("User {} found, collecting user groups", id);
@@ -149,7 +165,9 @@ public class LdapIdentityManager implements IdentityManager {
      * Retrieves the filter string where the placeholder for the user id is replaced with the given id.
      *
      * @param userId
+     *  the unique identifier of a user
      * @return
+     *  a filter expression for filtering entries for users
      */
     private String getUserFilter(final String userId) {
         return ldapConfig.getUserFilter().replaceAll("\\{0\\}", userId);

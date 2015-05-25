@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Gerald Muecke, gerald.muecke@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.inkstand.jcr.provider;
 
 import java.io.File;
@@ -13,7 +29,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
-import javax.xml.parsers.ParserConfigurationException;
 
 import io.inkstand.InkstandRuntimeException;
 import io.inkstand.jcr.util.JCRContentLoader;
@@ -43,10 +58,10 @@ public final class JackrabbitUtil {
      * @param repositoryLocation
      *            the home directory of the repository
      * @param configUrl
-     *            the URL to the configuraiton file
-     * @return an instance of a transient repsository
+     *            the URL to the configuration file
+     * @return an instance of a transient repository
      * @throws ConfigurationException
-     * @throws IOException
+     *   when the configuration file is was invalid
      */
     public static TransientRepository createTransientRepository(final File repositoryLocation, final URL configUrl)
             throws ConfigurationException {
@@ -65,10 +80,10 @@ public final class JackrabbitUtil {
      * Loads the inque nodetype model to the session's repository
      *
      * @param session
-     * @param url
-     * @throws IOException
+     *  a session with a user with sufficient privileges
+     * @param cndFile
+     *  the url to the file containing the node type definitions in CND syntax
      * @throws RepositoryException
-     * @throws ParseException
      */
     public static void initializeContentModel(final Session session, final URL cndFile) throws RepositoryException {
         LOG.info("Initializing JCR Model from File {}", cndFile.getPath());
@@ -102,8 +117,8 @@ public final class JackrabbitUtil {
         for (final NodeType nt : nodeTypes) {
             buf.append(nt.getName()).append("\n\t  > ");
             String sep = "";
-            for (final NodeType supert : nt.getSupertypes()) {
-                buf.append(sep).append(supert.getName());
+            for (final NodeType supertype : nt.getSupertypes()) {
+                buf.append(sep).append(supertype.getName());
                 sep = ", ";
             }
             buf.append("\n\t");
@@ -124,10 +139,8 @@ public final class JackrabbitUtil {
      *            the session to load the content into the repository
      * @param contentDescription
      *            the URL of the content description file
-     * @throws ParserConfigurationException
      */
-    public static void loadContent(final Session session, final URL contentDescription)
-            throws ParserConfigurationException {
+    public static void loadContent(final Session session, final URL contentDescription) {
         new JCRContentLoader().loadContent(session, contentDescription);
     }
 

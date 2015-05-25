@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Gerald Muecke, gerald.muecke@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.inkstand.jcr.util;
 
 import java.io.ByteArrayInputStream;
@@ -101,6 +117,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Creates a new content handler using the specified session for performing the input
      *
      * @param session
+     *  the JCR session bound to a user with sufficient privileges to perform the content loader operation
      */
     public JCRContentHandler(final Session session) {
 
@@ -149,7 +166,7 @@ public class JCRContentHandler extends DefaultHandler {
 
         LOG.trace("startElement uri={} localName={} qName={} attributes={}", uri, localName, qName, attributes);
 
-        if (!isInkstandNamespace(uri)) {
+        if (isNotInkstandNamespace(uri)) {
             return;
         }
         switch (localName) {
@@ -174,6 +191,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on rootNode element
      *
      * @param attributes
+     *  the DOM attributes of the root node element
      *
      * @throws SAXException
      */
@@ -191,6 +209,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on node element
      *
      * @param attributes
+     *  the DOM attributes of the node element
      *
      * @throws SAXException
      */
@@ -208,6 +227,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on mixin element
      *
      * @param attributes
+     *  the DOM attributes of the mixin element
      *
      * @throws SAXException
      */
@@ -225,6 +245,7 @@ public class JCRContentHandler extends DefaultHandler {
      * Invoked on property element
      *
      * @param attributes
+     *  the DOM attributes of the property element
      */
     private void startElementProperty(final Attributes attributes) {
 
@@ -240,7 +261,7 @@ public class JCRContentHandler extends DefaultHandler {
     public void endElement(final String uri, final String localName, final String qName) throws SAXException {
 
         LOG.trace("endElement uri={} localName={} qName={}", uri, localName, qName);
-        if (!isInkstandNamespace(uri)) {
+        if (isNotInkstandNamespace(uri)) {
             return;
         }
         switch (localName) {
@@ -278,7 +299,10 @@ public class JCRContentHandler extends DefaultHandler {
     /**
      * Creates the {@link Node} in the repository from the given attributes
      *
-     * @param parent
+     * @param parent    inkstand.jcr.config - the absolute path to your configuration file for the cluster node
+    inkstand.jcr.home - the absolute path to the working directory of the cluster node
+
+More on Jackrabbit configuration can be found on the Apache Jackrabbit project page.
      *         the parent node of the node to be created. If this is null, a root-level node will be created.
      * @param attributes
      *         the attributes containing the basic information required to create the node
@@ -295,14 +319,13 @@ public class JCRContentHandler extends DefaultHandler {
         } else {
             parentNode = parent;
         }
-        // TODO handle path paramters
+        // TODO handle path parameters
 
         final String name = attributes.getValue("name");
         final String primaryType = attributes.getValue("primaryType");
 
         LOG.info("Node {} adding child node {}(type={})", parentNode.getPath(), name, primaryType);
-        final Node node = parentNode.addNode(name, primaryType);
-        return node;
+        return parentNode.addNode(name, primaryType);
     }
 
     private void addMixin(final Node node, final Attributes attributes) throws RepositoryException {
@@ -350,7 +373,7 @@ public class JCRContentHandler extends DefaultHandler {
         // TODO handle ref property
         LOG.debug("Parsing type={} from='{}'", valueType, valueAsText);
         final ValueFactory vf = session.getValueFactory();
-        Value value = null;
+        Value value;
         switch (valueType) {
             case BINARY:
                 value = vf.createValue(vf.createBinary(new ByteArrayInputStream(Base64.decodeBase64(valueAsText.getBytes(
@@ -381,20 +404,20 @@ public class JCRContentHandler extends DefaultHandler {
      */
     private int getPropertyType(final PropertyValueType valueType) {
 
-        return JCR_PROPERTIES.get(valueType).intValue();
+        return JCR_PROPERTIES.get(valueType);
     }
 
     /**
-     * Checks if the specified uri is of the namesspace this {@link JCRContentHandler} is able to process
+     * Checks if the specified uri is not of the namespace this {@link JCRContentHandler} is able to process
      *
      * @param uri
      *         the uri to check
      *
-     * @return <code>true</code> if the namespace is processable by this {@link JCRContentHandler}
+     * @return <code>false</code> if the namespace is processable by this {@link JCRContentHandler}
      */
-    private boolean isInkstandNamespace(final String uri) {
+    private boolean isNotInkstandNamespace(final String uri) {
 
-        return INKSTAND_IMPORT_NAMESPACE.equals(uri);
+        return !INKSTAND_IMPORT_NAMESPACE.equals(uri);
     }
 
     /**

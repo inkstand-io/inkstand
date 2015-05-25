@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 
-io.inkstand.cdi.GlobalAlternativeSelector
-io.inkstand.cdi.ResourcesAndProviders
+org.jboss.resteasy.cdi.ResteasyCdiExtension
+

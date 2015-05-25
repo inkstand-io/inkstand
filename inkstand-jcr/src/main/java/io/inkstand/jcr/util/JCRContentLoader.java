@@ -1,18 +1,32 @@
-package io.inkstand.jcr.util;
+/*
+ * Copyright 2015 Gerald Muecke, gerald.muecke@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import java.io.IOException;
-import java.net.URL;
+package io.inkstand.jcr.util;
 
 import javax.jcr.Session;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
-
-import io.inkstand.InkstandRuntimeException;
-
+import java.io.IOException;
+import java.net.URL;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import io.inkstand.InkstandRuntimeException;
 
 /**
  * Loads content from an external source into the JCR Repository
@@ -37,6 +51,7 @@ public class JCRContentLoader {
     public void loadContent(final Session session, final URL contentDefinitionResource) {
         final SAXParserFactory factory = getSAXParserFactory();
         try {
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             final SAXParser parser = factory.newSAXParser();
             final InputSource source = new InputSource(contentDefinitionResource.openStream());
             parser.parse(source, new JCRContentHandler(session));
@@ -50,6 +65,8 @@ public class JCRContentLoader {
      * Creates a new {@link SAXParserFactory} using the configured parameters.
      *
      * @return
+     *  an instance of a SAXParserFactory to create new SAX parsers. The factory is configured according to
+     *  the settings for input schema validation and namespace awareness.
      */
     private SAXParserFactory getSAXParserFactory() {
         final SAXParserFactory factory = SAXParserFactory.newInstance();

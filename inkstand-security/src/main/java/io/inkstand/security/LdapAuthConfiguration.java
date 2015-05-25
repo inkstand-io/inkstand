@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Gerald Muecke, gerald.muecke@gmail.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.inkstand.security;
 
 import io.inkstand.config.LdapConfiguration;
@@ -14,7 +30,7 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
      *
      * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
      */
-    public static enum SearchScope {
+    enum SearchScope {
         // TODO potential candidate for inkstand-ldap
         BASE(0, "base"),
         ONE_LEVEL(1, "one"),
@@ -23,7 +39,7 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
         private final String name;
         private final int value;
 
-        private SearchScope(final int value, final String name) {
+        SearchScope(final int value, final String name) {
             this.value = value;
             this.name = name;
         }
@@ -42,8 +58,9 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
      * The scope for user or group searches
      *
      * @return
+     *  the scope for the ldap search
      */
-    public abstract SearchScope getSearchScope();
+    SearchScope getSearchScope();
 
     /**
      * The attribute that contains the role name. The role is used as role def in web applications.<br>
@@ -51,7 +68,7 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
      *
      * @return the attribute name for the role name.
      */
-    public abstract String getRoleNameAttribute();
+    String getRoleNameAttribute();
 
     /**
      * The filter for finding roles inside the role context and the search scope.<br>
@@ -59,7 +76,7 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
      *
      * @return the filter to search for roles
      */
-    public abstract String getRoleFilter();
+    String getRoleFilter();
 
     /**
      * The DN containing the roles. <br>
@@ -67,7 +84,7 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
      *
      * @return the role context dn
      */
-    public abstract String getRoleContextDn();
+    String getRoleContextDn();
 
     /**
      * The filter for finding users inside the user context and the search scope. For example:<br>
@@ -75,7 +92,7 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
      *
      * @return the filter to search for users
      */
-    public abstract String getUserFilter();
+    String getUserFilter();
 
     /**
      * The dn of the context to search for users. <br>
@@ -83,6 +100,6 @@ public interface LdapAuthConfiguration extends LdapConfiguration {
      *
      * @return the dn of the user context
      */
-    public abstract String getUserContextDn();
+    String getUserContextDn();
 
 }
