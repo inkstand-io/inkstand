@@ -16,19 +16,17 @@
 
 package io.inkstand.jcr.util;
 
-import java.io.IOException;
-import java.net.URL;
-
 import javax.jcr.Session;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
-
-import io.inkstand.InkstandRuntimeException;
-
+import java.io.IOException;
+import java.net.URL;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import io.inkstand.InkstandRuntimeException;
 
 /**
  * Loads content from an external source into the JCR Repository
@@ -53,6 +51,7 @@ public class JCRContentLoader {
     public void loadContent(final Session session, final URL contentDefinitionResource) {
         final SAXParserFactory factory = getSAXParserFactory();
         try {
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             final SAXParser parser = factory.newSAXParser();
             final InputSource source = new InputSource(contentDefinitionResource.openStream());
             parser.parse(source, new JCRContentHandler(session));
