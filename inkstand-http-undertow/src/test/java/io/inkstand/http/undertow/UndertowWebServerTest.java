@@ -21,13 +21,17 @@ import static io.inkstand.scribble.net.NetworkMatchers.isReachable;
 import static io.inkstand.scribble.net.NetworkMatchers.remotePort;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
 
 import io.inkstand.scribble.net.NetworkUtils;
 import io.undertow.Undertow;
@@ -37,6 +41,7 @@ import io.undertow.server.HttpServerExchange;
 @RunWith(MockitoJUnitRunner.class)
 public class UndertowWebServerTest {
 
+    private static final Logger LOG = getLogger(UndertowWebServerTest.class);
 
     private Undertow undertow;
 
@@ -54,7 +59,7 @@ public class UndertowWebServerTest {
             @Override
             public void handleRequest(final HttpServerExchange httpServerExchange) throws Exception {
 
-                System.out.println(httpServerExchange.getRequestMethod() + " " + httpServerExchange.getRequestPath());
+                LOG.info("{} {}", httpServerExchange.getRequestMethod(), httpServerExchange.getRequestPath());
             }
         }).build();
         inject(undertow).into(subject);
@@ -63,8 +68,12 @@ public class UndertowWebServerTest {
     @Test
     public void testStartStop() throws Exception {
 
-        System.out.println("starting server on port " + port);
+
         subject.start();
+
+        //TODO this line should be changed to check for the HTTP-connectivity and not just socket reachability
+        // as this is prone to error on windows (for some reasons...)
+        assertNotNull(new URL("http://localhost:"+port).openStream());
         assertThat(remotePort("localhost", port), isReachable().within(10, TimeUnit.SECONDS));
         subject.stop();
         assertThat(remotePort("localhost", port), not(isReachable().within(10, TimeUnit.SECONDS)));
