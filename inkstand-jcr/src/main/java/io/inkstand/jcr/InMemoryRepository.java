@@ -16,18 +16,17 @@
 
 package io.inkstand.jcr;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Stereotype;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Stereotype;
-
 /**
- * Annotation to annotate a repository implementation or producer to indicate it will produce a repository that is
- * transient and will be shutdown one the last user logs off from it.
+ * Annotation for a repository implementation or producer to indicate it will produce a repository that has in-memory
+ * persistence only. All changes made to the content of the repository is lost on shutdown.
  *
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
@@ -38,6 +37,6 @@ import javax.enterprise.inject.Stereotype;
 @Target({
     ElementType.TYPE, ElementType.METHOD, ElementType.FIELD
 })
-public @interface TransientRepository {
+public @interface InMemoryRepository {
 
 }

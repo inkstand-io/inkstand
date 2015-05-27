@@ -16,30 +16,29 @@
 
 package io.inkstand.jcr.provider;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
 import javax.jcr.PropertyType;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
-
-import io.inkstand.InkstandRuntimeException;
-import io.inkstand.jcr.util.JCRContentLoader;
-
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import org.apache.jackrabbit.commons.cnd.CndImporter;
 import org.apache.jackrabbit.commons.cnd.ParseException;
+import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.inkstand.InkstandRuntimeException;
+import io.inkstand.jcr.util.JCRContentLoader;
 
 public final class JackrabbitUtil {
 
@@ -74,6 +73,26 @@ public final class JackrabbitUtil {
             throw new InkstandRuntimeException("Could not read config url " + configUrl, e);
         }
         return new TransientRepository(config);
+    }
+
+    /**
+     * Wrapps an existing repository instance into a {@link TransientRepository} wrapper. A transient repository
+     * will shutdown automatically once the last user logs out.
+     * @param repository
+     *  existing instance of a repository. The repository may already be running.
+     * @return
+     *  a transient repository wrapped around the given repository
+     */
+    public static TransientRepository asTransientRepository(final RepositoryImpl repository) {
+
+        return new TransientRepository(new TransientRepository.RepositoryFactory() {
+
+            @Override
+            public RepositoryImpl getRepository() throws RepositoryException {
+
+                return repository;
+            }
+        }, repository.getConfig().getHomeDir());
     }
 
     /**

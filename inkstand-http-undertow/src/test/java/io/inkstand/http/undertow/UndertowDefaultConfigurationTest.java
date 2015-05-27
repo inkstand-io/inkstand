@@ -19,7 +19,6 @@ package io.inkstand.http.undertow;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import io.inkstand.scribble.Scribble;
@@ -36,9 +35,7 @@ public class UndertowDefaultConfigurationTest {
         Scribble.inject("foreign.host").asConfigProperty("inkstand.http.listenaddress").into(subject);
     }
 
-    //TODO reenable test
     @Test
-    @Ignore
     public void testGetPort() throws Exception {
         assertEquals(1024, subject.getPort());
     }

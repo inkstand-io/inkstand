@@ -16,13 +16,11 @@
 
 package io.inkstand.http.undertow;
 
-import io.undertow.Undertow;
-
 import javax.inject.Inject;
+import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 import io.inkstand.config.WebServerConfiguration;
-
-import org.apache.deltaspike.core.api.config.ConfigProperty;
+import io.undertow.Undertow;
 
 /**
  * Default configuration for an {@link Undertow} web container that defines the listen address and the port. If none is
@@ -39,7 +37,7 @@ public class UndertowDefaultConfiguration implements WebServerConfiguration {
 
     @Inject
     @ConfigProperty(name = "inkstand.http.port", defaultValue = "80")
-    private int port;
+    private Integer port;
 
     @Inject
     @ConfigProperty(name = "inkstand.http.listenaddress", defaultValue = "localhost")
