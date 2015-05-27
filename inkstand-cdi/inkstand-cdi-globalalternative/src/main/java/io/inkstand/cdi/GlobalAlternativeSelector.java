@@ -16,12 +16,6 @@
 
 package io.inkstand.cdi;
 
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.annotation.Priority;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Alternative;
@@ -34,7 +28,11 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
-
+import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.bootstrap.spi.Metadata;
 import org.jboss.weld.xml.BeansXmlParser;
@@ -80,6 +78,8 @@ public class GlobalAlternativeSelector implements Extension {
         if (beansXmlUrl == null) {
             throw new IllegalStateException("No beans.xml found");
         }
+        //TODO the processing of the beans.xml is depending on Weld/RI this should be removed
+        // at latest when alternative CDI containers (OpenWebBeans) have to be supported as well
         final BeansXml beansXml = new BeansXmlParser().parse(beansXmlUrl);
         enabledStereotypes.addAll(loadClasses(beansXml.getEnabledAlternativeStereotypes()));
         enabledAlternatives.addAll(loadClasses(beansXml.getEnabledAlternativeClasses()));

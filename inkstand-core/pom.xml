@@ -25,9 +25,7 @@
     <packaging>jar</packaging>
     <url>https://github.com/inkstand.io/inkstand/wiki</url>
     <description>
-        The core package contains the configuration API, a launcher class and CDI extensions that are
-        required for configuration and auto-discovery. The CDI extensions can be used without the full inkstand
-        bundle by just using this core package.
+        The core package contains the configuration API and a launcher class.
     </description>
 
     <dependencies>
@@ -39,6 +37,16 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-cdi-globalalternative</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-cdi-resourceautodiscovery</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

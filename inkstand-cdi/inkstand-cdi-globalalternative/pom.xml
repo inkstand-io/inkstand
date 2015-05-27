@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>inkstand-cdi</artifactId>
+        <groupId>io.inkstand</groupId>
+        <version>0.2.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>inkstand-cdi-globalalternative</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>
+        The GlobalAlternative extension allows to activate alternative implementations from one external BDA
+        and inject those into another external BDA. The alternatives must have a Priority annotation. Using
+        this extension allows to provide bundles of alternatives in one BDA.
+    </description>
+
+    <dependencies>
+        <!-- the Weld CDI container -->
+        <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

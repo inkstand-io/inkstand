@@ -37,6 +37,7 @@
 		<module>inkstand-ms</module>
 		<module>inkstand-security</module>
 		<module>inkstand-parent</module>
+		<module>inkstand-cdi</module>
 	</modules>
 
 	<dependencies>

@@ -16,17 +16,15 @@
 
 package io.inkstand.cdi;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
-
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
