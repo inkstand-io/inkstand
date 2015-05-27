@@ -107,6 +107,9 @@
         <jboss.resteasy.version>3.0.10.Final</jboss.resteasy.version>
         <jboss.weld.se.version>2.2.6.Final</jboss.weld.se.version>
         <jboss.undertow.version>1.2.6.Final</jboss.undertow.version>
+        <!-- additional  libraries -->
+        <jersey.common.version>2.17</jersey.common.version>
+
         <!-- Library Versions -->
         <halite.version>0.0.15</halite.version>
     </properties>
@@ -190,6 +193,14 @@
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-client</artifactId>
                 <version>${jboss.resteasy.version}</version>
+            </dependency>
+
+            <!-- Jersey (for testing only) -->
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-common</artifactId>
+                <version>${jersey.common.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Weld CDI Container -->
