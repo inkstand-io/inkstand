@@ -16,14 +16,12 @@
 
 package io.inkstand.deployment.resteasy;
 
-import java.util.Collection;
-
 import javax.inject.Inject;
+import java.util.Collection;
+import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 import io.inkstand.cdi.ResourcesAndProviders;
 import io.inkstand.config.ApplicationConfiguration;
-
-import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 /**
  * {@link ApplicationConfiguration} for setting up the Resteasy deployment configuration (i.e. the
@@ -38,7 +36,7 @@ import org.apache.deltaspike.core.api.config.ConfigProperty;
 public class DynamicResteasyConfiguration implements ApplicationConfiguration {
 
     @Inject
-    @ConfigProperty(name = "inkstand.rest.contextRoot", defaultValue = "")
+    @ConfigProperty(name = "inkstand.rest.contextRoot")
     private String contexRoot;
 
     @Inject

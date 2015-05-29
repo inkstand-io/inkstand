@@ -16,23 +16,21 @@
 
 package io.inkstand.http.undertow;
 
-import io.inkstand.PublicService;
-import io.undertow.Undertow;
-import io.undertow.servlet.Servlets;
-import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.DeploymentManager;
-
 import javax.annotation.Priority;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
-
-import io.inkstand.InkstandRuntimeException;
-import io.inkstand.config.WebServerConfiguration;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.inkstand.InkstandRuntimeException;
+import io.inkstand.PublicService;
+import io.inkstand.config.WebServerConfiguration;
+import io.undertow.Undertow;
+import io.undertow.servlet.Servlets;
+import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.DeploymentManager;
 
 /**
  * Provider of an Undertow WebServer instance with a specific deployment configuration. The deployment configuration is
@@ -42,14 +40,10 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
 @Singleton
-@Priority(0)
-@PublicService
 public class UndertowWebServerProvider {
 
-    /**
-     * SLF4J Logger for this class
-     */
     private static final Logger LOG = LoggerFactory.getLogger(UndertowWebServerProvider.class);
+
     @Inject
     private WebServerConfiguration config;
 
@@ -59,16 +53,47 @@ public class UndertowWebServerProvider {
     @Produces
     public Undertow getUndertow() {
 
+        final WebServerConfiguration config = this.getConfig();
+        final DeploymentInfo deploymentInfo = this.getDeploymentInfo();
+
         final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
         deploymentManager.deploy();
 
         try {
-            LOG.info("Creating service endpoint {}:{}/{} for {} at ", config.getBindAddress(), config.getPort(),
-                    deploymentInfo.getContextPath(), deploymentInfo.getDeploymentName());
-            return Undertow.builder().addHttpListener(config.getPort(), config.getBindAddress())
-                    .setHandler(deploymentManager.start()).build();
+
+            LOG.info("Creating service endpoint {}:{}/{} for {} at ",
+                     config.getBindAddress(),
+                     config.getPort(),
+                     deploymentInfo.getContextPath(),
+                     deploymentInfo.getDeploymentName());
+
+            return Undertow.builder()
+                           .addHttpListener(config.getPort(), config.getBindAddress())
+                           .setHandler(deploymentManager.start())
+                           .build();
         } catch (final ServletException e) {
             throw new InkstandRuntimeException(e);
         }
+    }
+
+    public WebServerConfiguration getConfig() {
+
+        return this.config;
+    }
+
+    public DeploymentInfo getDeploymentInfo() {
+
+        return this.deploymentInfo;
+    }
+
+    /**
+     * Stereotyped version of the default UndertowWebServerProvider that can be activated using the {@link
+     * PublicService} stereotype in beans.xml.
+     */
+    @Priority(1)
+    @PublicService
+    @Singleton
+    private static class PublicUndertowWebServiceProvider extends UndertowWebServerProvider {
+
     }
 }

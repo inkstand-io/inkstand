@@ -38,15 +38,11 @@
 		<module>inkstand-security</module>
 		<module>inkstand-parent</module>
 		<module>inkstand-cdi</module>
+		<module>inkstand-it</module>
 	</modules>
 
 	<dependencies>
 		<!-- Code Coverage -->
-		<dependency>
-			<groupId>org.jacoco</groupId>
-			<artifactId>jacoco-maven-plugin</artifactId>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
