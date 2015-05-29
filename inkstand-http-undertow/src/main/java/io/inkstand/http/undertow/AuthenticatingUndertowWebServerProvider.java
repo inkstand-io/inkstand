@@ -16,6 +16,20 @@
 
 package io.inkstand.http.undertow;
 
+import javax.annotation.Priority;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletException;
+import java.util.Collections;
+import java.util.List;
+import org.apache.deltaspike.core.api.config.ConfigProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.inkstand.InkstandRuntimeException;
+import io.inkstand.ProtectedService;
+import io.inkstand.config.WebServerConfiguration;
 import io.undertow.Undertow;
 import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.AuthenticationMode;
@@ -29,22 +43,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
-
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Priority;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.servlet.ServletException;
-
-import io.inkstand.ProtectedService;
-import io.inkstand.InkstandRuntimeException;
-import io.inkstand.config.WebServerConfiguration;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provider of an Undertow WebServer instance with a specific deployment configuration. The deployment configuration is
@@ -71,6 +69,10 @@ public class AuthenticatingUndertowWebServerProvider {
     @Inject
     private IdentityManager identityManager;
 
+    @Inject
+    @ConfigProperty(name="inkstand.http.auth.realm", defaultValue = "DefaultRealm")
+    private String realm;
+
     @Produces
     public Undertow getLdapAuthUndertow() {
 
@@ -94,9 +96,14 @@ public class AuthenticatingUndertowWebServerProvider {
         handler = new AuthenticationCallHandler(handler);
         handler = new AuthenticationConstraintHandler(handler);
         final List<AuthenticationMechanism> mechanisms = Collections
-                .<AuthenticationMechanism> singletonList(new BasicAuthenticationMechanism("My Realm"));
+                .<AuthenticationMechanism> singletonList(new BasicAuthenticationMechanism(this.getRealm()));
         handler = new AuthenticationMechanismsHandler(handler, mechanisms);
         handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
         return handler;
+    }
+
+    public String getRealm() {
+
+        return this.realm;
     }
 }
