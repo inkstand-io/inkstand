@@ -340,6 +340,7 @@
                             <targetTests>
                                 <param>io.inkstand.*</param>
                             </targetTests>
+                            <failWhenNoMutations>false</failWhenNoMutations>
                             <mutators>
                                 <mutator>DEFAULTS</mutator>
                                 <mutator>REMOVE_CONDITIONALS</mutator>
