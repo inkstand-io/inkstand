@@ -16,22 +16,26 @@
 
 package io.inkstand.http.undertow.auth.ldap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.when;
 
+import java.net.URL;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import io.inkstand.scribble.rules.ldap.Directory;
+import io.inkstand.scribble.Scribble;
 import io.inkstand.scribble.rules.ldap.DirectoryServer;
 import io.inkstand.security.LdapAuthConfiguration;
+import io.undertow.security.idm.Account;
+import io.undertow.security.idm.PasswordCredential;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LdapIdentityManagerTest {
@@ -42,43 +46,57 @@ public class LdapIdentityManagerTest {
     @InjectMocks
     private LdapIdentityManager subject;
 
-    public final TemporaryFolder folder = new TemporaryFolder();
-    public final Directory directory = new Directory(folder);
-    public final DirectoryServer ldapServer = new DirectoryServer(directory);
+    private final URL ldif = LdapIdentityManagerTest.class.getResource("LdapIdentityManagerTest_users.ldif");
+
     @Rule
-    public RuleChain ruleChain = RuleChain.outerRule(folder).around(directory).around(ldapServer);
+    public final DirectoryServer ldapServer = Scribble.newDirectory()
+                                                      .withPartition("inkstand", "dc=inkstand")
+                                                      .importLdif(ldif)
+                                                      .aroundDirectoryServer()
+                                                      .onAvailablePort().build();
+    private int port;
 
     @Before
     public void setUp() throws Exception {
+        when(authConfig.getHostname()).thenReturn("localhost");
+        this.port = ldapServer.getTcpPort();
+        when(authConfig.getPort()).thenReturn(port);
         when(authConfig.getHostname()).thenReturn("localhost");
     }
 
 
     @Test
     @Ignore
-    public void testConnect() throws Exception {
+    public void testVerify_withConnection_and_validUser() throws Exception {
 
-        Thread.sleep(10000);
+        //prepare
+        //bind settings
+        when(authConfig.getBindDn()).thenReturn("uid=admin,ou=system");
+        when(authConfig.getBindCredentials()).thenReturn("secret");
+        //user search settings
+        when(authConfig.getUserContextDn()).thenReturn("ou=users,dc=inkstand");
+        when(authConfig.getUserFilter()).thenReturn("(uid={0})");
+        //role settings
+        when(authConfig.getRoleNameAttribute()).thenReturn("cn");
+        when(authConfig.getRoleContextDn()).thenReturn("ou=groups,dc=inkstand");
+        when(authConfig.getRoleFilter()).thenReturn("(uniqueMember={1})");
+        //search scope
+        when(authConfig.getSearchScope()).thenReturn(LdapAuthConfiguration.SearchScope.SUBTREE);
+
+        //prepare the user login data, see ldif
+        final String userId = "testuser";
+        final PasswordCredential passwordCredential = new PasswordCredential("Password1".toCharArray());
+
+        subject.connect();
+
+        //act
+        Account account = subject.verify(userId, passwordCredential);
+
+        //assert
+        assertNotNull(account);
+        assertEquals(userId, account.getPrincipal().getName());
+
     }
 
-    // @Test
-    // public void testDisconnect() throws Exception {
-    // throw new RuntimeException("not yet implemented");
-    // }
-    //
-    // @Test
-    // public void testVerifyAccount() throws Exception {
-    // throw new RuntimeException("not yet implemented");
-    // }
-    //
-    // @Test
-    // public void testVerifyStringCredential() throws Exception {
-    // throw new RuntimeException("not yet implemented");
-    // }
-    //
-    // @Test
-    // public void testVerifyCredential() throws Exception {
-    // throw new RuntimeException("not yet implemented");
-    // }
 
 }
