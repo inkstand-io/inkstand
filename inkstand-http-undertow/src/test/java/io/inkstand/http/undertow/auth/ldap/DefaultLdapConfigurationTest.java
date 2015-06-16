@@ -1,14 +1,13 @@
 package io.inkstand.http.undertow.auth.ldap;
 
 import static io.inkstand.scribble.Scribble.inject;
-import static io.inkstand.security.LdapAuthConfiguration.SearchScope.*;
+import static io.inkstand.security.LdapAuthConfiguration.SearchScope.BASE;
+import static io.inkstand.security.LdapAuthConfiguration.SearchScope.SUBTREE;
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import io.inkstand.security.LdapAuthConfiguration;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by Gerald on 29.05.2015.
@@ -27,7 +26,7 @@ public class DefaultLdapConfigurationTest {
 
 
     @Test
-    @Ignore("until SCRIB-32 is fixed")
+
     public void testGetPort_defaultPort() throws Exception {
 
         //prepare
