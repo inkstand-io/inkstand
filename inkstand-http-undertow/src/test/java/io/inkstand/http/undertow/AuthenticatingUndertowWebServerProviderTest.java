@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.net.URL;
 import java.util.Collections;
+
+import io.inkstand.scribble.net.NetworkUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,12 +47,14 @@ public class AuthenticatingUndertowWebServerProviderTest  {
      */
     @InjectMocks
     private AuthenticatingUndertowWebServerProvider subject;
+    private int port;
 
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
+        this.port = NetworkUtils.findAvailablePort();
         when(config.getBindAddress()).thenReturn("localhost");
-        when(config.getPort()).thenReturn(41080);
+        when(config.getPort()).thenReturn(port);
         when(deploymentInfo.clone()).thenReturn(deploymentInfo);
         when(deploymentInfo.getDefaultEncoding()).thenReturn("UTF-8");
         when(deploymentInfo.getDeploymentName()).thenReturn("test.war");
@@ -72,7 +76,7 @@ public class AuthenticatingUndertowWebServerProviderTest  {
         verify(deploymentInfo).setIdentityManager(identityManager);
         try {
             undertow.start();
-            URL url = new URL("http://localhost:41080/test");
+            URL url = new URL("http://localhost:"+port+"/test");
             url.openConnection().connect();
         } finally {
             undertow.stop();
