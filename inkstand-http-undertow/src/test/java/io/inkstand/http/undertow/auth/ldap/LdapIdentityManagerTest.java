@@ -19,10 +19,13 @@ package io.inkstand.http.undertow.auth.ldap;
 import static io.inkstand.scribble.Scribble.newDirectory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.net.URL;
+import java.util.Set;
 
+import io.inkstand.InkstandRuntimeException;
 import io.inkstand.scribble.rules.ldap.DirectoryServer;
 import io.inkstand.security.LdapAuthConfiguration;
 import io.undertow.security.idm.Account;
@@ -64,6 +67,46 @@ public class LdapIdentityManagerTest {
     public void testVerify_withConnection_and_validUser() throws Exception {
 
         //prepare
+        prepareLdapConfig();
+
+        //prepare the user login data, see ldif
+        final String userId = "testuser";
+        final PasswordCredential passwordCredential = new PasswordCredential("Password1".toCharArray());
+        subject.connect();
+
+        //act
+        Account account = subject.verify(userId, passwordCredential);
+
+        //assert
+        assertNotNull(account);
+        assertEquals(userId, account.getPrincipal().getName());
+        Set<String> roles = account.getRoles();
+        assertNotNull(roles);
+        assertEquals(1, roles.size());
+        assertTrue(roles.contains("testgroup"));
+    }
+
+    @Test(expected = InkstandRuntimeException.class)
+    public void testVerify_withConnection_and_invalidUser() throws Exception {
+
+        //prepare
+        prepareLdapConfig();
+
+        //prepare the user login data, see ldif
+        final String userId = "invalidUser";
+        final PasswordCredential passwordCredential = new PasswordCredential("Password1".toCharArray());
+
+        subject.connect();
+
+        //act
+        //throws an InkstandRuntimeException because user is not found
+        subject.verify(userId, passwordCredential);
+    }
+
+
+
+    private void prepareLdapConfig() {
+
         //bind settings
         when(authConfig.getBindDn()).thenReturn("uid=admin,ou=system");
         when(authConfig.getBindCredentials()).thenReturn("secret");
@@ -76,20 +119,6 @@ public class LdapIdentityManagerTest {
         when(authConfig.getRoleFilter()).thenReturn("(uniqueMember={1})");
         //search scope
         when(authConfig.getSearchScope()).thenReturn(LdapAuthConfiguration.SearchScope.SUBTREE);
-
-        //prepare the user login data, see ldif
-        final String userId = "testuser";
-        final PasswordCredential passwordCredential = new PasswordCredential("Password1".toCharArray());
-
-        subject.connect();
-
-        //act
-        Account account = subject.verify(userId, passwordCredential);
-
-        //assert
-        assertNotNull(account);
-        assertEquals(userId, account.getPrincipal().getName());
     }
-
 
 }
