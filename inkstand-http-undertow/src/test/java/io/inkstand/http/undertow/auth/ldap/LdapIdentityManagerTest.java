@@ -16,26 +16,24 @@
 
 package io.inkstand.http.undertow.auth.ldap;
 
+import static io.inkstand.scribble.Scribble.newDirectory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.when;
 
 import java.net.URL;
+
+import io.inkstand.scribble.rules.ldap.DirectoryServer;
+import io.inkstand.security.LdapAuthConfiguration;
+import io.undertow.security.idm.Account;
+import io.undertow.security.idm.PasswordCredential;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import io.inkstand.scribble.Scribble;
-import io.inkstand.scribble.rules.ldap.DirectoryServer;
-import io.inkstand.security.LdapAuthConfiguration;
-import io.undertow.security.idm.Account;
-import io.undertow.security.idm.PasswordCredential;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LdapIdentityManagerTest {
@@ -49,16 +47,13 @@ public class LdapIdentityManagerTest {
     private final URL ldif = LdapIdentityManagerTest.class.getResource("LdapIdentityManagerTest_users.ldif");
 
     @Rule
-    public final DirectoryServer ldapServer = Scribble.newDirectory()
-                                                      .withPartition("inkstand", "dc=inkstand")
-                                                      .importLdif(ldif)
-                                                      .aroundDirectoryServer()
-                                                      .onAvailablePort().build();
+    public final DirectoryServer ldapServer = newDirectory().withPartition("inkstand", "dc=inkstand")
+                                                  .importLdif(ldif)
+                                                  .aroundDirectoryServer().onAvailablePort().build();
     private int port;
 
     @Before
     public void setUp() throws Exception {
-        when(authConfig.getHostname()).thenReturn("localhost");
         this.port = ldapServer.getTcpPort();
         when(authConfig.getPort()).thenReturn(port);
         when(authConfig.getHostname()).thenReturn("localhost");
@@ -66,7 +61,6 @@ public class LdapIdentityManagerTest {
 
 
     @Test
-    @Ignore
     public void testVerify_withConnection_and_validUser() throws Exception {
 
         //prepare
@@ -95,7 +89,6 @@ public class LdapIdentityManagerTest {
         //assert
         assertNotNull(account);
         assertEquals(userId, account.getPrincipal().getName());
-
     }
 
 
