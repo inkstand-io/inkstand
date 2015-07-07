@@ -21,14 +21,14 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.inkstand.InkstandRuntimeException;
 import io.inkstand.ProtectedService;
+import io.inkstand.config.ResourceSecurityConfiguration;
 import io.inkstand.config.WebServerConfiguration;
 import io.undertow.Undertow;
 import io.undertow.security.api.AuthenticationMechanism;
@@ -60,8 +60,12 @@ public class AuthenticatingUndertowWebServerProvider {
      * SLF4J Logger for this class
      */
     private static final Logger LOG = LoggerFactory.getLogger(UndertowWebServerProvider.class);
+
     @Inject
     private WebServerConfiguration config;
+
+    @Inject
+    private ResourceSecurityConfiguration securityConfig;
 
     @Inject
     private DeploymentInfo deploymentInfo;
@@ -69,41 +73,66 @@ public class AuthenticatingUndertowWebServerProvider {
     @Inject
     private IdentityManager identityManager;
 
-    @Inject
-    @ConfigProperty(name="inkstand.http.auth.realm", defaultValue = "DefaultRealm")
-    private String realm;
-
+    /**
+     * Creates an {@link Undertow} instance that has an {@link IdentityManager} associated to secure the resources
+     * served by the undertow http server.
+     *
+     * @return a secured undertow instance
+     */
     @Produces
-    public Undertow getLdapAuthUndertow() {
+    public Undertow getSecuredUndertow() {
 
-        deploymentInfo.setIdentityManager(identityManager);
+        this.deploymentInfo.setIdentityManager(identityManager);
 
-        final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
+        final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(this.deploymentInfo);
         deploymentManager.deploy();
 
         try {
-            LOG.info("Creating service endpoint {}:{}/{} for {} at ", config.getBindAddress(), config.getPort(),
-                    deploymentInfo.getContextPath(), deploymentInfo.getDeploymentName());
-            return Undertow.builder().addHttpListener(config.getPort(), config.getBindAddress())
-                    .setHandler(addSecurity(deploymentManager.start())).build();
+            LOG.info("Creating service endpoint {}:{}/{} for {}",
+                     this.config.getBindAddress(),
+                     this.config.getPort(),
+                     this.deploymentInfo.getContextPath(),
+                     this.deploymentInfo.getDeploymentName());
+            return Undertow.builder()
+                           .addHttpListener(this.config.getPort(), this.config.getBindAddress())
+                           .setHandler(addSecurity(deploymentManager.start()))
+                           .build();
         } catch (final ServletException e) {
             throw new InkstandRuntimeException(e);
         }
     }
 
+    /**
+     * Adds the security handlers to the specified http handler.
+     *
+     * @param toWrap
+     *         the {@link HttpHandler} to be wrapped into security handlers
+     *
+     * @return a {@link HttpHandler} that provides security to the served resources.
+     */
     HttpHandler addSecurity(final HttpHandler toWrap) {
+
+        final List<AuthenticationMechanism> mechanisms = getAuthenticationMechanisms();
+
         HttpHandler handler = toWrap;
         handler = new AuthenticationCallHandler(handler);
         handler = new AuthenticationConstraintHandler(handler);
-        final List<AuthenticationMechanism> mechanisms = Collections
-                .<AuthenticationMechanism> singletonList(new BasicAuthenticationMechanism(this.getRealm()));
         handler = new AuthenticationMechanismsHandler(handler, mechanisms);
         handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
         return handler;
     }
 
-    public String getRealm() {
+    private List<AuthenticationMechanism> getAuthenticationMechanisms() {
 
-        return this.realm;
+        final List<AuthenticationMechanism> mechanisms = new ArrayList<>();
+        switch (this.securityConfig.getAuthenticationMethod()) {
+            case "BASIC":
+                mechanisms.add(new BasicAuthenticationMechanism(this.securityConfig.getRealm()));
+                break;
+            default:
+                throw new IllegalArgumentException(this.securityConfig.getAuthenticationMethod()
+                                                           + " is no supported security mechanism");
+        }
+        return mechanisms;
     }
 }

@@ -24,12 +24,6 @@ import static org.mockito.Mockito.when;
 
 import java.net.URL;
 import java.util.Set;
-
-import io.inkstand.InkstandRuntimeException;
-import io.inkstand.scribble.rules.ldap.DirectoryServer;
-import io.inkstand.security.LdapAuthConfiguration;
-import io.undertow.security.idm.Account;
-import io.undertow.security.idm.PasswordCredential;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,6 +31,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import io.inkstand.InkstandRuntimeException;
+import io.inkstand.scribble.rules.ldap.DirectoryServer;
+import io.inkstand.security.LdapAuthConfiguration;
+import io.undertow.security.idm.Account;
+import io.undertow.security.idm.PasswordCredential;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LdapIdentityManagerTest {
@@ -54,6 +54,10 @@ public class LdapIdentityManagerTest {
                                                   .importLdif(ldif)
                                                   .aroundDirectoryServer().onAvailablePort().build();
     private int port;
+
+    private class test {
+
+    }
 
     @Before
     public void setUp() throws Exception {

@@ -21,18 +21,15 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.util.Set;
+
 import io.inkstand.ProtectedService;
-import io.inkstand.config.ApplicationConfiguration;
-import io.inkstand.http.undertow.UndertowDeploymentProvider;
+import io.inkstand.config.ResourceSecurityConfiguration;
 import io.undertow.Undertow;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.ListenerInfo;
-import io.undertow.servlet.api.ServletInfo;
-import org.jboss.resteasy.cdi.CdiInjectorFactory;
-import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
-import org.jboss.resteasy.spi.ResteasyDeployment;
-import ws.ament.hammock.core.impl.CDIListener;
+import io.undertow.servlet.api.LoginConfig;
+import io.undertow.servlet.api.SecurityConstraint;
 
 /**
  * Provider for producing an {@link DeploymentInfo} for an {@link Undertow} web server that provides Jax-RS support
@@ -43,46 +40,53 @@ import ws.ament.hammock.core.impl.CDIListener;
 @Singleton
 @ProtectedService
 @Priority(0)
-public class BasicSecurityResteasyDeploymentProvider implements UndertowDeploymentProvider {
-
-    // TODO make security configuration configurable
+public class BasicSecurityResteasyDeploymentProvider extends DefaultResteasyDeploymentProvider {
 
     @Inject
-    private ApplicationConfiguration appConfig;
+    private ResourceSecurityConfiguration secConfig;
 
     @Override
     @Produces
     public DeploymentInfo getDeployment() {
 
-        final ResteasyDeployment deployment = new ResteasyDeployment();
-        deployment.getActualResourceClasses().addAll(appConfig.getResourceClasses());
-        deployment.getActualProviderClasses().addAll(appConfig.getProviderClasses());
-        deployment.setInjectorFactoryClass(CdiInjectorFactory.class.getName());
-        deployment.setSecurityEnabled(true);
+        final DeploymentInfo di = super.getDeployment();
+        di.setLoginConfig(createLoginConfig(secConfig.getRealm(), secConfig.getAuthenticationMethod()));
+        di.addSecurityRoles(secConfig.getSecurityRoles());
+        di.addSecurityConstraint(createSecurityConstraint(secConfig.getAllowedRoles(),
+                                                          secConfig.getProtectedResources()));
+        return di;
 
-        final ListenerInfo listener = Servlets.listener(CDIListener.class);
+    }
 
-        //@formatter:off
-        final ServletInfo resteasyServlet = Servlets.servlet("ResteasyServlet", HttpServlet30Dispatcher.class)
-                .setAsyncSupported(true)
-                .setLoadOnStartup(1)
-                .addInitParam("org.jboss.weld.environment.servlet.archive.isolation", "true")
-                .addMapping("/*");
-        resteasyServlet.addSecurityRoleRef("User", null);
+    /**
+     * Creates a login configuration using the specified realm and authentication method.
+     * @param realm
+     *  the realm of the login configuration
+     * @param authenticationMethod
+     *  the authentication method used for authenticating users for this realm
+     * @return
+     *  the login configuration for a {@link DeploymentInfo}
+     */
+    private LoginConfig createLoginConfig(final String realm, final String authenticationMethod) {
 
-        return   new DeploymentInfo()
-            .setClassLoader(ClassLoader.getSystemClassLoader())
-            .addListener(listener)
-            .setDeploymentName("ResteasyUndertow")
-            .setContextPath(appConfig.getContextRoot())
-            .addServletContextAttribute(ResteasyDeployment.class.getName(), deployment)
-            .addServlet(resteasyServlet)
-            .setLoginConfig(Servlets.loginConfig("My Realm").addFirstAuthMethod("BASIC"))
-            .addSecurityRole("Users")
-            .addSecurityConstraint(Servlets.securityConstraint().addRoleAllowed("Users")
-            .addWebResourceCollection(Servlets.webResourceCollection().addUrlPattern("/*")));
+        return Servlets.loginConfig(realm).addFirstAuthMethod(authenticationMethod);
+    }
 
-        // @formatter:on
+    /**
+     * Creates a security constraint that maps a set of roles that should have access to a set of resources
+     * defined by a set of URL patterns.
+     * @param allowedRoles
+     *  the role names that are allowed
+     * @param protectedResources
+     *  the URL patterns (like /*) that define the resource whose access is constraint
+     * @return
+     *  the security constraint for the resources
+     */
+    private SecurityConstraint createSecurityConstraint(final Set<String> allowedRoles,
+                                                        final Set<String> protectedResources) {
 
+        return Servlets.securityConstraint()
+                       .addRolesAllowed(allowedRoles)
+                       .addWebResourceCollection(Servlets.webResourceCollection().addUrlPatterns(protectedResources));
     }
 }

@@ -1,0 +1,85 @@
+package io.inkstand.it;
+
+import static io.inkstand.scribble.Scribble.newDirectory;
+import static org.junit.Assert.assertEquals;
+
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.client.ClientBuilder;
+import java.net.URL;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import io.inkstand.Inkstand;
+import io.inkstand.scribble.net.NetworkUtils;
+import io.inkstand.scribble.rules.ldap.DirectoryServer;
+
+/**
+ * Created by Gerald on 27.05.2015.
+ */
+public class ProtectedServiceITCase {
+
+    private int port;
+    private int ldapPort;
+
+    private static final URL ldif = ProtectedServiceITCase.class.getResource("/testusers.ldif");
+
+
+    @ClassRule
+    public static final DirectoryServer ldapServer = newDirectory().withPartition("inkstand", "dc=inkstand")
+                                                            .importLdif(ldif)
+                                                            .aroundDirectoryServer().onAvailablePort().build();
+
+    @Before
+    public void setUp() throws Exception {
+
+        port = NetworkUtils.findAvailablePort();
+        //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
+        System.setProperty("inkstand.http.port", String.valueOf(port));
+        //configuration for connecting to the LDAP server
+        System.setProperty("inkstand.auth.ldap.port", String.valueOf(ldapServer.getTcpPort()));
+        System.setProperty("inkstand.auth.ldap.bind.dn", "uid=admin,ou=system");
+        System.setProperty("inkstand.auth.ldap.bind.credentials", "secret");
+        System.setProperty("inkstand.auth.ldap.user.context.dn", "ou=users,dc=inkstand");
+        System.setProperty("inkstand.auth.ldap.user.filter", "(uid={0})");
+        System.setProperty("inkstand.auth.ldap.role.context.dn", "ou=groups,dc=inkstand");
+        System.setProperty("inkstand.auth.ldap.role.filter", "(uniqueMember={1})");
+        System.setProperty("inkstand.auth.ldap.role.nameAttribute", "cn");
+        System.setProperty("inkstand.auth.ldap.searchScope", "SUBTREE");
+
+        System.setProperty("inkstand.http.auth.securityRoles", "Admins");
+        System.setProperty("inkstand.http.auth.allowedRoles", "Admins");
+        System.setProperty("inkstand.http.auth.protectedResources", "/*");
+
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testGetApp_noUserAutentication() throws InterruptedException {
+
+        //prepare
+        Inkstand.main(new String[] {});
+
+        //act
+        String value = ClientBuilder.newClient()
+                                    .target("http://localhost:" + port + "/test")
+                                    .request()
+                                    .get(String.class);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testGetApp_authorizedUser() throws InterruptedException {
+
+        //prepare
+        Inkstand.main(new String[] {});
+
+        //act
+        String value = ClientBuilder.newClient()
+                                    .register(new ClientAuthenticator("testuser", "Password1"))
+                                    .target("http://localhost:" + port + "/test")
+                                    .request()
+                                    .get(String.class);
+        //assert
+        assertEquals("test", value);
+
+    }
+}

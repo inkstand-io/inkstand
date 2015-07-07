@@ -39,6 +39,11 @@
 		</dependency>
 		<dependency>
 			<groupId>io.inkstand</groupId>
+			<artifactId>inkstand-http</artifactId>
+			<version>0.2.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>io.inkstand</groupId>
 			<artifactId>inkstand-ms</artifactId>
 			<version>0.2.0-SNAPSHOT</version>
 		</dependency>

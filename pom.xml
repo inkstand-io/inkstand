@@ -32,6 +32,7 @@
 		<module>inkstand-core</module>
 		<module>inkstand-jcr</module>
 		<module>inkstand-jcr-jackrabbit</module>
+		<module>inkstand-http</module>
 		<module>inkstand-http-undertow</module>
 		<module>inkstand-deployments</module>
 		<module>inkstand-ms</module>
