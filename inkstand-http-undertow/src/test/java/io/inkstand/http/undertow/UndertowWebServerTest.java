@@ -70,6 +70,7 @@ public class UndertowWebServerTest {
         assertThat(serviceUrl, isAvailable());
 
         subject.stop();
+        Thread.sleep(1000);
         assertThat(serviceUrl, not(isAvailable()));
     }
 
