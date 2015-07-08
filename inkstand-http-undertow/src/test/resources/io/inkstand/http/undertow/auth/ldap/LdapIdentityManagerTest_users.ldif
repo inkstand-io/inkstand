@@ -1,24 +1,24 @@
-userDn: dc=inkstand
+dn: dc=inkstand
 objectClass: top
 objectClass: dcObject
 objectClass: organization
 o: inkstand.io
 
-userDn: ou=groups,dc=inkstand
+dn: ou=groups,dc=inkstand
 objectClass: organizationalUnit
 ou: groups
 
-userDn: cn=testgroup,ou=groups,dc=inkstand
+dn: cn=testgroup,ou=groups,dc=inkstand
 objectClass: top
 objectClass: groupOfUniqueNames
 cn: testgroup
 uniqueMember: uid=testuser,ou=users,dc=inkstand
 
-userDn: ou=users,dc=inkstand
+dn: ou=users,dc=inkstand
 objectClass: organizationalUnit
 ou: users
 
-userDn: uid=testuser,ou=users,dc=inkstand
+dn: uid=testuser,ou=users,dc=inkstand
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
