@@ -88,17 +88,17 @@ public class LdapIdentityManager implements IdentityManager {
     }
 
     @Override
-    public Account verify(final String id, final Credential credential) {
+    public Account verify(final String userId, final Credential credential) {
         bind();
         try {
-            final EntryCursor result = this.connection.search(this.ldapConfig.getUserContextDn(), getUserFilter(id),
+            final EntryCursor result = this.connection.search(this.ldapConfig.getUserContextDn(), getUserFilter(userId),
                     getSearchScope());
             if (result.next()) {
                 final Entry user = result.get();
-                return createUserAccount(user, credential, id);
+                return createUserAccount(user, credential, userId);
             }
             // TODO replace with authentication exception
-            throw new InkstandRuntimeException("No user with id " + id + " found");
+            throw new InkstandRuntimeException("No user with id " + userId + " found");
         } catch (final LdapException | CursorException e) {
             throw new InkstandRuntimeException(e);
         } finally {
@@ -118,7 +118,7 @@ public class LdapIdentityManager implements IdentityManager {
      *  the user entry from the LDAP service
      * @param credential
      *  the credentials used to perform the login
-     * @param id
+     * @param userId
      *  the id of the user
      * @return
      *  the created user account
@@ -127,20 +127,20 @@ public class LdapIdentityManager implements IdentityManager {
      * @throws CursorException
      *  if the roles could not be retrieved for the user
      */
-    private LdapAccount createUserAccount(final Entry user, final Credential credential, final String id)
+    private LdapAccount createUserAccount(final Entry user, final Credential credential, final String userId)
             throws LdapException, CursorException {
 
-        LOG.debug("User {} found, collecting user groups", id);
+        LOG.debug("User {} found, collecting user groups", userId);
 
-        final Set<String> roles = getRoles(id, user.getDn().toString());
-        LOG.debug("User {} has roles {}", id, roles);
+        final Set<String> roles = getRoles(userId, user.getDn().toString());
+        LOG.debug("User {} has roles {}", userId, roles);
 
-        LOG.debug("Authenticating user {}", id);
+        LOG.debug("Authenticating user {}", userId);
         final char[] password = ((PasswordCredential) credential).getPassword();
         this.connection.bind(user.getDn(), String.valueOf(password));
-        LOG.debug("User {} authenticated", id);
+        LOG.debug("User {} authenticated", userId);
 
-        final LdapAccount account = new LdapAccount(id, user.getDn().toString());
+        final LdapAccount account = new LdapAccount(userId, user.getDn().toString());
         account.addRoles(roles);
         for (final String role : roles) {
             account.addRole(role);
@@ -175,7 +175,7 @@ public class LdapIdentityManager implements IdentityManager {
      * Retrieves all role names for the current user.
      * @param uid
      *  the userID of the user to retrieve the roles for
-     * @param dn
+     * @param userDn
      *  the distringuished name of the user entry to retrieve the roles for
      * @return
      *  a set of role names
@@ -184,9 +184,9 @@ public class LdapIdentityManager implements IdentityManager {
      * @throws CursorException
      *  if the result of the search could not be processed
      */
-    private Set<String> getRoles(final String uid, final String dn) throws LdapException, CursorException {
+    private Set<String> getRoles(final String uid, final String userDn) throws LdapException, CursorException {
         bind();
-        final EntryCursor result = this.connection.search(this.ldapConfig.getRoleContextDn(), getRoleFilter(uid, dn),
+        final EntryCursor result = this.connection.search(this.ldapConfig.getRoleContextDn(), getRoleFilter(uid, userDn),
                 getSearchScope(), this.ldapConfig.getRoleNameAttribute());
         final Set<String> roles = new HashSet<>();
         while (result.next()) {

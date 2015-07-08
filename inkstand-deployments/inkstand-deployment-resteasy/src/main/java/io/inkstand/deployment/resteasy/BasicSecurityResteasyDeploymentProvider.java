@@ -49,12 +49,12 @@ public class BasicSecurityResteasyDeploymentProvider extends DefaultResteasyDepl
     @Produces
     public DeploymentInfo getDeployment() {
 
-        final DeploymentInfo di = super.getDeployment();
-        di.setLoginConfig(createLoginConfig(secConfig.getRealm(), secConfig.getAuthenticationMethod()));
-        di.addSecurityRoles(secConfig.getSecurityRoles());
-        di.addSecurityConstraint(createSecurityConstraint(secConfig.getAllowedRoles(),
-                                                          secConfig.getProtectedResources()));
-        return di;
+        final DeploymentInfo deployInfo = super.getDeployment();
+        deployInfo.setLoginConfig(createLoginConfig(secConfig.getRealm(), secConfig.getAuthenticationMethod()));
+        deployInfo.addSecurityRoles(secConfig.getSecurityRoles());
+        deployInfo.addSecurityConstraint(createSecurityConstraint(secConfig.getAllowedRoles(),
+                                                                  secConfig.getProtectedResources()));
+        return deployInfo;
 
     }
 
@@ -62,14 +62,14 @@ public class BasicSecurityResteasyDeploymentProvider extends DefaultResteasyDepl
      * Creates a login configuration using the specified realm and authentication method.
      * @param realm
      *  the realm of the login configuration
-     * @param authenticationMethod
+     * @param authMethod
      *  the authentication method used for authenticating users for this realm
      * @return
      *  the login configuration for a {@link DeploymentInfo}
      */
-    private LoginConfig createLoginConfig(final String realm, final String authenticationMethod) {
+    private LoginConfig createLoginConfig(final String realm, final String authMethod) {
 
-        return Servlets.loginConfig(realm).addFirstAuthMethod(authenticationMethod);
+        return Servlets.loginConfig(realm).addFirstAuthMethod(authMethod);
     }
 
     /**
@@ -77,16 +77,16 @@ public class BasicSecurityResteasyDeploymentProvider extends DefaultResteasyDepl
      * defined by a set of URL patterns.
      * @param allowedRoles
      *  the role names that are allowed
-     * @param protectedResources
+     * @param protectedRes
      *  the URL patterns (like /*) that define the resource whose access is constraint
      * @return
      *  the security constraint for the resources
      */
     private SecurityConstraint createSecurityConstraint(final Set<String> allowedRoles,
-                                                        final Set<String> protectedResources) {
+                                                        final Set<String> protectedRes) {
 
         return Servlets.securityConstraint()
                        .addRolesAllowed(allowedRoles)
-                       .addWebResourceCollection(Servlets.webResourceCollection().addUrlPatterns(protectedResources));
+                       .addWebResourceCollection(Servlets.webResourceCollection().addUrlPatterns(protectedRes));
     }
 }

@@ -59,7 +59,7 @@ public class DefaultResourceSecurityConfiguration implements ResourceSecurityCon
 
     private Set<String> allowedRoles = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("Users")));
 
-    private Set<String> protectedResources = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("/*")));
+    private Set<String> protectedRes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("/*")));
 
     @Override
     public String getRealm() {
@@ -88,7 +88,7 @@ public class DefaultResourceSecurityConfiguration implements ResourceSecurityCon
     @Override
     public Set<String> getProtectedResources() {
 
-        return protectedResources;
+        return protectedRes;
     }
 
     @Inject
@@ -111,9 +111,9 @@ public class DefaultResourceSecurityConfiguration implements ResourceSecurityCon
     public void setProtectedResourcs(
             @ConfigProperty(name = "inkstand.http.auth.protectedResources",
                             defaultValue = "/*")
-            String protectedResources) {
+            String protectedRes) {
 
-        this.protectedResources = asSet(protectedResources, ';');
+        this.protectedRes = asSet(protectedRes, ';');
     }
 
     private Set<String> asSet(String inputString, char separator) {

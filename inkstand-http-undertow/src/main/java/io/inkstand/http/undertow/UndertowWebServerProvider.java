@@ -53,22 +53,22 @@ public class UndertowWebServerProvider {
     @Produces
     public Undertow getUndertow() {
 
-        final WebServerConfiguration config = this.getConfig();
-        final DeploymentInfo deploymentInfo = this.getDeploymentInfo();
+        final WebServerConfiguration httpConfig = this.getConfig();
+        final DeploymentInfo deployInfo = this.getDeploymentInfo();
 
-        final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deploymentInfo);
+        final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deployInfo);
         deploymentManager.deploy();
 
         try {
 
             LOG.info("Creating service endpoint {}:{}/{} for {} at ",
-                     config.getBindAddress(),
-                     config.getPort(),
-                     deploymentInfo.getContextPath(),
-                     deploymentInfo.getDeploymentName());
+                     httpConfig.getBindAddress(),
+                     httpConfig.getPort(),
+                     deployInfo.getContextPath(),
+                     deployInfo.getDeploymentName());
 
             return Undertow.builder()
-                           .addHttpListener(config.getPort(), config.getBindAddress())
+                           .addHttpListener(httpConfig.getPort(), httpConfig.getBindAddress())
                            .setHandler(deploymentManager.start())
                            .build();
         } catch (final ServletException e) {
