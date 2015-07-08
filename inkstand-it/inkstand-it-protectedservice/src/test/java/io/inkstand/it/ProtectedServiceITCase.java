@@ -22,13 +22,13 @@ import static org.junit.Assert.assertEquals;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.ClientBuilder;
 import java.net.URL;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
 
 import io.inkstand.Inkstand;
 import io.inkstand.scribble.net.NetworkUtils;
 import io.inkstand.scribble.rules.ldap.DirectoryServer;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 /**
  * Created by Gerald on 27.05.2015.
@@ -41,8 +41,8 @@ public class ProtectedServiceITCase {
     private static final URL ldif = ProtectedServiceITCase.class.getResource("/testusers.ldif");
 
 
-    @ClassRule
-    public static final DirectoryServer ldapServer = newDirectory().withPartition("inkstand", "dc=inkstand")
+    @Rule
+    public final DirectoryServer ldapServer = newDirectory().withPartition("inkstand", "dc=inkstand")
                                                             .importLdif(ldif)
                                                             .aroundDirectoryServer().onAvailablePort().build();
 
@@ -50,10 +50,11 @@ public class ProtectedServiceITCase {
     public void setUp() throws Exception {
 
         port = NetworkUtils.findAvailablePort();
+        ldapPort = ldapServer.getTcpPort();
         //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
         System.setProperty("inkstand.http.port", String.valueOf(port));
         //configuration for connecting to the LDAP server
-        System.setProperty("inkstand.auth.ldap.port", String.valueOf(ldapServer.getTcpPort()));
+        System.setProperty("inkstand.auth.ldap.port", String.valueOf(ldapPort));
         System.setProperty("inkstand.auth.ldap.bind.dn", "uid=admin,ou=system");
         System.setProperty("inkstand.auth.ldap.bind.credentials", "secret");
         System.setProperty("inkstand.auth.ldap.user.context.dn", "ou=users,dc=inkstand");
