@@ -19,16 +19,18 @@ package io.inkstand.it;
 import static io.inkstand.scribble.Scribble.newDirectory;
 import static org.junit.Assert.assertEquals;
 
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.ClientBuilder;
 import java.net.URL;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import io.inkstand.Inkstand;
 import io.inkstand.scribble.net.NetworkUtils;
 import io.inkstand.scribble.rules.ldap.DirectoryServer;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 
 /**
  * Created by Gerald on 27.05.2015.
@@ -45,6 +47,9 @@ public class ProtectedServiceITCase {
     public final DirectoryServer ldapServer = newDirectory().withPartition("inkstand", "dc=inkstand")
                                                             .importLdif(ldif)
                                                             .aroundDirectoryServer().onAvailablePort().build();
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -70,11 +75,13 @@ public class ProtectedServiceITCase {
 
     }
 
-    @Test(expected = NotAuthorizedException.class)
-    public void get_withoutUserAutentication_fails() throws InterruptedException {
+    @Test
+    public void get_withoutUserAutentication_unauthorized() throws InterruptedException {
 
         //prepare
         Inkstand.main(new String[] {});
+        exception.expect(NotAuthorizedException.class);
+        exception.expectMessage("HTTP 401 Unauthorized");
 
         //act
         String value = ClientBuilder.newClient()
@@ -83,11 +90,13 @@ public class ProtectedServiceITCase {
                                     .get(String.class);
     }
 
-    @Test(expected = NotAuthorizedException.class)
-    public void get_withAuthorizedUser_withWrongRole_fails() throws InterruptedException {
+    @Test
+    public void get_withAuthorizedUser_withWrongRole_forbidden() throws InterruptedException {
 
         //prepare
         Inkstand.main(new String[] {});
+        exception.expect(ClientErrorException.class);
+        exception.expectMessage("HTTP 403 Forbidden");
 
         //act
         String value = ClientBuilder.newClient()
@@ -101,7 +110,7 @@ public class ProtectedServiceITCase {
     }
 
     @Test
-    public void get_withAuthorizedUser_withAdminRole_succeeds() throws InterruptedException {
+    public void get_withAuthorizedUser_withAdminRole_ok() throws InterruptedException {
 
         //prepare
         Inkstand.main(new String[] {});
