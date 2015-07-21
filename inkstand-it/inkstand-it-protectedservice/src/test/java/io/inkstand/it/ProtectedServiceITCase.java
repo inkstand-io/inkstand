@@ -64,14 +64,14 @@ public class ProtectedServiceITCase {
         System.setProperty("inkstand.auth.ldap.role.nameAttribute", "cn");
         System.setProperty("inkstand.auth.ldap.searchScope", "SUBTREE");
 
-        System.setProperty("inkstand.http.auth.securityRoles", "Admins");
-        System.setProperty("inkstand.http.auth.allowedRoles", "Admins");
+        System.setProperty("inkstand.http.auth.securityRoles", "admins");
+        System.setProperty("inkstand.http.auth.allowedRoles", "admins");
         System.setProperty("inkstand.http.auth.protectedResources", "/*");
 
     }
 
     @Test(expected = NotAuthorizedException.class)
-    public void testGetApp_noUserAutentication() throws InterruptedException {
+    public void get_withoutUserAutentication_fails() throws InterruptedException {
 
         //prepare
         Inkstand.main(new String[] {});
@@ -84,7 +84,7 @@ public class ProtectedServiceITCase {
     }
 
     @Test(expected = NotAuthorizedException.class)
-    public void testGetApp_authorizedUser() throws InterruptedException {
+    public void get_withAuthorizedUser_withWrongRole_fails() throws InterruptedException {
 
         //prepare
         Inkstand.main(new String[] {});
@@ -92,6 +92,23 @@ public class ProtectedServiceITCase {
         //act
         String value = ClientBuilder.newClient()
                                     .register(new ClientAuthenticator("testuser", "Password1"))
+                                    .target("http://localhost:" + port + "/test")
+                                    .request()
+                                    .get(String.class);
+        //assert
+        assertEquals("test", value);
+
+    }
+
+    @Test
+    public void get_withAuthorizedUser_withAdminRole_succeeds() throws InterruptedException {
+
+        //prepare
+        Inkstand.main(new String[] {});
+
+        //act
+        String value = ClientBuilder.newClient()
+                                    .register(new ClientAuthenticator("testadmin", "Password1"))
                                     .target("http://localhost:" + port + "/test")
                                     .request()
                                     .get(String.class);

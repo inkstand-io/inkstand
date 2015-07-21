@@ -16,6 +16,7 @@
 
 package io.inkstand.it;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.Response;
  * Test resource
  * Created by Gerald on 27.05.2015.
  */
+@RolesAllowed("admins")
 @Path("/test")
 public class ProtectedServiceTestResource {
 

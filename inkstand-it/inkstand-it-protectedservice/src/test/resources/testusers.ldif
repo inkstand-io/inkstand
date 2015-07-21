@@ -14,6 +14,12 @@ objectClass: groupOfUniqueNames
 cn: testgroup
 uniqueMember: uid=testuser,ou=users,dc=inkstand
 
+dn: cn=admins,ou=groups,dc=inkstand
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: admins
+uniqueMember: uid=testadmin,ou=users,dc=inkstand
+
 dn: ou=users,dc=inkstand
 objectClass: organizationalUnit
 ou: users
@@ -29,3 +35,13 @@ uid: testuser
 userPassword: Password1
 mail: test.user1@inkstand.io
 
+dn: uid=testadmin,ou=users,dc=inkstand
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: test
+sn: admin
+uid: testadmin
+userPassword: Password1
+mail: test.admin@inkstand.io
