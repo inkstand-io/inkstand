@@ -20,6 +20,7 @@ import static io.inkstand.scribble.Scribble.newDirectory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.net.URL;
@@ -27,6 +28,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -53,6 +55,9 @@ public class LdapIdentityManagerTest {
     public final DirectoryServer ldapServer = newDirectory().withPartition("inkstand", "dc=inkstand")
                                                   .importLdif(ldif)
                                                   .aroundDirectoryServer().onAvailablePort().build();
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
     private int port;
 
     private class test {
@@ -105,6 +110,22 @@ public class LdapIdentityManagerTest {
         //act
         //throws an InkstandRuntimeException because user is not found
         subject.verify(userId, passwordCredential);
+    }
+
+    @Test
+    public void testVerify_noConnection() throws Exception {
+        //prepare
+        when(authConfig.getPort()).thenReturn(port + 1);
+        prepareLdapConfig();
+        exception.expect(InkstandRuntimeException.class);
+        exception.expectMessage("Could not connect to LDAP server at localhost:" + (port+1));
+
+        //act
+        subject.connect();
+
+        //assert
+        fail("Exception expected");
+
     }
 
 
