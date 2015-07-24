@@ -37,11 +37,13 @@ import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 
 import io.inkstand.InkstandRuntimeException;
+import io.inkstand.jcr.InMemoryRepository;
 
 /**
  * Provider for an in-memory repository. The in-memory repository uses a predefined default configuration with
- * in-memory persistence only. This config file can be overwritten making this repository provider functionally
- * identical to the {@link StandaloneRepositoryProvider} from which in inherits. On top of the {@link StandaloneRepositoryProvider}
+ * in-memory persistence only. This config file can be overridden using the {@code inkstand.jcr.config} property making
+ * this repository provider functionally identical to the {@link StandaloneRepositoryProvider} from which in inherits.
+ * On top of the {@link StandaloneRepositoryProvider}
  * this implementation creates it's working directory automatically as temporary folder - which is not recommended
  * for repositories with persistence. And it provides the option to initialize the repository with a node type model
  * which has to be done manually for the standalone repository as it is typically only required once.
@@ -52,7 +54,7 @@ import io.inkstand.InkstandRuntimeException;
 public class InMemoryRepositoryProvider extends StandaloneRepositoryProvider  {
 
     /**
-     * Path to the working directory. The path is kept to clean it up on shutdown
+     * Path to the working directory. The path is kept to clean it up on shutdown.
      */
     private Path tempFolder;
 
@@ -72,7 +74,7 @@ public class InMemoryRepositoryProvider extends StandaloneRepositoryProvider  {
 
     @Override
     @Produces
-    @io.inkstand.jcr.InMemoryRepository
+    @InMemoryRepository
     public Repository getRepository() throws RepositoryException {
         final Repository repository = super.getRepository();
         try {
