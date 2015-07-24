@@ -97,20 +97,18 @@ public class LdapIdentityManager implements IdentityManager {
     @Override
     public Account verify(final String userId, final Credential credential) {
 
-        bind();
+        this.bind();
         try {
             final EntryCursor result = this.connection.search(this.ldapConfig.getUserContextDn(),
-                                                              getUserFilter(userId),
-                                                              getSearchScope());
+                                                             this. getUserFilter(userId),
+                                                              this.getSearchScope());
             if (result.next()) {
                 final Entry user = result.get();
-                return createUserAccount(user, credential, userId);
+                return this.createUserAccount(user, credential, userId);
             }
             throw new UserNotFoundException(userId);
         } catch (final LdapException | CursorException e) {
             throw new InkstandRuntimeException(e);
-        } finally {
-            unbind();
         }
     }
 
@@ -143,7 +141,7 @@ public class LdapIdentityManager implements IdentityManager {
 
         LOG.debug("User {} found, collecting user groups", userId);
 
-        final Set<String> roles = getRoles(userId, user.getDn().toString());
+        final Set<String> roles = this.getRoles(userId, user.getDn().toString());
         LOG.debug("User {} has roles {}", userId, roles);
 
         LOG.debug("Authenticating user {}", userId);
@@ -177,18 +175,6 @@ public class LdapIdentityManager implements IdentityManager {
     }
 
     /**
-     * Unbinds the currently bound user from the connection.
-     */
-    private void unbind() {
-
-        try {
-            this.connection.unBind();
-        } catch (final LdapException e) {
-            throw new InkstandRuntimeException("Ldap unbind failed", e);
-        }
-    }
-
-    /**
      * Retrieves all role names for the current user.
      *
      * @param uid
@@ -205,10 +191,9 @@ public class LdapIdentityManager implements IdentityManager {
      */
     private Set<String> getRoles(final String uid, final String userDn) throws LdapException, CursorException {
 
-        bind();
         final EntryCursor result = this.connection.search(this.ldapConfig.getRoleContextDn(),
-                                                          getRoleFilter(uid, userDn),
-                                                          getSearchScope(),
+                                                          this.getRoleFilter(uid, userDn),
+                                                          this.getSearchScope(),
                                                           this.ldapConfig.getRoleNameAttribute());
         final Set<String> roles = new HashSet<>();
         while (result.next()) {

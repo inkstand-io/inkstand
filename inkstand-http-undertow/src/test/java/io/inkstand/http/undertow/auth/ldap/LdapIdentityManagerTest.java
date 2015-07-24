@@ -16,15 +16,20 @@
 
 package io.inkstand.http.undertow.auth.ldap;
 
+import static io.inkstand.scribble.Scribble.inject;
 import static io.inkstand.scribble.Scribble.newDirectory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 import java.net.URL;
 import java.util.Set;
+import org.apache.directory.ldap.client.api.LdapConnection;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,6 +76,73 @@ public class LdapIdentityManagerTest {
         this.port = ldapServer.getTcpPort();
         when(authConfig.getPort()).thenReturn(port);
         when(authConfig.getHostname()).thenReturn("localhost");
+    }
+
+    @Test
+    public void disconnect_activeConnection() throws Exception {
+        //prepare
+        final LdapConnection con = mock(LdapConnection.class);
+        inject(con).into(subject);
+        when(con.isConnected()).thenReturn(true);
+
+        //act
+        subject.disconnect();
+
+        //assert
+        verify(con).close();
+
+    }
+
+
+
+    @Test
+    public void disconnect_noConnection() throws Exception {
+        //prepare
+        final LdapConnection con = mock(LdapConnection.class);
+        inject(con).into(subject);
+        when(con.isConnected()).thenReturn(false);
+
+        //act
+        subject.disconnect();
+
+        //assert
+        verify(con, times(0)).close();
+
+    }
+
+    @Test
+    public void verify_account() throws Exception {
+        //prepare
+        Account acc = mock(Account.class);
+
+        //act
+        Account result = subject.verify(acc);
+
+        //assert
+        assertEquals(acc, result);
+
+    }
+
+    @Test
+    public void verify_withConnection_and_invalidUser() throws Exception {
+
+        //prepare
+        prepareLdapConfig();
+        when(authConfig.getBindDn()).thenReturn("uid=invalid,ou=system");
+        when(authConfig.getBindCredentials()).thenReturn("invalid");
+        exception.expect(InkstandRuntimeException.class);
+        exception.expectMessage("Ldap authentication failed");
+
+        //prepare the user login data, see ldif
+        final String userId = "testuser";
+        final PasswordCredential passwordCredential = new PasswordCredential("Password1".toCharArray());
+        subject.connect();
+
+        //act
+        Account account = subject.verify(userId, passwordCredential);
+
+        //assert
+        fail("Exception expected");
     }
 
 
