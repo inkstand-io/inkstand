@@ -55,7 +55,7 @@ public class AuthenticationException extends InkstandRuntimeException {
 
     @Override
     public String getLocalizedMessage() {
-        return this.createMessage(super.getLocalizedMessage(), this.userId);
+        return super.getLocalizedMessage();
     }
 
     private String createMessage(final String message, final String user) {

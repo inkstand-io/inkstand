@@ -56,9 +56,6 @@ import io.undertow.servlet.api.DeploymentManager;
 @ProtectedService
 public class AuthenticatingUndertowWebServerProvider {
 
-    /**
-     * SLF4J Logger for this class
-     */
     private static final Logger LOG = LoggerFactory.getLogger(UndertowWebServerProvider.class);
 
     @Inject
@@ -82,7 +79,7 @@ public class AuthenticatingUndertowWebServerProvider {
     @Produces
     public Undertow getSecuredUndertow() {
 
-        this.deploymentInfo.setIdentityManager(identityManager);
+        this.deploymentInfo.setIdentityManager(this.identityManager);
 
         final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(this.deploymentInfo);
         deploymentManager.deploy();
@@ -112,24 +109,22 @@ public class AuthenticatingUndertowWebServerProvider {
      */
     HttpHandler addSecurity(final HttpHandler toWrap) {
 
-        final List<AuthenticationMechanism> mechanisms = getAuthenticationMechanisms();
+        final List<AuthenticationMechanism> mechanisms = this.getAuthenticationMechanisms();
 
         HttpHandler handler = toWrap;
         handler = new AuthenticationCallHandler(handler);
         handler = new AuthenticationConstraintHandler(handler);
         handler = new AuthenticationMechanismsHandler(handler, mechanisms);
-        handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, identityManager, handler);
+        handler = new SecurityInitialHandler(AuthenticationMode.PRO_ACTIVE, this.identityManager, handler);
         return handler;
     }
 
     private List<AuthenticationMechanism> getAuthenticationMechanisms() {
 
         final List<AuthenticationMechanism> mechanisms = new ArrayList<>();
-        switch (this.securityConfig.getAuthenticationMethod()) {
-            case "BASIC":
-                mechanisms.add(new BasicAuthenticationMechanism(this.securityConfig.getRealm()));
-                break;
-            default:
+        if("BASIC".equals(this.securityConfig.getAuthenticationMethod())){
+            mechanisms.add(new BasicAuthenticationMechanism(this.securityConfig.getRealm()));
+        } else {
                 throw new IllegalArgumentException(this.securityConfig.getAuthenticationMethod()
                                                            + " is no supported security mechanism");
         }
