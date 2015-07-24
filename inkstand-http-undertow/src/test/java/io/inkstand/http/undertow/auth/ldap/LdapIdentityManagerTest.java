@@ -36,7 +36,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import io.inkstand.InkstandRuntimeException;
 import io.inkstand.scribble.rules.ldap.DirectoryServer;
+import io.inkstand.security.InvalidCredentialsException;
 import io.inkstand.security.LdapAuthConfiguration;
+import io.inkstand.security.UserNotFoundException;
 import io.undertow.security.idm.Account;
 import io.undertow.security.idm.PasswordCredential;
 
@@ -73,7 +75,7 @@ public class LdapIdentityManagerTest {
 
 
     @Test
-    public void testVerify_withConnection_and_validUser() throws Exception {
+    public void verify_withConnection_and_validUser_returns_valid_account() throws Exception {
 
         //prepare
         prepareLdapConfig();
@@ -95,11 +97,12 @@ public class LdapIdentityManagerTest {
         assertTrue(roles.contains("testgroup"));
     }
 
-    @Test(expected = InkstandRuntimeException.class)
-    public void testVerify_withConnection_and_invalidUser() throws Exception {
+    @Test
+    public void verify_withConnection_and_invalidUser_throws_exception() throws Exception {
 
         //prepare
         prepareLdapConfig();
+        exception.expect(UserNotFoundException.class);
 
         //prepare the user login data, see ldif
         final String userId = "invalidUser";
@@ -110,10 +113,34 @@ public class LdapIdentityManagerTest {
         //act
         //throws an InkstandRuntimeException because user is not found
         subject.verify(userId, passwordCredential);
+
+        //assert
+        fail("Exception expected");
     }
 
     @Test
-    public void testVerify_noConnection() throws Exception {
+    public void verify_withConnection_and_validUser_and_wrongPassword_throws_exception() throws Exception {
+
+        //prepare
+        prepareLdapConfig();
+        exception.expect(InvalidCredentialsException.class);
+
+        //prepare the user login data, see ldif
+        final String userId = "testuser";
+        final PasswordCredential passwordCredential = new PasswordCredential("InvalidPassword".toCharArray());
+
+        subject.connect();
+
+        //act
+        //throws an InkstandRuntimeException because user is not found
+        subject.verify(userId, passwordCredential);
+
+        //assert
+        fail("Exception expected");
+    }
+
+    @Test
+    public void verify_with_noConnection_throws_exception() throws Exception {
         //prepare
         when(authConfig.getPort()).thenReturn(port + 1);
         prepareLdapConfig();
