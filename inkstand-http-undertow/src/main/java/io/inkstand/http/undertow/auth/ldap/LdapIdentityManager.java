@@ -155,9 +155,6 @@ public class LdapIdentityManager implements IdentityManager {
 
         final LdapAccount account = new LdapAccount(userId, user.getDn().toString());
         account.addRoles(roles);
-        for (final String role : roles) {
-            account.addRole(role);
-        }
         return account;
     }
 
