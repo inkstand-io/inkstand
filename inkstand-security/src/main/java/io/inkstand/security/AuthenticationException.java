@@ -50,25 +50,25 @@ public class AuthenticationException extends InkstandRuntimeException {
 
     @Override
     public String getMessage() {
-        return getMessage(super.getMessage(), userId);
+        return this.createMessage(super.getMessage(), this.userId);
     }
 
     @Override
     public String getLocalizedMessage() {
-        return getMessage(super.getLocalizedMessage(), userId);
+        return this.createMessage(super.getLocalizedMessage(), this.userId);
     }
 
-    private String getMessage(final String message, final String user) {
+    private String createMessage(final String message, final String user) {
         return message + " [user=" + user+ ']';
     }
 
     /**
-     * The id of the user that failed to authenticate
+     * The id of the user that failed to authenticate.
      *
      * @return a string representing the id of the user whose authentication failed
      */
     public String getUserId() {
-        return userId;
+        return this.userId;
     }
 
 }

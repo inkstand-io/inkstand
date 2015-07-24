@@ -59,10 +59,10 @@ public class AuthenticationExceptionTest {
 
     @Test
     public void testGetLocalizedMessage() throws Exception {
-        assertEquals("Authentication failed [user=testUser]", subject_with_userId.getMessage());
-        assertEquals("Authentication failed [user=testUser]", subject_with_userId_and_cause.getMessage());
-        assertEquals("myMessage [user=testUser]", subject_with_message_and_userId.getMessage());
-        assertEquals("myMessage [user=testUser]", subject_with_message_and_userId_and_cause.getMessage());
+        assertEquals("Authentication failed [user=testUser]", subject_with_userId.getLocalizedMessage());
+        assertEquals("Authentication failed [user=testUser]", subject_with_userId_and_cause.getLocalizedMessage());
+        assertEquals("myMessage [user=testUser]", subject_with_message_and_userId.getLocalizedMessage());
+        assertEquals("myMessage [user=testUser]", subject_with_message_and_userId_and_cause.getLocalizedMessage());
     }
 
     @Test
