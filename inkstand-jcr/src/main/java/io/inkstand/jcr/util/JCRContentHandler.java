@@ -16,13 +16,6 @@
 
 package io.inkstand.jcr.util;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.Repository;
@@ -30,6 +23,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class JCRContentHandler extends DefaultHandler {
     /**
      * Namespace the content handler uses to identify the correct elements
      */
-    public static final String INKSTAND_IMPORT_NAMESPACE = "http://inkstand.io/schemas/jcr-import";
+    public static final String INKSTAND_IMPORT_NAMESPACE = "http://inkstand.io/schemas/jcr-import"; //NOSONAR
 
     /**
      * Object Factory for creating temporary model object.
@@ -93,7 +93,7 @@ public class JCRContentHandler extends DefaultHandler {
     private static final Map<PropertyValueType, Integer> JCR_PROPERTIES;
 
     static {
-        final Map<PropertyValueType, Integer> properties = new HashMap<>();
+        final Map<PropertyValueType, Integer> properties = new HashMap<>(); //NOSONAR
         //@formatter:off
         properties.put(PropertyValueType.BINARY,        PropertyType.BINARY);
         properties.put(PropertyValueType.DATE,          PropertyType.DATE);
@@ -148,7 +148,7 @@ public class JCRContentHandler extends DefaultHandler {
         try {
             session.save();
         } catch (final RepositoryException e) {
-            throw new SAXException("Saving failed", e);
+            throw new SAXException("Saving failed", e); //NOSONAR
         }
         final long endTime = System.nanoTime();
         final long processingTime = endTime - startTime;
@@ -200,7 +200,7 @@ public class JCRContentHandler extends DefaultHandler {
         LOG.debug("Found rootNode");
         try {
             nodeStack.push(newNode(null, attributes));
-        } catch (final RepositoryException e) {
+        } catch (final RepositoryException e) { //NOSONAR
             throw new SAXException("Could not create node", e);
         }
     }
@@ -219,7 +219,7 @@ public class JCRContentHandler extends DefaultHandler {
         try {
             nodeStack.push(newNode(nodeStack.peek(), attributes));
         } catch (final RepositoryException e) {
-            throw new SAXException("Could not create node", e);
+            throw new SAXException("Could not create node", e); //NOSONAR
         }
     }
 
@@ -237,7 +237,7 @@ public class JCRContentHandler extends DefaultHandler {
         try {
             addMixin(nodeStack.peek(), attributes);
         } catch (final RepositoryException e) {
-            throw new SAXException("Could not add mixin type", e);
+            throw new SAXException("Could not add mixin type", e); //NOSONAR
         }
     }
 
@@ -287,12 +287,12 @@ public class JCRContentHandler extends DefaultHandler {
     private void endElementProperty() throws SAXException {
 
         LOG.debug("Closing property");
-        final PropertyDescriptor pd = propertyStack.pop();
+        final PropertyDescriptor propDesc = propertyStack.pop();
         try {
-            pd.setValue(parseValue(pd.getJcrType(), textStack.pop()));
-            addProperty(nodeStack.peek(), pd);
+            propDesc.setValue(parseValue(propDesc.getJcrType(), textStack.pop()));
+            addProperty(nodeStack.peek(), propDesc);
         } catch (final RepositoryException e) {
-            throw new SAXException("Could set property value", e);
+            throw new SAXException("Could set property value", e); //NOSONAR
         }
     }
 
@@ -340,15 +340,15 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
      *
      * @param node
      *         the node to which the property should be added
-     * @param pd
+     * @param propDesc
      *         the {@link PropertyDescriptor} containing the details of the property
      *
      * @throws RepositoryException
      */
-    private void addProperty(final Node node, final PropertyDescriptor pd) throws RepositoryException {
+    private void addProperty(final Node node, final PropertyDescriptor propDesc) throws RepositoryException {
 
-        LOG.info("Node {} adding property {}", node.getPath(), pd.getName());
-        node.setProperty(pd.getName(), (Value) pd.getValue());
+        LOG.info("Node {} adding property {}", node.getPath(), propDesc.getName());
+        node.setProperty(propDesc.getName(), (Value) propDesc.getValue());
     }
 
     /**
@@ -361,23 +361,23 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
      */
     private PropertyDescriptor newPropertyDescriptor(final Attributes attributes) {
 
-        final PropertyDescriptor pd = FACTORY.createPropertyDescriptor();
+        final PropertyDescriptor propDesc = FACTORY.createPropertyDescriptor();
         LOG.debug("property name={}", attributes.getValue("name"));
         LOG.debug("property jcrType={}", attributes.getValue("jcrType"));
-        pd.setName(attributes.getValue("name"));
-        pd.setJcrType(PropertyValueType.fromValue(attributes.getValue("jcrType")));
-        return pd;
+        propDesc.setName(attributes.getValue("name"));
+        propDesc.setJcrType(PropertyValueType.fromValue(attributes.getValue("jcrType")));
+        return propDesc;
     }
 
     private Object parseValue(final PropertyValueType valueType, final String valueAsText) throws RepositoryException {
         // TODO handle ref property
         LOG.debug("Parsing type={} from='{}'", valueType, valueAsText);
-        final ValueFactory vf = session.getValueFactory();
+        final ValueFactory valueFactory = session.getValueFactory();
         Value value;
         switch (valueType) {
             case BINARY:
-                value = vf.createValue(vf.createBinary(new ByteArrayInputStream(Base64.decodeBase64(valueAsText.getBytes(
-                        StandardCharsets.UTF_8)))));
+                value = valueFactory.createValue(valueFactory.createBinary(new ByteArrayInputStream(Base64.decodeBase64(
+                        valueAsText.getBytes(StandardCharsets.UTF_8)))));
                 break;
             case REFERENCE:
                 // TODO resolve IDs
@@ -388,7 +388,7 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
                 value = null;
                 break;
             default:
-                value = vf.createValue(valueAsText, getPropertyType(valueType));
+                value = valueFactory.createValue(valueAsText, getPropertyType(valueType));
         }
 
         return value;
@@ -424,9 +424,9 @@ More on Jackrabbit configuration can be found on the Apache Jackrabbit project p
      * Detects text by trimming the effective content of the char array.
      */
     @Override
-    public void characters(final char[] ch, final int start, final int length) throws SAXException {
+    public void characters(final char[] chr, final int start, final int length) throws SAXException {
 
-        final String text = new String(ch).substring(start, start + length);
+        final String text = new String(chr).substring(start, start + length);
         LOG.trace("characters; '{}'", text);
         final String trimmedText = text.trim();
         if (!trimmedText.isEmpty()) {
