@@ -131,7 +131,7 @@ public final class JackrabbitUtil {
 
     }
 
-    private static void logRegisteredNodeTypes(final NodeType[] nodeTypes) {
+    private static void logRegisteredNodeTypes(final NodeType... nodeTypes) {
         final StringBuilder buf = new StringBuilder(32);
         for (final NodeType nt : nodeTypes) {
             buf.append(nt.getName()).append("\n\t  > ");

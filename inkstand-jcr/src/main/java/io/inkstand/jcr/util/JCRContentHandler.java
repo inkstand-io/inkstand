@@ -200,8 +200,8 @@ public class JCRContentHandler extends DefaultHandler {
         LOG.debug("Found rootNode");
         try {
             nodeStack.push(newNode(null, attributes));
-        } catch (final RepositoryException e) { //NOSONAR
-            throw new SAXException("Could not create node", e);
+        } catch (final RepositoryException e) {
+            throw new SAXException("Could not create node", e); //NOSONAR
         }
     }
 

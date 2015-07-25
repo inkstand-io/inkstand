@@ -35,9 +35,11 @@ import io.inkstand.InkstandRuntimeException;
  */
 public class JCRContentLoader {
 
-    private boolean validateInput = false;
+    private boolean validateInput;
+
     private boolean namespaceAware = true;
-    private Schema schema = null;
+
+    private Schema schema;
 
     /**
      * Loads the content from the specified contentDefinition into the JCRRepository, using the specified session
@@ -45,15 +47,15 @@ public class JCRContentLoader {
      * @param session
      *            the session used to import the date. The user bound to the session must have the required privileges
      *            to perform the import operation.
-     * @param contentDefinitionResource
-     *            the content definition describing which content to import.
+     * @param contentDef
+     *            the resource of the content definition describing which content to import.
      */
-    public void loadContent(final Session session, final URL contentDefinitionResource) {
+    public void loadContent(final Session session, final URL contentDef) {
         final SAXParserFactory factory = getSAXParserFactory();
         try {
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             final SAXParser parser = factory.newSAXParser();
-            final InputSource source = new InputSource(contentDefinitionResource.openStream());
+            final InputSource source = new InputSource(contentDef.openStream());
             parser.parse(source, new JCRContentHandler(session));
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new InkstandRuntimeException("Loading Content to JCR Repository failed", e);

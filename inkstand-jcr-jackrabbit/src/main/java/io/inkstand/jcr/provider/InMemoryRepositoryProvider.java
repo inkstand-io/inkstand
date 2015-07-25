@@ -146,14 +146,14 @@ public class InMemoryRepositoryProvider extends StandaloneRepositoryProvider  {
 
         final String configuredHome = super.getRepositoryHome();
         final Path workingDir;
-        if(configuredHome != null) {
-            workingDir = Paths.get(configuredHome);
-        } else {
+        if(configuredHome == null) {
             try {
                 workingDir = Files.createTempDirectory("inkstand");
             } catch (IOException e) {
                 throw new InkstandRuntimeException("Could not create temporary working directory", e);
             }
+        } else {
+            workingDir = Paths.get(configuredHome);
         }
         return workingDir.toAbsolutePath();
     }
