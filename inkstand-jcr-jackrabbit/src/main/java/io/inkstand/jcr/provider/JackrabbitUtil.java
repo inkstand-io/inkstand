@@ -54,7 +54,7 @@ public final class JackrabbitUtil {
     /**
      * Creates a transient repository at the specified path using the specified configuration file
      *
-     * @param repositoryLocation
+     * @param workDir
      *            the home directory of the repository
      * @param configUrl
      *            the URL to the configuration file
@@ -62,13 +62,13 @@ public final class JackrabbitUtil {
      * @throws ConfigurationException
      *   when the configuration file is was invalid
      */
-    public static TransientRepository createTransientRepository(final File repositoryLocation, final URL configUrl)
+    public static TransientRepository createTransientRepository(final File workDir, final URL configUrl)
             throws ConfigurationException {
-        LOG.info("Creating transient repository at location {}", repositoryLocation.getAbsolutePath());
+        LOG.info("Creating transient repository at location {}", workDir.getAbsolutePath());
 
         RepositoryConfig config;
         try {
-            config = RepositoryConfig.create(configUrl.openStream(), repositoryLocation.getAbsolutePath());
+            config = RepositoryConfig.create(configUrl.openStream(), workDir.getAbsolutePath());
         } catch (final IOException e) {
             throw new InkstandRuntimeException("Could not read config url " + configUrl, e);
         }
@@ -156,11 +156,11 @@ public final class JackrabbitUtil {
      *
      * @param session
      *            the session to load the content into the repository
-     * @param contentDescription
+     * @param contentDesc
      *            the URL of the content description file
      */
-    public static void loadContent(final Session session, final URL contentDescription) {
-        new JCRContentLoader().loadContent(session, contentDescription);
+    public static void loadContent(final Session session, final URL contentDesc) {
+        new JCRContentLoader().loadContent(session, contentDesc);
     }
 
 }
