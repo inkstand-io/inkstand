@@ -40,9 +40,9 @@ public class BinaryStreamingOutput implements StreamingOutput {
             throws IOException, WebApplicationException {
 
         try (InputStream inStream = data.getStream()){
-            int data;
-            while ((data = inStream.read()) != -1) {
-                paramOutputStream.write(data);
+            int readByte;
+            while ((readByte = inStream.read()) != -1) {
+                paramOutputStream.write(readByte);
             }
         } catch (final RepositoryException e) {
             throw new WebApplicationException(e);
