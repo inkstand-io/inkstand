@@ -16,7 +16,6 @@
 
 package io.inkstand.it;
 
-import javax.ws.rs.client.ClientBuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,11 +23,13 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.inkstand.Inkstand;
 import io.inkstand.scribble.Scribble;
@@ -40,6 +41,7 @@ import io.inkstand.scribble.net.NetworkUtils;
  */
 public class StaticContentITCase {
 
+    @ClassRule
     public final static TemporaryFolder folder = Scribble.newTempFolder().build();
 
     public static File contentFile;
@@ -79,18 +81,17 @@ public class StaticContentITCase {
     }
 
     @Test
-    public void testGetStaticContent_contextRoot_indexFile() {
+    public void testGetStaticContent_contextRoot_indexFile() throws IOException {
         //prepare
         System.setProperty("inkstand.http.content.zip", contentFile.getAbsolutePath());
         Inkstand.main(new String[] {});
 
-        //act
-        String value = ClientBuilder.newClient()
-                                    .target("http://localhost:" + port + "/")
-                                    .request().get(String.class);
-        //assert
-        Assert.assertEquals("test", value);
+        try (final WebClient webClient = new WebClient()) {
+            final HtmlPage page = webClient.getPage("http://localhost:"+port+"/index.html");
 
+            final String pageAsXml = page.asXml();
+            System.out.println(pageAsXml);
+        }
     }
 
 

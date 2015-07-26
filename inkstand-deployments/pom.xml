@@ -27,6 +27,7 @@
   <description>Deployments for Inkstand.</description>
   <modules>
   	<module>inkstand-undertow-resteasy</module>
+    <module>inkstand-undertow-staticcontent</module>
   </modules>
 
 
