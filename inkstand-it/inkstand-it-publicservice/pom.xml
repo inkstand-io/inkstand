@@ -40,7 +40,7 @@
         </dependency>
         <dependency>
             <groupId>io.inkstand</groupId>
-            <artifactId>inkstand-deployment-resteasy</artifactId>
+            <artifactId>inkstand-undertow-resteasy</artifactId>
             <version>0.2.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
