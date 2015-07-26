@@ -237,6 +237,12 @@
                 <artifactId>mockito-all</artifactId>
                 <version>${test.mockito.version}</version>
             </dependency>
+            <dependency>
+                <groupId>net.sourceforge.htmlunit</groupId>
+                <artifactId>htmlunit</artifactId>
+                <version>${test.htmlunit.version}</version>
+            </dependency>
+
             <!-- Arquillian -->
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
