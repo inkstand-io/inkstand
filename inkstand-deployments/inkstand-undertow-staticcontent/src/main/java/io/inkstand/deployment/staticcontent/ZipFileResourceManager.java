@@ -31,8 +31,15 @@ import io.undertow.server.handlers.resource.ResourceManager;
  */
 public class ZipFileResourceManager implements ResourceManager {
 
+    /**
+     * The zip file containing the resource to be served by this manager.
+     */
     private final ZipFile zipFile;
 
+    /**
+     * Creates the resource manager for serving the contents of the zip file.
+     * @param zipFile
+     */
     public ZipFileResourceManager(File zipFile) {
 
         try {
