@@ -26,7 +26,8 @@
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Deployments for Inkstand.</description>
   <modules>
-  	<module>inkstand-deployment-resteasy</module>
+  	<module>inkstand-undertow-resteasy</module>
+    <module>inkstand-undertow-staticcontent</module>
   </modules>
 
 
