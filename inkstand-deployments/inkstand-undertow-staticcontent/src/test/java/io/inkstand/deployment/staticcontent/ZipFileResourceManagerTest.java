@@ -19,6 +19,7 @@ package io.inkstand.deployment.staticcontent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,6 +31,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import io.inkstand.scribble.Scribble;
 import io.inkstand.scribble.rules.TemporaryFile;
 import io.undertow.server.handlers.resource.Resource;
+import io.undertow.server.handlers.resource.ResourceChangeListener;
 
 /**
  * Created by Gerald on 26.07.2015.
@@ -91,6 +93,30 @@ public class ZipFileResourceManagerTest {
 
         //assert
         subject.getResource("/index.html");
+
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testRegisterResourceChangeListener() throws Exception {
+        //prepare
+        ResourceChangeListener listener = mock(ResourceChangeListener.class);
+
+        //act
+        subject.registerResourceChangeListener(listener);
+
+        //assert
+
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testRemoveResourceChangeListener() throws Exception {
+        //prepare
+        ResourceChangeListener listener = mock(ResourceChangeListener.class);
+
+        //act
+        subject.removeResourceChangeListener(listener);
+
+        //assert
 
     }
 }

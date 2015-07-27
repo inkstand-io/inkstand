@@ -106,7 +106,7 @@ public class ZipFileResource implements Resource {
     public List<Resource> list() {
 
         if(!zipEntry.isDirectory()){
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         final List<Resource> resourceList = new ArrayList<>();
@@ -138,10 +138,10 @@ public class ZipFileResource implements Resource {
     @Override
     public void serve(final Sender sender, final HttpServerExchange exchange, final IoCallback completionCallback) {
 
-        OutputStream os = exchange.getOutputStream();
-        try (InputStream is = zipFile.getInputStream(zipEntry)) {
+        final OutputStream outStream = exchange.getOutputStream();
+        try (InputStream inStream = zipFile.getInputStream(zipEntry)) {
 
-            IOUtils.copy(is, os);
+            IOUtils.copy(inStream, outStream);
             completionCallback.onComplete(exchange, sender);
 
         } catch (IOException e) {

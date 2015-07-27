@@ -65,12 +65,12 @@ public class ZipFileResourceManager implements ResourceManager {
 
     @Override
     public void registerResourceChangeListener(final ResourceChangeListener listener) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void removeResourceChangeListener(final ResourceChangeListener listener) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override

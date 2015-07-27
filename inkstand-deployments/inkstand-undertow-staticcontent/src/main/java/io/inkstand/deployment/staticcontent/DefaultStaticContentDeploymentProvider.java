@@ -31,13 +31,13 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
 
     @Inject
     @ConfigProperty(name = "inkstand.http.content.zip")
-    private String contentFileLocation;
+    private String contentFileLocation; //NOSONAR
 
     @Override
     @Produces
     public DeploymentInfo getDeployment() {
 
-        final File contentFile = new File(contentFileLocation);
+        final File contentFile = new File(contentFileLocation); //NOSONAR
 
         return new DeploymentInfo()
         .setContextPath("/")
