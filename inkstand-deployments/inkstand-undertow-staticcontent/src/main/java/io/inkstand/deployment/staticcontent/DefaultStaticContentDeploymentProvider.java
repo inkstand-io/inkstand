@@ -40,7 +40,8 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
         final File contentFile = new File(contentFileLocation);
 
         return new DeploymentInfo()
-        .setContextPath("/").setResourceManager(new ZipFileResourceManager(contentFile))
+        .setContextPath("/")
+        .setResourceManager(new ZipFileResourceManager(contentFile))
         .setDeploymentName("StaticContent")
         .setClassLoader(ClassLoader.getSystemClassLoader());
 

@@ -63,7 +63,7 @@ public class ZipFileResourceManagerTest {
     public void testGetResource() throws Exception {
 
         //prepare
-        String path = "/index.html";
+        String path = "index.html";
 
         //act
         Resource resource = subject.getResource(path);
