@@ -99,6 +99,7 @@
         <!-- Apache Library Version -->
         <apache.commons.io.version>2.4</apache.commons.io.version>
         <apache.commons.codec.version>1.10</apache.commons.codec.version>
+        <apache.commons.lang.version>3.4</apache.commons.lang.version>
         <apache.deltaspike.version>1.4.0</apache.deltaspike.version>
         <apache.jackrabbit.version>2.10.1</apache.jackrabbit.version>
         <apache.ds.server.version>2.0.0-M20</apache.ds.server.version>
@@ -145,6 +146,11 @@
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${apache.commons.codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${apache.commons.lang.version}</version>
             </dependency>
             <!-- Apache Deltaspike -->
             <dependency>

@@ -22,13 +22,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.slf4j.Logger;
 
 import io.undertow.io.IoCallback;
@@ -39,36 +42,46 @@ import io.undertow.util.ETag;
 import io.undertow.util.MimeMappings;
 
 /**
- * Created by Gerald on 26.07.2015.
+ * A resource implementation that reflects a single entry in a zip file. The resource is bound to a {@link ZipFile} and
+ * a path within that file. Created by Gerald on 26.07.2015.
  */
 public class ZipFileResource implements Resource {
 
     private static final Logger LOG = getLogger(ZipFileResource.class);
 
+    /**
+     * The zip file that contains the entry referenced by path. It is required to read the content of the entry.
+     */
     private final ZipFile zipFile;
-    private final ZipEntry zipEntry;
-    private final String path;
 
-    public ZipFileResource(ZipFile zipFile, String path){
+    /**
+     * The zip entry that refers to the actual resource
+     */
+    private final ZipEntry zipEntry;
+
+
+    public static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss zzz");
+
+    public ZipFileResource(ZipFile zipFile, String path) {
+
         this.zipFile = zipFile;
         this.zipEntry = zipFile.getEntry(path);
-        this.path = path;
     }
 
     @Override
     public String getPath() {
-        return this.path;
+        return this.zipEntry.getName();
     }
 
     @Override
     public Date getLastModified() {
+
         return new Date(zipEntry.getTime());
     }
 
     @Override
     public String getLastModifiedString() {
-
-        return null;
+        return DATE_FORMAT.format(getLastModified());
     }
 
     @Override
@@ -92,30 +105,49 @@ public class ZipFileResource implements Resource {
     @Override
     public List<Resource> list() {
 
-        return null;
+        if(!zipEntry.isDirectory()){
+            return Collections.EMPTY_LIST;
+        }
+
+        final List<Resource> resourceList = new ArrayList<>();
+        final Enumeration<? extends ZipEntry> entries = this.zipFile.entries();
+        final String rootEntryPath = zipEntry.getName();
+        while(entries.hasMoreElements()){
+            final ZipEntry entry = entries.nextElement();
+            final String entryPath = entry.getName();
+
+            //we make just a check for the base path. With this, all entries including those in the subdirectories
+            //will be added too. One could consider this as a characteristic of a zip-file content store. If this
+            //causes problems, this part should be improved with a more sophisticated logic
+            if(!entryPath.equals(rootEntryPath) && entryPath.startsWith(rootEntryPath)){
+                resourceList.add(new ZipFileResource(this.zipFile, entryPath));
+            }
+        }
+
+        return resourceList;
     }
 
     @Override
     public String getContentType(final MimeMappings mimeMappings) {
 
-        return null;
+        String extension = zipEntry.getName().substring(zipEntry.getName().lastIndexOf('.') + 1);
+        return mimeMappings.getMimeType(extension);
+
     }
 
     @Override
     public void serve(final Sender sender, final HttpServerExchange exchange, final IoCallback completionCallback) {
 
         OutputStream os = exchange.getOutputStream();
-        try(InputStream is = zipFile.getInputStream(zipEntry)){
+        try (InputStream is = zipFile.getInputStream(zipEntry)) {
 
             IOUtils.copy(is, os);
+            completionCallback.onComplete(exchange, sender);
 
         } catch (IOException e) {
             LOG.error("Could not serve content file", e);
-            e.printStackTrace(new PrintStream(os));
-        } finally {
-            completionCallback.onComplete(exchange, sender);
+            completionCallback.onException(exchange, sender, e);
         }
-
     }
 
     @Override

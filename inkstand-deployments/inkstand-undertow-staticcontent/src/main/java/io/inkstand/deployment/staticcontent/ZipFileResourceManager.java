@@ -26,7 +26,9 @@ import io.undertow.server.handlers.resource.ResourceChangeListener;
 import io.undertow.server.handlers.resource.ResourceManager;
 
 /**
- * An Undertow {@link ResourceManager} that serves resources from a zip file.
+ * An Undertow {@link ResourceManager} that serves resources from a zip file. All content may be provided in a single
+ * zip file which makes bulk deployment and replacement much easier. Further, it's inherently not possible to
+ * leave the content structure with relative paths.
  * Created by Gerald on 26.07.2015.
  */
 public class ZipFileResourceManager implements ResourceManager {
