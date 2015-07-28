@@ -19,6 +19,7 @@ package io.inkstand.deployment.staticcontent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
@@ -113,6 +114,20 @@ public class ZipFileResourceManagerTest {
         assertNotNull(resource);
         assertEquals("/index2.html", resource.getPath());
     }
+
+    @Test
+    public void testGetResource_nonExistingResource_null() throws Exception {
+
+        //prepare
+
+        //act
+        Resource resource = subject.getResource("/non-existing.html");
+
+        //assert
+        assertNull(resource);
+    }
+
+
 
     @Test
     public void testIsResourceChangeListenerSupported() throws Exception {

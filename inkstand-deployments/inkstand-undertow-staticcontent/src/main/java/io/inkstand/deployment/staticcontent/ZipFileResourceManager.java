@@ -70,9 +70,6 @@ public class ZipFileResourceManager implements ResourceManager {
     public Resource getResource(final String path) throws IOException {
 
         //entries in the zip file can be with leading / or without
-        String relativePath;
-        String absolutePath;
-
         ZipEntry entry;
         if(path.startsWith("/")){
             entry = getEntry(path, path.substring(1));
