@@ -264,7 +264,7 @@ public class ZipFileResourceTest {
     public void testList_fileEntry_emptyList() throws Exception {
 
         //prepare
-        Enumeration enumeration = Collections.enumeration(Arrays.asList(zipEntry));
+        Enumeration enumeration = Collections.enumeration(Arrays.asList(zipEntry, dirEntry));
         when(zipFile.entries()).thenReturn(enumeration);
 
 

@@ -118,6 +118,10 @@ public class ZipFileResource implements Resource {
     @Override
     public List<Resource> list() {
 
+        //this check is just for preventing the scan of the entire zip file
+        //the method would return the same result without this check (equal_else mutant)
+        //but without this check the list method could be an performance issue on zip
+        //files with lots on entries
         if(!zipEntry.isDirectory()){
             return Collections.emptyList();
         }
