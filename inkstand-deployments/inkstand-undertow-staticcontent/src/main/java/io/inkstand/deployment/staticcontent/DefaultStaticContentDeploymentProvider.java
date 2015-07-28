@@ -16,10 +16,13 @@
 
 package io.inkstand.deployment.staticcontent;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import java.io.File;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
+import org.slf4j.Logger;
 
 import io.inkstand.http.undertow.UndertowDeploymentProvider;
 import io.undertow.servlet.api.DeploymentInfo;
@@ -29,6 +32,8 @@ import io.undertow.servlet.api.DeploymentInfo;
  */
 public class DefaultStaticContentDeploymentProvider implements UndertowDeploymentProvider {
 
+    private static final Logger LOG = getLogger(DefaultStaticContentDeploymentProvider.class);
+
     @Inject
     @ConfigProperty(name = "inkstand.http.content.zip")
     private String contentFileLocation; //NOSONAR
@@ -37,6 +42,7 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
     @Produces
     public DeploymentInfo getDeployment() {
 
+        LOG.info("Serving content from {}", contentFileLocation);
         final File contentFile = new File(contentFileLocation); //NOSONAR
 
         return new DeploymentInfo()
