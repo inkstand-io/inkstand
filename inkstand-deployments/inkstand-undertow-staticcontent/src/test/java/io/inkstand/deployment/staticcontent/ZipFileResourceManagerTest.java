@@ -44,7 +44,6 @@ public class ZipFileResourceManagerTest {
      */
     private ZipFileResourceManager subject;
 
-
     //@formatter:off
     @Rule
     public final TemporaryFile file = Scribble.newTempFolder().aroundTempFile("content.zip")
@@ -58,21 +57,61 @@ public class ZipFileResourceManagerTest {
 
     @Before
     public void setUp() throws Exception {
+
         subject = new ZipFileResourceManager(file.getFile());
+
     }
 
     @Test
-    public void testGetResource() throws Exception {
+    public void testGetResource_nonLeadingSlashPath_nonLeadingSlashEntry_success() throws Exception {
 
         //prepare
-        String path = "index.html";
 
         //act
-        Resource resource = subject.getResource(path);
+        Resource resource = subject.getResource("index1.html");
 
         //assert
         assertNotNull(resource);
-        assertEquals(path, resource.getPath());
+        assertEquals("index1.html", resource.getPath());
+    }
+
+    @Test
+    public void testGetResource_leadingSlashPath_nonLeadingSlashEntry_success() throws Exception {
+
+        //prepare
+
+        //act
+        Resource resource = subject.getResource("/index1.html");
+
+        //assert
+        assertNotNull(resource);
+        assertEquals("/index1.html", resource.getPath());
+    }
+
+    @Test
+    public void testGetResource_nonLeadingSlashPath_leadingSlashEntry_success() throws Exception {
+
+        //prepare
+
+        //act
+        Resource resource = subject.getResource("index2.html");
+
+        //assert
+        assertNotNull(resource);
+        assertEquals("index2.html", resource.getPath());
+    }
+
+    @Test
+    public void testGetResource_leadingSlashPath_leadingSlashEntry_success() throws Exception {
+
+        //prepare
+
+        //act
+        Resource resource = subject.getResource("/index2.html");
+
+        //assert
+        assertNotNull(resource);
+        assertEquals("/index2.html", resource.getPath());
     }
 
     @Test

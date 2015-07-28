@@ -16,9 +16,15 @@
 
 package io.inkstand.deployment.staticcontent;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import org.slf4j.Logger;
 
 import io.inkstand.InkstandRuntimeException;
 import io.undertow.server.handlers.resource.Resource;
@@ -33,6 +39,8 @@ import io.undertow.server.handlers.resource.ResourceManager;
  */
 public class ZipFileResourceManager implements ResourceManager {
 
+    private static final Logger LOG = getLogger(ZipFileResourceManager.class);
+
     /**
      * The zip file containing the resource to be served by this manager.
      */
@@ -46,6 +54,13 @@ public class ZipFileResourceManager implements ResourceManager {
 
         try {
             this.zipFile = new ZipFile(zipFile);
+            if(LOG.isDebugEnabled()){
+                LOG.debug("Registered resources");
+                final Enumeration<? extends ZipEntry> entries = this.zipFile.entries();
+                while(entries.hasMoreElements()){
+                    LOG.debug("{}", entries.nextElement().getName());
+                }
+            }
         } catch (IOException e) {
             throw new InkstandRuntimeException("Could not read content from zip file  " + zipFile, e);
         }
@@ -54,12 +69,32 @@ public class ZipFileResourceManager implements ResourceManager {
     @Override
     public Resource getResource(final String path) throws IOException {
 
-        return new ZipFileResource(this.zipFile, path);
+        //entries in the zip file can be with leading / or without
+        String relativePath;
+        String absolutePath;
+
+        ZipEntry entry;
+        if(path.startsWith("/")){
+            entry = getEntry(path, path.substring(1));
+        } else {
+            entry = getEntry("/" + path, path);
+        }
+        if(entry == null) {
+            return null;
+        }
+        return new ZipFileResource(this.zipFile, entry, path);
+    }
+
+    private ZipEntry getEntry(final String absolutePath, final String relativePath) {
+        ZipEntry entry = this.zipFile.getEntry(absolutePath);
+        if(entry == null) {
+            entry = this.zipFile.getEntry(relativePath);
+        }
+        return entry;
     }
 
     @Override
     public boolean isResourceChangeListenerSupported() {
-
         return false;
     }
 

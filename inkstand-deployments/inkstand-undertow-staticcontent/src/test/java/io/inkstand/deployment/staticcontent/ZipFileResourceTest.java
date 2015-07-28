@@ -64,7 +64,8 @@ import io.undertow.util.MimeMappings;
 @RunWith(MockitoJUnitRunner.class)
 public class ZipFileResourceTest {
 
-    public static final String ENTRY_PATH = "/some/path/file.pdf";
+    public static final String FILE_ENTRY_PATH = "somepath/file.pdf";
+    public static final String DIR_ENTRY_PATH = "somepath/";
 
     @Mock
     private ZipFile zipFile;
@@ -73,11 +74,17 @@ public class ZipFileResourceTest {
     private ZipEntry zipEntry;
 
     @Mock
+    private ZipEntry dirEntry;
+
+    @Mock
     private BlockingHttpExchange httpExchange;
+
     @Mock
     private ServerConnection serverCon;
+
     @Mock
     private Sender sender;
+
     @Mock
     private IoCallback completionCallback;
 
@@ -85,14 +92,23 @@ public class ZipFileResourceTest {
     /**
      * The class under test
      */
-    private ZipFileResource subject;
+    private ZipFileResource subject_file_resource;
+    private ZipFileResource subject_dir_resource;
 
     @Before
     public void setUp() throws Exception {
 
-        when(zipFile.getEntry(ENTRY_PATH)).thenReturn(zipEntry);
-        when(zipEntry.getName()).thenReturn(ENTRY_PATH);
-        subject = new ZipFileResource(zipFile, ENTRY_PATH);
+        when(zipEntry.getName()).thenReturn(FILE_ENTRY_PATH);
+        when(zipEntry.isDirectory()).thenReturn(false);
+
+        when(dirEntry.getName()).thenReturn(DIR_ENTRY_PATH);
+        when(dirEntry.isDirectory()).thenReturn(true);
+
+        when(zipFile.getEntry(FILE_ENTRY_PATH)).thenReturn(zipEntry);
+        when(zipFile.getEntry(DIR_ENTRY_PATH)).thenReturn(dirEntry);
+
+        subject_file_resource = new ZipFileResource(zipFile, zipEntry, FILE_ENTRY_PATH);
+        subject_dir_resource = new ZipFileResource(zipFile, dirEntry, DIR_ENTRY_PATH);
     }
 
     @Test
@@ -100,10 +116,10 @@ public class ZipFileResourceTest {
         //prepare
 
         //act
-        String actualPath = subject.getPath();
+        String actualPath = subject_file_resource.getPath();
 
         //assert
-        assertEquals(ENTRY_PATH, actualPath);
+        assertEquals(FILE_ENTRY_PATH, actualPath);
     }
 
     @Test
@@ -112,7 +128,7 @@ public class ZipFileResourceTest {
         when(zipEntry.getTime()).thenReturn(1_000_000_000L);
 
         //act
-        Date date = subject.getLastModified();
+        Date date = subject_file_resource.getLastModified();
 
         //assert
         assertNotNull(date);
@@ -127,7 +143,7 @@ public class ZipFileResourceTest {
         when(zipEntry.getTime()).thenReturn(1_000_000_000L);
 
         //act
-        String lmString = subject.getLastModifiedString();
+        String lmString = subject_file_resource.getLastModifiedString();
 
         //assert
         assertNotNull(lmString);
@@ -216,7 +232,7 @@ public class ZipFileResourceTest {
         //prepare
 
         //act
-        ETag etag = subject.getETag();
+        ETag etag = subject_file_resource.getETag();
 
         //assert
         assertNull(etag);
@@ -227,10 +243,10 @@ public class ZipFileResourceTest {
         //prepare
 
         //act
-        String name = subject.getName();
+        String name = subject_file_resource.getName();
 
         //assert
-        assertEquals(ENTRY_PATH, name);
+        assertEquals(FILE_ENTRY_PATH, name);
     }
 
     @Test
@@ -238,7 +254,7 @@ public class ZipFileResourceTest {
         //prepare
 
         //act
-        boolean isDir = subject.isDirectory();
+        boolean isDir = subject_file_resource.isDirectory();
 
         //assert
         assertFalse(isDir);
@@ -250,10 +266,10 @@ public class ZipFileResourceTest {
         //prepare
         Enumeration enumeration = Collections.enumeration(Arrays.asList(zipEntry));
         when(zipFile.entries()).thenReturn(enumeration);
-        when(zipEntry.isDirectory()).thenReturn(false);
+
 
         //act
-        List<Resource> resources = subject.list();
+        List<Resource> resources = subject_file_resource.list();
 
         //assert
         assertNotNull(resources);
@@ -261,11 +277,28 @@ public class ZipFileResourceTest {
     }
 
     @Test
+    public void testList_dirEntry_fileList() throws Exception {
+        //prepare
+        Enumeration enumeration = Collections.enumeration(Arrays.asList(zipEntry, dirEntry));
+        when(zipFile.entries()).thenReturn(enumeration);
+
+        //act
+        List<Resource> resources = subject_dir_resource.list();
+
+        //assert
+        assertNotNull(resources);
+        assertEquals(1, resources.size());
+        ZipFileResource res = (ZipFileResource) resources.get(0);
+        assertEquals(FILE_ENTRY_PATH, res.getPath());
+
+    }
+
+    @Test
     public void testGetContentType_DefaultMimeMappings() throws Exception {
         //prepare
 
         //act
-        String contentType = subject.getContentType(MimeMappings.DEFAULT);
+        String contentType = subject_file_resource.getContentType(MimeMappings.DEFAULT);
 
         //assert
         assertNotNull(contentType);
@@ -287,7 +320,7 @@ public class ZipFileResourceTest {
         exchange.startBlocking(httpExchange);
 
         //act
-        subject.serve(sender, exchange, completionCallback);
+        subject_file_resource.serve(sender, exchange, completionCallback);
 
         //assert
         assertArrayEquals(data, out.toByteArray());
@@ -305,7 +338,7 @@ public class ZipFileResourceTest {
         exchange.startBlocking(httpExchange);
 
         //act
-        subject.serve(sender, exchange, completionCallback);
+        subject_file_resource.serve(sender, exchange, completionCallback);
 
         //assert
         verify(completionCallback, times(0)).onComplete(exchange, sender);
@@ -319,7 +352,7 @@ public class ZipFileResourceTest {
         when(zipEntry.getSize()).thenReturn(123L);
 
         //act
-        Long length = subject.getContentLength();
+        Long length = subject_file_resource.getContentLength();
 
         //assert
         assertNotNull(length);
@@ -332,7 +365,7 @@ public class ZipFileResourceTest {
         //prepare
 
         //act
-        String cacheKey = subject.getCacheKey();
+        String cacheKey = subject_file_resource.getCacheKey();
 
         //assert
         assertNull(cacheKey);
@@ -343,7 +376,7 @@ public class ZipFileResourceTest {
         //prepare
 
         //act
-        File file = subject.getFile();
+        File file = subject_file_resource.getFile();
 
         //assert
         assertNull(file);
@@ -354,7 +387,7 @@ public class ZipFileResourceTest {
         //prepare
 
         //act
-        File rmRoot = subject.getResourceManagerRoot();
+        File rmRoot = subject_file_resource.getResourceManagerRoot();
 
         //assert
         assertNull(rmRoot);
@@ -365,7 +398,7 @@ public class ZipFileResourceTest {
         //prepare
 
         //act
-        URL url = subject.getUrl();
+        URL url = subject_file_resource.getUrl();
 
         //assert
         assertNull(url);

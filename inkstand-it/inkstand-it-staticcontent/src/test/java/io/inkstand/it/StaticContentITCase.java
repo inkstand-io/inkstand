@@ -16,6 +16,8 @@
 
 package io.inkstand.it;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -89,8 +91,8 @@ public class StaticContentITCase {
         try (final WebClient webClient = new WebClient()) {
             final HtmlPage page = webClient.getPage("http://localhost:"+port+"/index.html");
 
-            final String pageAsXml = page.asXml();
-            System.out.println(pageAsXml);
+            final String pageAsText = page.asText();
+            assertTrue(pageAsText.contains("Static Content Test"));
         }
     }
 

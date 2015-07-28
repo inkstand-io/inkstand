@@ -61,16 +61,29 @@ public class ZipFileResource implements Resource {
 
 
     public static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("EEE, dd MMM yyyy HH:mm:ss zzz");
+    private final String path;
 
-    public ZipFileResource(ZipFile zipFile, String path) {
+    /**
+     * Creates a ZipFileResource for a zip entry in a zip file.
+     * @param zipFile
+     *  the zip file containing the zip entry. The file is needed to read the actual data from the file.
+     * @param zipEntry
+     *  the actual zip entry that identifies the resource within the zip file.
+     * @param path
+     *  the requested path of the resource. As zip file entries may be named absolute or relative, they may
+     *  actually differ from the requested path.
+     */
+    public ZipFileResource(ZipFile zipFile, final ZipEntry zipEntry, String path) {
 
         this.zipFile = zipFile;
-        this.zipEntry = zipFile.getEntry(path);
+        this.zipEntry = zipEntry;
+        this.path = path;
     }
+
 
     @Override
     public String getPath() {
-        return this.zipEntry.getName();
+        return this.path;
     }
 
     @Override
@@ -120,7 +133,7 @@ public class ZipFileResource implements Resource {
             //will be added too. One could consider this as a characteristic of a zip-file content store. If this
             //causes problems, this part should be improved with a more sophisticated logic
             if(!entryPath.equals(rootEntryPath) && entryPath.startsWith(rootEntryPath)){
-                resourceList.add(new ZipFileResource(this.zipFile, entryPath));
+                resourceList.add(new ZipFileResource(this.zipFile, entry, entryPath));
             }
         }
 
