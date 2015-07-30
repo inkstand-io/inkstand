@@ -19,6 +19,7 @@ package io.inkstand.deployment.staticcontent;
 import static io.inkstand.scribble.Scribble.inject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import io.inkstand.scribble.Scribble;
 import io.inkstand.scribble.rules.TemporaryFile;
+import io.undertow.server.handlers.resource.ResourceManager;
 import io.undertow.servlet.api.DeploymentInfo;
 
 /**
@@ -47,11 +49,12 @@ public class DefaultStaticContentDeploymentProviderTest {
                                         .fromClasspathResource("/io/inkstand/deployment/staticcontent/content.zip")
                                         .build();
 
+
     @Test
-    public void testGetDeployment() throws Exception {
+    public void testGetDeployment_zipContentFile() throws Exception {
 
         //prepare
-        inject(file.getFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.zip").into(subject);
+        inject(file.getFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.root").into(subject);
 
         //act
         DeploymentInfo di = this.subject.getDeployment();
@@ -60,5 +63,31 @@ public class DefaultStaticContentDeploymentProviderTest {
         assertNotNull(di);
         assertEquals("/", di.getContextPath());
         assertEquals("StaticContent", di.getDeploymentName());
+        ResourceManager rm = di.getResourceManager();
+        //the index.html file is contained in the testfile.zip
+        assertNotNull(rm.getResource("index1.html"));
+        assertNull(rm.getResource("/testfile.zip"));
+    }
+
+    @Test
+    public void testGetDeployment_fsContentRoot() throws Exception {
+
+        //prepare
+        inject(file.getFile().getParentFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.root").into(
+                subject);
+
+        //act
+        DeploymentInfo di = this.subject.getDeployment();
+
+        //assert
+        assertNotNull(di);
+        assertEquals("/", di.getContextPath());
+        assertEquals("StaticContent", di.getDeploymentName());
+        //the resource manager should serve content in the DIRECTORY of the content.zip
+        //therefore there is no index.html resource (it's in the testfile.zip) but a resource named "testfile.zip"
+        ResourceManager rm = di.getResourceManager();
+        assertNull(rm.getResource("index1.html"));
+        assertNotNull(rm.getResource("/testfile.zip"));
+
     }
 }
