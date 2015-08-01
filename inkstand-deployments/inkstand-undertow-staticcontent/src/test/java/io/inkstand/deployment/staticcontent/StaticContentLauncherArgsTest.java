@@ -16,7 +16,7 @@
 
 package io.inkstand.deployment.staticcontent;
 
-import static io.inkstand.deployment.staticcontent.StaticContentLauncherArgs.CONTENT_ROOT;
+import static io.inkstand.deployment.staticcontent.DefaultStaticContentDeploymentProvider.HTTP_CONTENT_ROOT_PROPERTY;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -76,13 +76,13 @@ public class StaticContentLauncherArgsTest {
     public void testApply_contentRoot() throws Exception {
 
         //prepare
-        assumeThat(System.getProperty(CONTENT_ROOT), nullValue());
+        assumeThat(System.getProperty(HTTP_CONTENT_ROOT_PROPERTY), nullValue());
 
         //act
         subject.apply("contentRoot", "/");
 
         //assert
-        assertEquals("/", System.getProperty(CONTENT_ROOT));
+        assertEquals("/", System.getProperty(HTTP_CONTENT_ROOT_PROPERTY));
     }
 
     @Test(expected = IllegalArgumentException.class)

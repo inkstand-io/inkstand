@@ -16,6 +16,7 @@
 
 package io.inkstand.deployment.staticcontent;
 
+import static io.inkstand.deployment.staticcontent.DefaultStaticContentDeploymentProvider.HTTP_CONTENT_ROOT_PROPERTY;
 import static io.inkstand.util.CollectionHelper.asUnmodifiableSet;
 
 import java.util.Set;
@@ -56,7 +57,7 @@ public class StaticContentLauncherArgs implements LauncherArgs {
         if(contentRoot == null) {
             throw new IllegalArgumentException("Value for contentRoot is missing");
         }
-        System.setProperty("", contentRoot);
+        System.setProperty(HTTP_CONTENT_ROOT_PROPERTY, contentRoot);
 
     }
 

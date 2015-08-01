@@ -35,9 +35,13 @@ import io.undertow.servlet.api.DeploymentInfo;
 public class DefaultStaticContentDeploymentProvider implements UndertowDeploymentProvider {
 
     private static final Logger LOG = getLogger(DefaultStaticContentDeploymentProvider.class);
+    /**
+     * The configuration property for the location of the static content. Could point to a zip file or a directory.
+     */
+    public static final String HTTP_CONTENT_ROOT_PROPERTY = "inkstand.http.content.root";
 
     @Inject
-    @ConfigProperty(name = "inkstand.http.content.root")
+    @ConfigProperty(name = HTTP_CONTENT_ROOT_PROPERTY)
     private String contentFileLocation; //NOSONAR
 
     @Override
