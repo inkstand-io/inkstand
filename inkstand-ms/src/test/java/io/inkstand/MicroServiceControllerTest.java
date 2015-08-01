@@ -26,13 +26,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-public class ServiceLauncherTest {
+public class MicroServiceControllerTest {
 
     @Mock
     private MicroService ms;
 
     @InjectMocks
-    private ServiceLauncher subject;
+    private MicroServiceController subject;
 
     @Before
     public void setUp() throws Exception {
