@@ -35,12 +35,15 @@ import io.undertow.Undertow;
  */
 public class UndertowDefaultConfiguration implements WebServerConfiguration {
 
+    public static final String HTTP_PORT_PROPERTY = "inkstand.http.port";
+    public static final String HTTP_HOSTNAME_PROPERTY = "inkstand.http.listenaddress";
+
     @Inject
-    @ConfigProperty(name = "inkstand.http.port", defaultValue = "80")
+    @ConfigProperty(name = HTTP_PORT_PROPERTY, defaultValue = "80")
     private Integer port;
 
     @Inject
-    @ConfigProperty(name = "inkstand.http.listenaddress", defaultValue = "localhost")
+    @ConfigProperty(name = HTTP_HOSTNAME_PROPERTY, defaultValue = "localhost")
     private String bindAddress;
 
     @Override

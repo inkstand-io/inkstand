@@ -34,22 +34,40 @@ public class PublicServiceITCase {
     @Before
     public void setUp() throws Exception {
         port = NetworkUtils.findAvailablePort();
-        //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
-        System.setProperty("inkstand.http.port", String.valueOf(port));
 
     }
 
     @Test
-    public void testGetApp() throws InterruptedException {
+    public void testGetApp_syspropsConfiguration() throws InterruptedException {
 
         //prepare
-        Inkstand.main(new String[]{});
+        //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
+        System.setProperty("inkstand.http.port", String.valueOf(port));
 
         //act
+        Inkstand.main(new String[]{});
+
+        //assert
         String value = ClientBuilder.newClient()
                                     .target("http://localhost:" + port + "/test")
                                     .request().get(String.class);
+        Assert.assertEquals("test", value);
+    }
+
+    @Test
+    public void testGetApp_cmdLineConfiguration() throws InterruptedException {
+
+        //prepare
+        //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
+        String[] args = new String[]{"-port", port + ""};
+
+        //act
+        Inkstand.main(args);
+
         //assert
+        String value = ClientBuilder.newClient()
+                                    .target("http://localhost:" + port + "/test")
+                                    .request().get(String.class);
         Assert.assertEquals("test", value);
     }
 }
