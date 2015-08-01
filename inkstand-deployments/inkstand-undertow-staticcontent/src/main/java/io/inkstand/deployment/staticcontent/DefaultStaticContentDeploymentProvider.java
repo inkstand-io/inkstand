@@ -25,6 +25,8 @@ import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.slf4j.Logger;
 
 import io.inkstand.http.undertow.UndertowDeploymentProvider;
+import io.undertow.server.handlers.resource.FileResourceManager;
+import io.undertow.server.handlers.resource.ResourceManager;
 import io.undertow.servlet.api.DeploymentInfo;
 
 /**
@@ -35,21 +37,33 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
     private static final Logger LOG = getLogger(DefaultStaticContentDeploymentProvider.class);
 
     @Inject
-    @ConfigProperty(name = "inkstand.http.content.zip")
+    @ConfigProperty(name = "inkstand.http.content.root")
     private String contentFileLocation; //NOSONAR
 
     @Override
     @Produces
     public DeploymentInfo getDeployment() {
 
-        LOG.info("Serving content from {}", contentFileLocation);
-        final File contentFile = new File(contentFileLocation); //NOSONAR
+        final ResourceManager resMgr = createResourceManager();
 
         return new DeploymentInfo()
         .setContextPath("/")
-        .setResourceManager(new ZipFileResourceManager(contentFile))
+        .setResourceManager(resMgr)
         .setDeploymentName("StaticContent")
         .setClassLoader(ClassLoader.getSystemClassLoader());
+
+    }
+
+    private ResourceManager createResourceManager() {
+        LOG.info("Serving content from {}", contentFileLocation);
+        final File contentFile = new File(contentFileLocation); //NOSONAR
+
+        if(contentFile.getName().endsWith(".zip")){
+            return new ZipFileResourceManager(contentFile);
+        } else {
+            //data chunk for responding is set to 64K bytes
+            return new FileResourceManager(contentFile, 65_536L);
+        }
 
     }
 }
