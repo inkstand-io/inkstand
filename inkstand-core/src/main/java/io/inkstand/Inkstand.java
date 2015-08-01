@@ -35,7 +35,7 @@ public final class Inkstand {
     private Inkstand() {
     }
 
-    public static void main(final String[] args) {
+    public static void main(final String... args) {
 
         //get the name value pairs from the arguments
         final Map<String, String> argValues = argsToMap(args);
@@ -70,7 +70,7 @@ public final class Inkstand {
      * @return
      *  the arguments as a name-value map.
      */
-    private static Map<String, String> argsToMap(final String[] args) {
+    private static Map<String, String> argsToMap(final String... args) {
 
         final Map<String, String> argValues = new HashMap<>();
         for(int i = 0; i < args.length; i++){
