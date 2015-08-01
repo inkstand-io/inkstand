@@ -80,4 +80,14 @@ public class UndertowWebServerTest {
         assertEquals(undertow, subject.getUndertow());
     }
 
+    @Test
+    public void testToString() throws Exception {
+        //prepare
+
+        //act
+        assertEquals("[Undertow]", subject.toString());
+        //assert
+
+    }
+
 }

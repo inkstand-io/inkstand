@@ -60,6 +60,7 @@ public final class Inkstand {
                 }
             }
         }
+        //TODO throw exception if there are arguments that could not be applied
     }
 
     /**
@@ -76,6 +77,8 @@ public final class Inkstand {
         for(int i = 0; i < args.length; i++){
 
             //TODO refactor two nested ifs
+            //the next check is pointless as all "invalid" arguments are ignored when being applied to the registered
+            //LauncherArgs implementation. As long as that is the case, this line of code is prone to mutation
             if(args[i].startsWith("-")){
                 String argName = args[i].substring(1);
                 String argValue = null;

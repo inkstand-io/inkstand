@@ -21,6 +21,7 @@ import static io.inkstand.http.undertow.UndertowDefaultConfiguration.HTTP_PORT_P
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeThat;
 
@@ -79,12 +80,14 @@ public class UndertowLauncherArgsTest {
 
         //prepare
         assumeThat(System.getProperty(HTTP_HOSTNAME_PROPERTY), nullValue());
+        assumeThat(System.getProperty(HTTP_PORT_PROPERTY), nullValue());
 
         //act
         subject.apply("hostname", "testhostname");
 
         //assert
         assertEquals("testhostname", System.getProperty(HTTP_HOSTNAME_PROPERTY));
+        assertNull(System.getProperty(HTTP_PORT_PROPERTY));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -100,12 +103,14 @@ public class UndertowLauncherArgsTest {
 
         //prepare
         assumeThat(System.getProperty(HTTP_PORT_PROPERTY), nullValue());
+        assumeThat(System.getProperty(HTTP_HOSTNAME_PROPERTY), nullValue());
 
         //act
         subject.apply("port", "1080");
 
         //assert
         assertEquals("1080", System.getProperty(HTTP_PORT_PROPERTY));
+        assertNull(System.getProperty(HTTP_HOSTNAME_PROPERTY));
     }
 
     @Test(expected = IllegalArgumentException.class)

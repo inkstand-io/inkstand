@@ -16,19 +16,17 @@
 
 package io.inkstand;
 
-import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeThat;
-import static org.mockito.Matchers.eq;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Map;
-import java.util.ServiceLoader;
 import org.jboss.weld.environment.se.StartMain;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -101,7 +99,7 @@ public class InkstandTest {
     @Test
     public void testMain_helpArgs() throws Exception {
 
-        assumeThat(System.getProperty("tests.mode"), not(eq("pit")));
+        assumeTrue(!"pit".equals(System.getProperty("tests.mode")));
         assumeThat(StartMain.PARAMETERS, nullValue());
         //prepare
         //pass the help arg
@@ -140,11 +138,64 @@ public class InkstandTest {
 
         //assert
         assertArrayEquals(args, StartMain.getParameters());
-        final ServiceLoader<LauncherArgs> launcherArgs = ServiceLoader.load(LauncherArgs.class);
         assertTrue(TestLauncherArgs.isApplyInvoked());
         final Map<String,String> appliedArgs = TestLauncherArgs.getAppliedArgs();
         assertTrue(appliedArgs.containsKey("test"));
         assertEquals("testvalue", appliedArgs.get("test"));
+
+    }
+
+    /**
+     * The test verifies that the TestLauncherArgs is called to apply an argument  and
+     * that the Weld CDI container ist started using the {@link StartMain}.
+     * If an invalid argument is passed, it is ignored (maybe that should be revised some day)
+     * @throws Exception
+     */
+    @Test
+    public void testMain_applyArgs_invalidArgs_ignore() throws Exception {
+        assumeThat(StartMain.PARAMETERS, nullValue());
+
+        //prepare
+        String[] args = new String[]{"unknown", "-test", "testvalue"};
+
+        //act
+        Inkstand.main(args);
+
+        //assert
+        assertArrayEquals(args, StartMain.getParameters());
+        assertTrue(TestLauncherArgs.isApplyInvoked());
+        final Map<String,String> appliedArgs = TestLauncherArgs.getAppliedArgs();
+        assertEquals(1, appliedArgs.size());
+        assertFalse(appliedArgs.containsKey("unknown"));
+        assertFalse(appliedArgs.containsKey("testvalue"));
+        assertTrue(appliedArgs.containsKey("test"));
+        assertEquals("testvalue", appliedArgs.get("test"));
+
+    }
+
+    /**
+     * The test verifies that the TestLauncherArgs is called to apply a flag argument (without value) and
+     * that the Weld CDI container ist started using the {@link StartMain}.
+     * @throws Exception
+     */
+    @Test
+    public void testMain_applyArgs_flagArg() throws Exception {
+        assumeThat(StartMain.PARAMETERS, nullValue());
+
+        //prepare
+        String[] args = new String[]{"-test", "-other"};
+
+        //act
+        Inkstand.main(args);
+
+        //assert
+        assertArrayEquals(args, StartMain.getParameters());
+        assertTrue(TestLauncherArgs.isApplyInvoked());
+        final Map<String,String> appliedArgs = TestLauncherArgs.getAppliedArgs();
+        assertTrue(appliedArgs.containsKey("test"));
+        assertTrue(appliedArgs.containsKey("other"));
+        assertEquals(null, appliedArgs.get("test"));
+        assertEquals(null, appliedArgs.get("other"));
 
     }
 

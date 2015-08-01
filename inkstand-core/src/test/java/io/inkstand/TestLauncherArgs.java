@@ -17,10 +17,10 @@
 package io.inkstand;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -28,13 +28,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class TestLauncherArgs implements LauncherArgs {
 
-    private static Map<String,String> appliedArgs = new ConcurrentHashMap<>();
+    private static Map<String,String> appliedArgs = new HashMap<>();
     private static AtomicBoolean applyInvoked = new AtomicBoolean();
 
     @Override
     public Set<String> getArgNames() {
 
-        return new HashSet<>(Arrays.asList("test"));
+        return new HashSet<>(Arrays.asList("test", "other"));
     }
 
     @Override

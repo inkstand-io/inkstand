@@ -367,6 +367,9 @@
                                 <param>XML</param>
                                 <param>HTML</param>
                             </outputFormats>
+                            <jvmArgs>
+                                <value>-Dtests.mode=pit</value>
+                            </jvmArgs>
                         </configuration>
                         <executions>
                             <execution>
