@@ -32,12 +32,12 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
 @ApplicationScoped
-public class ServiceLauncher {
+public class MicroServiceController {
 
     /**
      * SLF4J Logger for this class
      */
-    private static final Logger LOG = LoggerFactory.getLogger(ServiceLauncher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MicroServiceController.class);
 
     @Inject
     private MicroService microService;
