@@ -29,7 +29,7 @@ import io.inkstand.LauncherArgs;
  */
 public class UndertowLauncherArgs implements LauncherArgs {
 
-    private static final Set<String> argNames = asUnmodifiableSet("port", "hostname");
+    private static final Set<String> ARG_NAMES = asUnmodifiableSet("port", "hostname");
     /**
      * Command line argument to set the port of the http server
      */
@@ -41,7 +41,7 @@ public class UndertowLauncherArgs implements LauncherArgs {
 
     @Override
     public Set<String> getArgNames() {
-        return argNames;
+        return ARG_NAMES;
     }
 
     @Override
