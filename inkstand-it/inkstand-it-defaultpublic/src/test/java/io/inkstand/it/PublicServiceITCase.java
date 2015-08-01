@@ -17,6 +17,8 @@
 package io.inkstand.it;
 
 import javax.ws.rs.client.ClientBuilder;
+import java.util.Properties;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,11 +32,17 @@ import io.inkstand.scribble.net.NetworkUtils;
 public class PublicServiceITCase {
 
     private int port;
+    private Properties originalProperties;
 
     @Before
     public void setUp() throws Exception {
         port = NetworkUtils.findAvailablePort();
+        originalProperties = System.getProperties();
+    }
 
+    @After
+    public void tearDown() throws Exception {
+        System.setProperties(originalProperties);
     }
 
     @Test
