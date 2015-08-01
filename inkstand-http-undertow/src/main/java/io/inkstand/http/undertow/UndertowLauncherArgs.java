@@ -30,7 +30,13 @@ import io.inkstand.LauncherArgs;
 public class UndertowLauncherArgs implements LauncherArgs {
 
     private static final Set<String> argNames = asUnmodifiableSet("port", "hostname");
+    /**
+     * Command line argument to set the port of the http server
+     */
     public static final String PORT = "port";
+    /**
+     * Command line argument to set the hostname or bind address of the http server
+     */
     public static final String HOSTNAME = "hostname";
 
     @Override
