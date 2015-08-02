@@ -145,33 +145,28 @@ public class InkstandTest {
 
     }
 
-    /**
-     * The test verifies that the TestLauncherArgs is called to apply an argument  and
-     * that the Weld CDI container ist started using the {@link StartMain}.
-     * If an invalid argument is passed, it is ignored (maybe that should be revised some day)
-     * @throws Exception
-     */
-    @Test
-    public void testMain_applyArgs_invalidArgs_ignore() throws Exception {
+    @Test(expected = IllegalArgumentException.class)
+    public void testMain_applyArgs_invalidArgs_exception() throws Exception {
         assumeThat(StartMain.PARAMETERS, nullValue());
 
         //prepare
-        String[] args = new String[]{"unknown", "-test", "testvalue"};
+        String[] args = new String[]{"-unknown", "-test", "testvalue"};
 
         //act
         Inkstand.main(args);
-
-        //assert
-        assertArrayEquals(args, StartMain.getParameters());
-        assertTrue(TestLauncherArgs.isApplyInvoked());
-        final Map<String,String> appliedArgs = TestLauncherArgs.getAppliedArgs();
-        assertEquals(1, appliedArgs.size());
-        assertFalse(appliedArgs.containsKey("unknown"));
-        assertFalse(appliedArgs.containsKey("testvalue"));
-        assertTrue(appliedArgs.containsKey("test"));
-        assertEquals("testvalue", appliedArgs.get("test"));
-
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMain_applyArgs_invalidValue_exception() throws Exception {
+        assumeThat(StartMain.PARAMETERS, nullValue());
+
+        //prepare
+        String[] args = new String[]{"unknown", "testvalue"};
+
+        //act
+        Inkstand.main(args);
+    }
+
 
     /**
      * The test verifies that the TestLauncherArgs is called to apply a flag argument (without value) and
