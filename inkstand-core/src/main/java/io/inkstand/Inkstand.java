@@ -17,8 +17,10 @@
 package io.inkstand;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 /**
  * Inkstand launcher. It's not just an alternative way of starting the CDI Container. The launcher also provides
@@ -52,15 +54,40 @@ public final class Inkstand {
     private static void applyArgs(final Map<String, String> argValues) {
 
         final ServiceLoader<LauncherArgs> launcherArgsSPIs = ServiceLoader.load(LauncherArgs.class);
+        final Set<String> unknownArgs = new HashSet<>(argValues.keySet());
+
         for(LauncherArgs launcherArgSPI : launcherArgsSPIs){
-            //TODO refactor two nested for-loops
-            for(String argName : launcherArgSPI.getArgNames()) {
-                if(argValues.containsKey(argName)){
-                    launcherArgSPI.apply(argName, argValues.get(argName));
-                }
+            unknownArgs.removeAll(processArgs(launcherArgSPI, argValues));
+        }
+        if(!unknownArgs.isEmpty()){
+            throw new IllegalArgumentException("Unknown arguments " + unknownArgs);
+        }
+    }
+
+    /**
+     * Processes the arguments in the map by passing them to the given LauncherArgs instance. All arguments that
+     * are recognized by this LauncherArgs are returned in the resulting set of known arguments.
+     * @param launcherArgSPI
+     *  the LauncherArgs instance to process the given arguments
+     * @param argValues
+     *  the arguments as key-value pairs to be passed to the LauncherArgs
+     * @return
+     *  a set of all argument names in the argValues map that are known to the launcher args. Callers may use this
+     *  information to detect unsupported arguments.
+     */
+    private static Set<String> processArgs(final LauncherArgs launcherArgSPI,
+                                           final Map<String, String> argValues) {
+
+        final Set<String> knownArgs = new HashSet<>();
+
+        for(String argName : launcherArgSPI.getArgNames()) {
+            if(argValues.containsKey(argName)){
+                launcherArgSPI.apply(argName, argValues.get(argName));
+                knownArgs.add(argName);
             }
         }
-        //TODO throw exception if there are arguments that could not be applied
+        return knownArgs;
+
     }
 
     /**
@@ -74,21 +101,57 @@ public final class Inkstand {
     private static Map<String, String> argsToMap(final String... args) {
 
         final Map<String, String> argValues = new HashMap<>();
+
+        String argValue = null;
         for(int i = 0; i < args.length; i++){
 
-            //TODO refactor two nested ifs
-            //the next check is pointless as all "invalid" arguments are ignored when being applied to the registered
-            //LauncherArgs implementation. As long as that is the case, this line of code is prone to mutation
+            if(argValue != null){
+                //if the current position contains a value (detected by the previous loop-cycle), reset the
+                //value and continue the loop. With this we avoid manipulating the loop counter directly.
+                argValue = null;
+                continue;
+            } else
             if(args[i].startsWith("-")){
-                String argName = args[i].substring(1);
-                String argValue = null;
-                if(i+1 < args.length && !args[i+1].startsWith("-")){
-                    argValue = args[i+1];
-                    i++;
-                }
-                argValues.put(argName, argValue);
+                argValue = getArgumentValue(args, i);
+                argValues.put(args[i].substring(1), argValue);
+            } else {
+                throw new IllegalArgumentException(args[i] + " is no valid argument");
             }
         }
         return argValues;
+    }
+
+    /**
+     * Returns the argument value for the argument at the position indicated by i. If there is no corresponding value
+     * for the argument, {@code null} is returned.
+     * @param args
+     *  the array of arguments
+     * @param i
+     *  the position of the current argument for which the value should be returned.
+     * @return
+     *  the argument value for the current argument or {@code null} if there is no argument.
+     */
+    private static String getArgumentValue(final String[] args, final int i) {
+        if(hasArgumentValue(args, i)){
+            return args[i+1];
+
+        }
+        return null;
+    }
+
+    /**
+     * Checks if the next element in the chain denotes an argument value, that is, if it exist and does not start
+     * with a dash '-'.
+     *
+     * @param args
+     *  the array of arguments
+     * @param i
+     *  the position of the current element in the array for which the successor should be checked.
+     * @return
+     *  <code>true</code> if the next element exists and is a value
+     */
+    private static boolean hasArgumentValue(final String[] args, final int i) {
+
+        return i+1 < args.length && !args[i+1].startsWith("-");
     }
 }
