@@ -63,7 +63,6 @@ public class StaticContentITCase {
     public static void setupTestContent() throws IOException {
 
         contentFile = createZip(folder.newFile("content.zip"), "/index.html", "/img/image.png");
-
     }
 
     @Before
@@ -100,7 +99,7 @@ public class StaticContentITCase {
 
         //assert
         try (final WebClient webClient = new WebClient()) {
-            final HtmlPage page = webClient.getPage("http://localhost:"+port+"/index.html");
+            final HtmlPage page = webClient.getPage("http://localhost:" + port + "/index.html");
 
             final String pageAsText = page.asText();
             assertTrue(pageAsText.contains("Static Content Test"));
@@ -117,12 +116,10 @@ public class StaticContentITCase {
 
         //assert
         try (final WebClient webClient = new WebClient()) {
-            final HtmlPage page = webClient.getPage("http://localhost:"+port+"/index.html");
+            final HtmlPage page = webClient.getPage("http://localhost:" + port + "/index.html");
 
             final String pageAsText = page.asText();
             assertTrue(pageAsText.contains("Static Content Test"));
         }
     }
-
-
 }

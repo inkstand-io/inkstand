@@ -40,6 +40,10 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
     @ConfigProperty(name = "inkstand.http.content.root")
     private String contentFileLocation; //NOSONAR
 
+    @Inject
+    @ConfigProperty(name = "inkstand.http.indexFile",  defaultValue= "index.html")
+    private String indexFile;
+
     @Override
     @Produces
     public DeploymentInfo getDeployment() {
@@ -47,11 +51,10 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
         final ResourceManager resMgr = createResourceManager();
 
         return new DeploymentInfo()
-        .setContextPath("/")
+        .setContextPath(indexFile)
         .setResourceManager(resMgr)
         .setDeploymentName("StaticContent")
         .setClassLoader(ClassLoader.getSystemClassLoader());
-
     }
 
     private ResourceManager createResourceManager() {
@@ -64,6 +67,5 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
             //data chunk for responding is set to 64K bytes
             return new FileResourceManager(contentFile, 65_536L);
         }
-
     }
 }

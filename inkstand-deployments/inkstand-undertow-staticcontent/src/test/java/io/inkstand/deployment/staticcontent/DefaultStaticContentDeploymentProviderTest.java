@@ -54,14 +54,15 @@ public class DefaultStaticContentDeploymentProviderTest {
     public void testGetDeployment_zipContentFile() throws Exception {
 
         //prepare
-        inject(file.getFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.root").into(subject);
+        Scribble.inject(file.getFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.root").into(subject);
+        Scribble.inject(null).asConfigProperty("inkstand.http.indexFile").into(subject);
 
         //act
         DeploymentInfo di = this.subject.getDeployment();
 
         //assert
         assertNotNull(di);
-        assertEquals("/", di.getContextPath());
+        assertEquals("index.html", di.getContextPath());
         assertEquals("StaticContent", di.getDeploymentName());
         ResourceManager rm = di.getResourceManager();
         //the index.html file is contained in the testfile.zip
@@ -73,21 +74,21 @@ public class DefaultStaticContentDeploymentProviderTest {
     public void testGetDeployment_fsContentRoot() throws Exception {
 
         //prepare
-        inject(file.getFile().getParentFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.root").into(
+        Scribble.inject(file.getFile().getParentFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.root").into(
                 subject);
+        Scribble.inject(null).asConfigProperty("inkstand.http.indexFile").into(subject);
 
         //act
         DeploymentInfo di = this.subject.getDeployment();
 
         //assert
         assertNotNull(di);
-        assertEquals("/", di.getContextPath());
+        assertEquals("index.html", di.getContextPath());
         assertEquals("StaticContent", di.getDeploymentName());
         //the resource manager should serve content in the DIRECTORY of the content.zip
         //therefore there is no index.html resource (it's in the testfile.zip) but a resource named "testfile.zip"
         ResourceManager rm = di.getResourceManager();
         assertNull(rm.getResource("index1.html"));
         assertNotNull(rm.getResource("/testfile.zip"));
-
     }
 }
