@@ -17,6 +17,7 @@
 package io.inkstand.http.undertow;
 
 import javax.annotation.Priority;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -25,12 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.inkstand.InkstandRuntimeException;
+import io.inkstand.Management;
 import io.inkstand.PublicService;
 import io.inkstand.config.WebServerConfiguration;
 import io.undertow.Undertow;
+import io.undertow.Undertow.Builder;
+import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.PathHandler;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
+import io.undertow.servlet.api.ServletContainer;
 
 /**
  * Provider of an Undertow WebServer instance with a specific deployment configuration. The deployment configuration is
@@ -48,29 +54,64 @@ public class UndertowWebServerProvider {
     private WebServerConfiguration config;
 
     @Inject
+    @Management
+    private Instance<WebServerConfiguration> mgmtConfig;
+
+    @Inject
     private DeploymentInfo deploymentInfo;
+
+    @Inject
+    @Management
+    private Instance<DeploymentInfo> mgmtDeployment;
 
     @Produces
     public Undertow getUndertow() {
 
         final WebServerConfiguration httpConfig = this.getConfig();
-        final DeploymentInfo deployInfo = this.getDeploymentInfo();
-
-        final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deployInfo);
-        deploymentManager.deploy();
 
         try {
 
+            final DeploymentInfo deployInfo = this.getDeploymentInfo();
+            final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deployInfo);
+            deploymentManager.deploy();
             LOG.info("Creating service endpoint {}:{}/{} for {} at ",
                      httpConfig.getBindAddress(),
                      httpConfig.getPort(),
                      deployInfo.getContextPath(),
                      deployInfo.getDeploymentName());
 
-            return Undertow.builder()
-                           .addHttpListener(httpConfig.getPort(), httpConfig.getBindAddress())
-                           .setHandler(deploymentManager.start())
-                           .build();
+            final Builder builder = Undertow.builder()
+                           .addHttpListener(httpConfig.getPort(),
+                                            httpConfig.getBindAddress(),
+                                            deploymentManager.start());
+
+
+            //mgmt Deployment is completely optional and will only be activated, if there is a mgmt config
+            if(!mgmtConfig.isUnsatisfied() && !mgmtDeployment.isUnsatisfied()) {
+                final WebServerConfiguration mCfg = mgmtConfig.get();
+                final ServletContainer mContainer = Servlets.newContainer();
+                final HttpHandler root;
+                if(mgmtDeployment.isAmbiguous()) {
+                    //multi-deployment
+                    final PathHandler path = new PathHandler();
+                    for(DeploymentInfo mDI : mgmtDeployment) {
+                        final DeploymentManager mDM = mContainer.addDeployment(mDI);
+                        mDM.deploy();
+                        path.addPrefixPath(mDI.getContextPath(),mDM.start());
+                    }
+                    root = path;
+                } else {
+                    //single deployment
+                    final DeploymentInfo mDI = mgmtDeployment.get();
+                    final DeploymentManager mDM = mContainer.addDeployment(mDI);
+                    mDM.deploy();
+                    root = mDM.start();
+                }
+                builder.addHttpListener(mCfg.getPort(), mCfg.getBindAddress(), root);
+
+            }
+
+            return builder.build();
         } catch (final ServletException e) {
             throw new InkstandRuntimeException(e);
         }

@@ -16,9 +16,11 @@
 
 package io.inkstand.http.undertow;
 
+import static io.inkstand.scribble.Scribble.inject;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
+import javax.enterprise.inject.Instance;
 import java.net.URL;
 import java.util.Collections;
 import org.junit.Before;
@@ -42,6 +44,11 @@ public class UndertowWebServerProviderTest {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private DeploymentInfo deploymentInfo;
 
+    @Mock
+    private Instance<WebServerConfiguration> mgmtConfig;
+    @Mock
+    private Instance<DeploymentInfo> mgmtDeployments;
+
     @InjectMocks
     private UndertowWebServerProvider subject;
 
@@ -55,6 +62,13 @@ public class UndertowWebServerProviderTest {
         when(deploymentInfo.getDeploymentName()).thenReturn("test.war");
         when(deploymentInfo.getContextPath()).thenReturn("test");
         when(deploymentInfo.getThreadSetupActions()).thenReturn(Collections.EMPTY_LIST);
+
+        //default: there are not management extensions
+        when(mgmtConfig.isUnsatisfied()).thenReturn(true);
+        when(mgmtDeployments.isUnsatisfied()).thenReturn(true);
+
+        inject(mgmtConfig).asQualifyingInstance().into(subject);
+        inject(mgmtDeployments).asQualifyingInstance().into(subject);
     }
 
     @Test

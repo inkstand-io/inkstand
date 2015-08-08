@@ -32,6 +32,7 @@
         <module>inkstand-it-publicservice</module>
         <module>inkstand-it-protectedservice</module>
         <module>inkstand-it-staticcontent</module>
+        <module>inkstand-it-defaultmgmt</module>
     </modules>
     <packaging>pom</packaging>
 
