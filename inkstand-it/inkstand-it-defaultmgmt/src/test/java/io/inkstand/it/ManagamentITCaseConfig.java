@@ -21,6 +21,7 @@ import javax.enterprise.inject.Produces;
 import io.inkstand.Management;
 import io.inkstand.config.WebServerConfiguration;
 import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.ServletInfo;
 
 /**
  * Created by Gerald on 02.08.2015.
@@ -34,7 +35,14 @@ public class ManagamentITCaseConfig {
     @Management
     public DeploymentInfo getDeployment() {
 
-
+        DeploymentInfo di = new DeploymentInfo();
+        ServletInfo si = new ServletInfo("mgmtServler", ManagementServlet.class);
+        si.addMapping("/*");
+        di.addServlet(si);
+        di.setDeploymentName("ManagementServlet");
+        di.setContextPath("/mgmt");
+        di.setClassLoader(ClassLoader.getSystemClassLoader());
+        return di;
     }
 
     @Produces
@@ -58,3 +66,4 @@ public class ManagamentITCaseConfig {
 
     }
 }
+
