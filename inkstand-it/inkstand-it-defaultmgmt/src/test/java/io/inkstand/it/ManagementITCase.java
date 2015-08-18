@@ -18,16 +18,22 @@ package io.inkstand.it;
 
 import static org.junit.Assert.assertEquals;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import java.net.URL;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.StringReader;
 import java.util.Properties;
-import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
 import io.inkstand.Inkstand;
 import io.inkstand.scribble.net.NetworkUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by Gerald on 09.08.2015.
@@ -61,15 +67,30 @@ public class ManagementITCase {
         Inkstand.main(new String[] {});
 
         //assert
+        final Client client = ClientBuilder.newClient();
+        final WebTarget publicService = client.target("http://localhost:" + port).path("test");
+        final WebTarget mgmtService = client.target("http://localhost:" + mgmtPort).path("mgmt");
+
         //public service is running
-        String publicService = ClientBuilder.newClient()
-                                    .target("http://localhost:" + port+ "/test")
-                                    .request().get(String.class);
-        assertEquals("test", publicService);
+        String publicServiceResult = publicService.request().get(String.class);
+        assertEquals("test", publicServiceResult);
 
-        //management servlet is running
-        String result = IOUtils.toString(new URL("http://localhost:" + mgmtPort + "/mgmt").openStream());
-        assertEquals("mgmt", result);
+        //Query the mgmtService
+        final Response response = mgmtService.request(MediaType.APPLICATION_JSON).get();
 
+        //Se Response.Status.OK;
+        assertEquals(200, response.getStatus());
+        final JsonObject json = readJson(response);
+        assertEquals("ok", json.getString("msg"));
+    }
+
+    private JsonObject readJson(final Response response) {
+
+        final StringReader stringReader = new StringReader(response.readEntity(String.class));
+        final JsonObject json;
+        try (JsonReader jsonReader = Json.createReader(stringReader)) {
+            json = jsonReader.readObject();
+        }
+        return json;
     }
 }

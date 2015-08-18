@@ -18,13 +18,15 @@ package io.inkstand.it;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import javax.json.Json;
+import javax.json.stream.JsonGenerator;
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
+
 import org.slf4j.Logger;
 
 /**
@@ -49,10 +51,12 @@ public class ManagementServlet implements Servlet {
     @Override
     public void service(final ServletRequest req, final ServletResponse res) throws ServletException, IOException {
 
-        LOG.info("{}", req.getServletContext().getContextPath());
-        OutputStream os = res.getOutputStream();
-        os.write("mgmt".getBytes());
-        os.flush();
+        res.setContentType("application/json");
+        final JsonGenerator out = Json.createGenerator(res.getOutputStream());
+        out.writeStartObject();
+        out.write("msg", "ok");
+        out.writeEnd();
+        out.close();
     }
 
     @Override
