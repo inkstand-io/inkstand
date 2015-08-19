@@ -126,7 +126,7 @@ public class StaticContentITCase {
 
         //assert
         try (final WebClient webClient = new WebClient()) {
-            final HtmlPage page = webClient.getPage("http://localhost:"+port+"/index.html");
+            final HtmlPage page = webClient.getPage("http://localhost:" + port + "/index.html");
 
             final String pageAsText = page.asText();
             assertTrue(pageAsText.contains("Static Content Test"));
@@ -160,7 +160,7 @@ public class StaticContentITCase {
 
         //assert
         try (final WebClient webClient = new WebClient()) {
-            final HtmlPage page = webClient.getPage("http://localhost:"+port+"/index.html");
+            final HtmlPage page = webClient.getPage("http://localhost:" + port + "/index.html");
 
             final String pageAsText = page.asText();
             assertTrue(pageAsText.contains("Static Content Test"));

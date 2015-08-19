@@ -55,9 +55,10 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
         final ResourceManager resMgr = createResourceManager();
 
         return new DeploymentInfo()
-        .setContextPath(indexFile)
+        .setContextPath("/")
         .setResourceManager(resMgr)
         .setDeploymentName("StaticContent")
+        .addWelcomePage(indexFile)
         .setClassLoader(ClassLoader.getSystemClassLoader());
     }
 
