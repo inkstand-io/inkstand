@@ -22,9 +22,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -58,6 +60,8 @@ public class StaticContentITCase {
 
     private int port;
 
+    private Properties originalProperties;
+
 
     @BeforeClass
     public static void setupTestContent() throws IOException {
@@ -67,10 +71,16 @@ public class StaticContentITCase {
 
     @Before
     public void setUp() throws Exception {
+        originalProperties = System.getProperties();
         port = NetworkUtils.findAvailablePort();
         //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
         System.setProperty("inkstand.http.port", String.valueOf(port));
 
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        System.setProperties(originalProperties);
     }
 
     private static File createZip(final File file, final String... resources) throws IOException {
@@ -90,7 +100,7 @@ public class StaticContentITCase {
     }
 
     @Test
-    public void testGetStaticContent_fromZipFile_indexFile() throws IOException {
+    public void testGetStaticContent_fromZipFile_indexFile_bySystemProperty() throws IOException {
         //prepare
         System.setProperty("inkstand.http.content.root", contentFile.getAbsolutePath());
 
@@ -107,7 +117,24 @@ public class StaticContentITCase {
     }
 
     @Test
-    public void testGetStaticContent_fromFilesystem_indexFile() throws IOException {
+    public void testGetStaticContent_fromZipFile_indexFile_byCmdLineArgs() throws IOException {
+        //prepare
+        String[] args = new String[]{"-contentRoot", contentFile.getAbsolutePath()};
+
+        //act
+        Inkstand.main(args);
+
+        //assert
+        try (final WebClient webClient = new WebClient()) {
+            final HtmlPage page = webClient.getPage("http://localhost:"+port+"/index.html");
+
+            final String pageAsText = page.asText();
+            assertTrue(pageAsText.contains("Static Content Test"));
+        }
+    }
+
+    @Test
+    public void testGetStaticContent_fromFilesystem_indexFile_bySystemProperty() throws IOException {
         //prepare
         System.setProperty("inkstand.http.content.root", file.getFile().getParentFile().getAbsolutePath());
 
@@ -122,4 +149,23 @@ public class StaticContentITCase {
             assertTrue(pageAsText.contains("Static Content Test"));
         }
     }
+
+    @Test
+    public void testGetStaticContent_fromFilesystem_indexFile_byCmdLineArgs() throws IOException {
+        //prepare
+        String[] args = new String[]{"-contentRoot", file.getFile().getParentFile().getAbsolutePath()};
+
+        //act
+        Inkstand.main(args);
+
+        //assert
+        try (final WebClient webClient = new WebClient()) {
+            final HtmlPage page = webClient.getPage("http://localhost:"+port+"/index.html");
+
+            final String pageAsText = page.asText();
+            assertTrue(pageAsText.contains("Static Content Test"));
+        }
+    }
+
+
 }

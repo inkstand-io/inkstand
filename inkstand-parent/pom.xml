@@ -339,6 +339,7 @@
             <id>pit</id>
             <properties>
                 <tests.json.strict.validation.disabled>true</tests.json.strict.validation.disabled>
+                <tests.mode>pit</tests.mode>
             </properties>
             <build>
                 <plugins>
@@ -353,6 +354,7 @@
                                 <param>io.inkstand.*</param>
                             </targetTests>
                             <failWhenNoMutations>false</failWhenNoMutations>
+                            <verbose>true</verbose>
                             <mutators>
                                 <mutator>DEFAULTS</mutator>
                                 <mutator>REMOVE_CONDITIONALS</mutator>
@@ -365,6 +367,9 @@
                                 <param>XML</param>
                                 <param>HTML</param>
                             </outputFormats>
+                            <jvmArgs>
+                                <value>-Dtests.mode=pit</value>
+                            </jvmArgs>
                         </configuration>
                         <executions>
                             <execution>
