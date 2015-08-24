@@ -20,8 +20,6 @@ import javax.enterprise.inject.Produces;
 
 import io.inkstand.Management;
 import io.inkstand.config.WebServerConfiguration;
-import io.undertow.servlet.api.DeploymentInfo;
-import io.undertow.servlet.api.ServletInfo;
 
 /**
  * Created by Gerald on 02.08.2015.
@@ -29,21 +27,6 @@ import io.undertow.servlet.api.ServletInfo;
 public class ManagamentITCaseConfig {
 
     private static int port = Integer.valueOf(System.getProperty("inkstand.mgmt.port"));
-
-
-    @Produces
-    @Management
-    public DeploymentInfo getDeployment() {
-
-        DeploymentInfo di = new DeploymentInfo();
-        ServletInfo si = new ServletInfo("mgmtServler", ManagementServlet.class);
-        si.addMapping("/*");
-        di.addServlet(si);
-        di.setDeploymentName("ManagementServlet");
-        di.setContextPath("/mgmt");
-        di.setClassLoader(ClassLoader.getSystemClassLoader());
-        return di;
-    }
 
     @Produces
     @Management

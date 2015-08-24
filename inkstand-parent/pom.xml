@@ -94,8 +94,10 @@
         <!-- javax library versions -->
         <javax.jcr.version>2.0</javax.jcr.version>
         <javax.javaee-api.version>7.0</javax.javaee-api.version>
+        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
+        <javax.json.version>1.0.4</javax.json.version>
         <!-- Apache Library Version -->
         <apache.commons.io.version>2.4</apache.commons.io.version>
         <apache.commons.codec.version>1.10</apache.commons.codec.version>
@@ -119,6 +121,11 @@
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
                 <version>${javax.javaee-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax.servlet-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.jcr</groupId>
@@ -209,6 +216,11 @@
                 <artifactId>jersey-common</artifactId>
                 <version>${jersey.common.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>${javax.json.version}</version>
             </dependency>
 
             <!-- Weld CDI Container -->

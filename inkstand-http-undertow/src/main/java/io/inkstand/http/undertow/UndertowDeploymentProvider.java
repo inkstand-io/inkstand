@@ -19,8 +19,6 @@ package io.inkstand.http.undertow;
 import io.undertow.Undertow;
 import io.undertow.servlet.api.DeploymentInfo;
 
-import javax.enterprise.inject.Produces;
-
 /**
  * Interface to provide Undertow deployments that are injected and deployed automatically on {@link Undertow}.
  *
@@ -34,6 +32,5 @@ public interface UndertowDeploymentProvider {
      * @return
      *  a deployment information descriptor for the undertow server
      */
-    @Produces
     DeploymentInfo getDeployment();
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>inkstand-deployments</artifactId>
+        <groupId>io.inkstand</groupId>
+        <version>0.2.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>inkstand-undertow-mgmt</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Deployment provider for management console.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-mgmt-web</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-cdi-webdiscovery</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>scribble</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-core</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-http-undertow</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <!-- Deltaspike -->
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.deltaspike.core</groupId>
+            <artifactId>deltaspike-core-impl</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
