@@ -142,6 +142,11 @@
                 <artifactId>validation-api</artifactId>
                 <version>${javax.validation-api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>${javax.json.version}</version>
+            </dependency>
 
             <!-- Apache Commons -->
             <dependency>

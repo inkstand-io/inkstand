@@ -28,11 +28,13 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
 import java.io.IOException;
 
+import io.inkstand.Management;
 import org.slf4j.Logger;
 
 /**
  * Created by Gerald on 09.08.2015.
  */
+@Management
 @WebServlet(name="mgmt",
             description = "Inkstand Management Servlet",
             urlPatterns={"/*"})
