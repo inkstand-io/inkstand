@@ -69,7 +69,7 @@ public class WebServletsTest {
         subject.servletFound(pat);
 
         //act
-        Set<Class> servlet = subject.getServlets();
+        Set<Class> servlet = subject.getAllServlets();
 
         //assert
         assertNotNull(servlet);
@@ -131,10 +131,52 @@ public class WebServletsTest {
 
     }
 
+    @Test
+    public void testGetServlets_withoutQualifiers_subsetReturned() throws Exception {
+        //prepare
+        when(annotatedType.getJavaClass()).thenReturn(TestServlet.class);
+        subject.servletFound(pat);
+        when(annotatedType.getJavaClass()).thenReturn(QualifiedTestServlet.class);
+        subject.servletFound(pat);
+        when(annotatedType.getJavaClass()).thenReturn(MultiQualifiedTestServlet.class);
+        subject.servletFound(pat);
+
+        //act
+        Set<Class> qualified = subject.getServlets();
+
+        //assert
+        assertNotNull(qualified);
+        assertEquals(1, qualified.size());
+        assertTrue(qualified.contains(TestServlet.class));
+
+    }
+
+    @Test
+    public void testGetAllServlets() throws Exception {
+        //prepare
+        when(annotatedType.getJavaClass()).thenReturn(TestServlet.class);
+        subject.servletFound(pat);
+        when(annotatedType.getJavaClass()).thenReturn(QualifiedTestServlet.class);
+        subject.servletFound(pat);
+        when(annotatedType.getJavaClass()).thenReturn(MultiQualifiedTestServlet.class);
+        subject.servletFound(pat);
+
+        //act
+        Set<Class> servlets = subject.getAllServlets();
+
+        //assert
+        assertNotNull(servlets);
+        assertEquals(3, servlets.size());
+        assertTrue(servlets.contains(TestServlet.class));
+        assertTrue(servlets.contains(QualifiedTestServlet.class));
+        assertTrue(servlets.contains(MultiQualifiedTestServlet.class));
+
+    }
+
     @Qualifier
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
-    private static @interface TestQualifier {
+    private @interface TestQualifier {
 
     }
 
