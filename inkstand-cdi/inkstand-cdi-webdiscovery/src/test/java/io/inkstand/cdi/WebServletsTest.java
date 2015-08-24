@@ -111,10 +111,37 @@ public class WebServletsTest {
 
     }
 
+    @Test
+    public void testGetServlets_withMultipleQualifiers_subsetReturned() throws Exception {
+        //prepare
+        when(annotatedType.getJavaClass()).thenReturn(TestServlet.class);
+        subject.servletFound(pat);
+        when(annotatedType.getJavaClass()).thenReturn(QualifiedTestServlet.class);
+        subject.servletFound(pat);
+        when(annotatedType.getJavaClass()).thenReturn(MultiQualifiedTestServlet.class);
+        subject.servletFound(pat);
+
+        //act
+        Set<Class> qualified = subject.getServlets(TestQualifier.class, AdditionalTestQualifier.class);
+
+        //assert
+        assertNotNull(qualified);
+        assertEquals(1, qualified.size());
+        assertTrue(qualified.contains(MultiQualifiedTestServlet.class));
+
+    }
+
     @Qualifier
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
     private static @interface TestQualifier {
+
+    }
+
+    @Qualifier
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+    private static @interface AdditionalTestQualifier {
 
     }
 
@@ -124,7 +151,13 @@ public class WebServletsTest {
     }
 
     @TestQualifier
-    private static class QualifiedTestServlet {
+     private static class QualifiedTestServlet {
+
+    }
+
+    @TestQualifier
+    @AdditionalTestQualifier
+    private static class MultiQualifiedTestServlet {
 
     }
 }
