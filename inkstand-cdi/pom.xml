@@ -36,6 +36,7 @@
     <modules>
         <module>inkstand-cdi-globalalternative</module>
         <module>inkstand-cdi-resourceautodiscovery</module>
+        <module>inkstand-cdi-webdiscovery</module>
     </modules>
 
     <dependencies>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.inkstand.it;
+package io.inkstand.mgmt;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -25,6 +25,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -32,6 +33,9 @@ import org.slf4j.Logger;
 /**
  * Created by Gerald on 09.08.2015.
  */
+@WebServlet(name="mgmt",
+            description = "Inkstand Management Servlet",
+            urlPatterns={"/*"})
 public class ManagementServlet implements Servlet {
 
     private static final Logger LOG = getLogger(ManagementServlet.class);
