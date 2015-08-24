@@ -35,8 +35,38 @@ public class WebServlets implements Extension  {
         servlets.add(pat.getAnnotatedType().getJavaClass());
     }
 
-    public Set<Class> getServlets() {
+    public Set<Class> getServlets(Class... qualifiers){
 
-        return Collections.unmodifiableSet(servlets);
+        if(qualifiers.length == 0){
+            return Collections.unmodifiableSet(servlets);
+        }
+
+        Set<Class> result = new HashSet<>();
+        for(Class servletClass : servlets){
+            if(matchesAnnotations(servletClass, qualifiers)) {
+                result.add(servletClass);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Checks if the servletClass is annotated with ALL of the specified annotations.
+     * @param servletClass
+     *  the servlet class to check for annotations
+     * @param qualifiers
+     *  the qualifier annotations that are all expected to be found on the servlet class
+     * @return
+     *  <code>true</code> if all annotations were found on the servlet class
+     */
+    private boolean matchesAnnotations(final Class servletClass, final Class[] qualifiers) {
+
+        for(Class qualifier : qualifiers) {
+            if(servletClass.getAnnotation(qualifier) == null) {
+                return false;
+            }
+        }
+        return true;
     }
 }

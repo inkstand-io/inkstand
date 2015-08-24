@@ -5,9 +5,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.inject.Qualifier;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -27,13 +34,21 @@ public class WebServletsTest {
     private WebServlets subject;
 
     @Mock
+    private AnnotatedType annotatedType;
+
+    @Mock
     private ProcessAnnotatedType pat;
+
+    @Before
+    public void setUp() throws Exception {
+        when(pat.getAnnotatedType()).thenReturn(annotatedType);
+    }
 
     @Test
     public void testServletFound() throws Exception {
 
         //prepare
-        when(pat.getAnnotatedType().getJavaClass()).thenReturn(TestServlet.class);
+        when(annotatedType.getJavaClass()).thenReturn(TestServlet.class);
 
         //act
         subject.servletFound(pat);
@@ -45,13 +60,32 @@ public class WebServletsTest {
 
     }
 
-@Test
+    @Test
+    public void testGetServlets_multipleHits_allReturned() throws Exception {
+        //prepare
+        when(annotatedType.getJavaClass()).thenReturn(QualifiedTestServlet.class);
+        subject.servletFound(pat);
+        when(annotatedType.getJavaClass()).thenReturn(TestServlet.class);
+        subject.servletFound(pat);
+
+        //act
+        Set<Class> servlet = subject.getServlets();
+
+        //assert
+        assertNotNull(servlet);
+        assertEquals(2, servlet.size());
+        assertTrue(servlet.contains(QualifiedTestServlet.class));
+        assertTrue(servlet.contains(TestServlet.class));
+
+    }
+
+    @Test
     public void testGetServlets_default_empty() throws Exception {
 
         //prepare
 
         //act
-        Set<Class> classes =  subject.getServlets();
+        Set<Class> classes = subject.getServlets();
 
         //assert
         assertNotNull(classes);
@@ -59,5 +93,38 @@ public class WebServletsTest {
 
     }
 
-    private static class TestServlet {}
+    @Test
+    public void testGetServlets_withQualifiers_subsetReturned() throws Exception {
+        //prepare
+        when(annotatedType.getJavaClass()).thenReturn(TestServlet.class);
+        subject.servletFound(pat);
+        when(annotatedType.getJavaClass()).thenReturn(QualifiedTestServlet.class);
+        subject.servletFound(pat);
+
+        //act
+        Set<Class> qualified = subject.getServlets(TestQualifier.class);
+
+        //assert
+        assertNotNull(qualified);
+        assertEquals(1, qualified.size());
+        assertTrue(qualified.contains(QualifiedTestServlet.class));
+
+    }
+
+    @Qualifier
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+    private static @interface TestQualifier {
+
+    }
+
+
+    private static class TestServlet {
+
+    }
+
+    @TestQualifier
+    private static class QualifiedTestServlet {
+
+    }
 }
