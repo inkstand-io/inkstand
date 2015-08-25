@@ -81,7 +81,31 @@ public class ManagementDeploymentProviderTest {
         assertEquals(2, servlets.size());
         assertTrue(servlets.containsKey("servlet1"));
         assertTrue(servlets.containsKey("servlet2"));
+        verifyServlet(servlets.get("servlet1"), "servlet1", true, 5,
+                      new String[] { "/test1/*", "/t1/*" },
+                      new String[][] { { "foo", "Hello" }, { "bar", "World!" } });
+        verifyServlet(servlets.get("servlet2"), "servlet2", false, 10,
+                      new String[] { "/test2/*", "/t2/*" },
+                      new String[][] { { "text", "Test" }});
 
+    }
+
+    private void verifyServlet(final ServletInfo servlet,
+                               final String name,
+                               final boolean async,
+                               final int loadOnStartup,
+                               final String[] urlPatterns,
+                               final String[][] initParams) {
+
+        assertEquals(name, servlet.getName());
+        assertEquals(async, servlet.isAsyncSupported());
+        assertEquals(loadOnStartup, servlet.getLoadOnStartup().intValue());
+        for(String urlPattern : urlPatterns) {
+            assertTrue(servlet.getMappings().contains(urlPattern));
+        }
+        for(String[] initParam : initParams){
+            assertEquals(initParam[1], servlet.getInitParams().get(initParam[0]));
+        }
     }
 
     public <TYPE> Set<TYPE> setFromList(TYPE... elements) {
@@ -95,14 +119,14 @@ public class ManagementDeploymentProviderTest {
                 asyncSupported = true,
                 loadOnStartup = 5,
                 urlPatterns = { "/test1/*", "/t1/*" },
-                initParams = { @WebInitParam(name="foo", value="Hello "),
-                               @WebInitParam(name="bar", value=" World!")})
+                initParams = { @WebInitParam(name="foo", value="Hello"),
+                               @WebInitParam(name="bar", value="World!")})
     public abstract class Servlet1 implements Servlet {
 
     }
 
     @WebServlet(name = "servlet2",
-                asyncSupported = true,
+                asyncSupported = false,
                 loadOnStartup = 10,
                 urlPatterns = { "/test2/*", "/t2/*" },
                 initParams = { @WebInitParam(name="text", value="Test")})
