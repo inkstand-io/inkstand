@@ -32,6 +32,8 @@ import io.inkstand.Management;
 import org.slf4j.Logger;
 
 /**
+ * Basic Management Servlet for Inkstand Microservice container that provides basic control
+ * functions such as starting and stopping the inkstand container.
  * Created by Gerald on 09.08.2015.
  */
 @Management
@@ -42,16 +44,20 @@ public class ManagementServlet implements Servlet {
 
     private static final Logger LOG = getLogger(ManagementServlet.class);
 
+    private ServletConfig config;
+
     @Override
     public void init(final ServletConfig config) throws ServletException {
 
         LOG.info("Management Servlet initialized");
+        this.config = config;
+
     }
 
     @Override
     public ServletConfig getServletConfig() {
 
-        return null;
+        return config;
     }
 
     @Override
@@ -68,7 +74,7 @@ public class ManagementServlet implements Servlet {
     @Override
     public String getServletInfo() {
 
-        return null;
+        return "Inkstand Management Servlet";
     }
 
     @Override

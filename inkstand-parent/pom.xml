@@ -91,6 +91,7 @@
         <test.jsonassert.version>1.2.3</test.jsonassert.version>
         <test.arquillian.version>1.1.8.Final</test.arquillian.version>
         <test.arquillian.weld.version>1.0.0.CR8</test.arquillian.weld.version>
+        <test.jsonassert.version>1.2.3</test.jsonassert.version>
         <!-- javax library versions -->
         <javax.jcr.version>2.0</javax.jcr.version>
         <javax.javaee-api.version>7.0</javax.javaee-api.version>
@@ -281,6 +282,7 @@
                 <scope>test</scope>
             </dependency>
 
+
             <!-- Code Coverage -->
             <dependency>
                 <groupId>org.jacoco</groupId>
@@ -315,6 +317,12 @@
                 <groupId>io.inkstand</groupId>
                 <artifactId>scribble</artifactId>
                 <version>${test.scribble.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${test.jsonassert.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
