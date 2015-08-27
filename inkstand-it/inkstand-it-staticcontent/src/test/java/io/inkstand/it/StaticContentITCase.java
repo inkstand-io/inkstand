@@ -117,6 +117,25 @@ public class StaticContentITCase {
     }
 
     @Test
+    public void testGetStaticContent_fromZipFile_withDefaultWelcomePage_bySystemProperty() throws IOException {
+        //prepare
+        System.setProperty("inkstand.http.content.root", contentFile.getAbsolutePath());
+        System.setProperty("inkstand.http.indexFile", "index.html");
+
+        //act
+        Inkstand.main(new String[] {});
+
+        //assert
+        try (final WebClient webClient = new WebClient()) {
+            final HtmlPage page = webClient.getPage("http://localhost:" + port + "/");
+
+            final String pageAsText = page.asText();
+            assertTrue(pageAsText.contains("Static Content Test"));
+        }
+    }
+
+
+    @Test
     public void testGetStaticContent_fromZipFile_indexFile_byCmdLineArgs() throws IOException {
         //prepare
         String[] args = new String[]{"-contentRoot", contentFile.getAbsolutePath()};

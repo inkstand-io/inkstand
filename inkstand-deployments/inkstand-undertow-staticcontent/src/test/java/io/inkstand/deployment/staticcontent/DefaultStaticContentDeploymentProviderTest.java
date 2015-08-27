@@ -17,9 +17,7 @@
 package io.inkstand.deployment.staticcontent;
 
 import static io.inkstand.scribble.Scribble.inject;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,6 +61,7 @@ public class DefaultStaticContentDeploymentProviderTest {
         //assert
         assertNotNull(di);
         assertEquals("/", di.getContextPath());
+        //TODO do it right
         assertEquals("index.html", di.getWelcomePages());
         assertEquals("StaticContent", di.getDeploymentName());
         ResourceManager rm = di.getResourceManager();
@@ -85,6 +84,7 @@ public class DefaultStaticContentDeploymentProviderTest {
         //assert
         assertNotNull(di);
         assertEquals("/", di.getContextPath());
+        //TODO do it right
         assertEquals("index.html", di.getWelcomePages());
         assertEquals("StaticContent", di.getDeploymentName());
         //the resource manager should serve content in the DIRECTORY of the content.zip
