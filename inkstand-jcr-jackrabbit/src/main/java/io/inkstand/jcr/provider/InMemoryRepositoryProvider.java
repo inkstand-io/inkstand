@@ -16,14 +16,6 @@
 
 package io.inkstand.jcr.provider;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.annotation.Priority;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
@@ -32,91 +24,138 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-
-import io.inkstand.InkstandRuntimeException;
-import io.inkstand.jcr.RepositoryProvider;
-
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
-import org.apache.jackrabbit.commons.cnd.ParseException;
-import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.core.config.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.jackrabbit.core.config.RepositoryConfig;
+
+import io.inkstand.InkstandRuntimeException;
+import io.inkstand.jcr.InMemoryRepository;
 
 /**
- * Provider that provides a transient, in-memory repository that is not persisted
+ * Provider for an in-memory repository. The in-memory repository uses a predefined default configuration with
+ * in-memory persistence only. This config file can be overridden using the {@code inkstand.jcr.config} property making
+ * this repository provider functionally identical to the {@link StandaloneRepositoryProvider} from which in inherits.
+ * On top of the {@link StandaloneRepositoryProvider}
+ * this implementation creates it's working directory automatically as temporary folder - which is not recommended
+ * for repositories with persistence. And it provides the option to initialize the repository with a node type model
+ * which has to be done manually for the standalone repository as it is typically only required once.
  *
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
 @Priority(1)
-public class InMemoryRepositoryProvider implements RepositoryProvider {
+public class InMemoryRepositoryProvider extends StandaloneRepositoryProvider  {
 
     /**
-     * SLF4J Logger for this class
+     * Path to the working directory. The path is kept to clean it up on shutdown.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(InMemoryRepositoryProvider.class);
-
-    private TransientRepository repository;
     private Path tempFolder;
 
     @Inject
-    @ConfigProperty(name = "inkstand.jcr.transient.configURL", defaultValue = "defaultInMemoryRepository.xml")
+    @ConfigProperty(name = "inkstand.jcr.config", defaultValue = "defaultInMemoryRepository.xml")
     private String configURL;
 
     @Inject
-    @ConfigProperty(name = "inkstand.jcr.transient.cndFileURL")
+    @ConfigProperty(name = "inkstand.jcr.cnd")
     private String cndFileURL;
 
+    /**
+     * Admin session that is required to initialize the content model. The session is kept open so that a transient
+     * repository is not shutdown right after the initialization.
+     */
     private Session adminSession;
 
     @Override
     @Produces
-    @io.inkstand.jcr.TransientRepository
+    @InMemoryRepository
     public Repository getRepository() throws RepositoryException {
+        final Repository repository = super.getRepository();
+        try {
+            initializeRepository(repository);
+        } catch (IOException e) {
+            throw new InkstandRuntimeException("Could not initialize repository", e);
+        }
         return repository;
     }
 
-    @PostConstruct
-    public void startRepository() {
-        LOG.info("Creating transient repository");
-        try {
-            initializeRepository();
-            loadContentModel();
-        } catch (IOException | RepositoryException e) {
-            throw new InkstandRuntimeException("Could not start repository", e);
-        }
+    @Override
+    public void close(@Disposes final Repository repository) {
 
+        super.close(repository);
+        if(super.getRepositoryHome() == null) {
+            try {
+                //only delete the folder if it has not been pre-configured
+                FileUtils.deleteDirectory(tempFolder.toFile());
+            } catch (IOException e) {
+                throw new InkstandRuntimeException("Could not cleanup temp folder", e);
+            }
+        }
     }
 
-    @PreDestroy
-    public void shutdownRepository(@Disposes final Repository repository) {
+
+    /**
+     * Initializes the repository. This includes
+     * <ul>
+     *     <li>Node Types from a CND file</li>
+     * </ul>
+     *
+     * @param repository
+     *  the repository to initialize
+     *
+     * @throws IOException
+     * @throws RepositoryException
+     */
+    private void initializeRepository(final Repository repository) throws IOException, RepositoryException {
+        loadContentModel(repository);
+    }
+
+    @Override
+    protected RepositoryConfig getRepositoryConfig() throws ConfigurationException {
 
         try {
-            if (repository == this.repository) {
-                if (adminSession != null) {
-                    adminSession.logout();
-                    adminSession = null;
-                }
-                this.repository.shutdown();
-                FileUtils.deleteDirectory(tempFolder.toFile());
-            }
-            // TODO else throw ... what?
-        } catch (final IOException e) {
-            throw new InkstandRuntimeException("Could not cleanup temp folder", e);
+            final URL configLocation = getConfigURL();
+            return RepositoryConfig.create(configLocation.toURI(), getRepositoryHome());
+        } catch (MalformedURLException | URISyntaxException e) {
+            throw new ConfigurationException("Invalid config location", e);
         }
+    }
+
+    @Override
+    public String getRepositoryHome() {
+
+        if(tempFolder == null){
+            tempFolder = initWorkingDirectory();
+        }
+        return tempFolder.toString();
     }
 
     /**
-     * Creates a transient test repository for integration testing
-     *
-     * @throws IOException
-     * @throws ConfigurationException
+     * Initializes the working directory path by either resolving a configured working directory or by
+     * creating a temporary folder.
+     * @return
+     *  the path to the working directory
      */
-    private void initializeRepository() throws IOException, ConfigurationException {
-        tempFolder = Files.createTempDirectory("inque");
-        final URL configLocation = getConfigURL();
-        repository = JackrabbitUtil.createTransientRepository(tempFolder.toFile(), configLocation);
+    private Path initWorkingDirectory() {
+
+        final String configuredHome = super.getRepositoryHome();
+        final Path workingDir;
+        if(configuredHome == null) {
+            try {
+                workingDir = Files.createTempDirectory("inkstand");
+            } catch (IOException e) {
+                throw new InkstandRuntimeException("Could not create temporary working directory", e);
+            }
+        } else {
+            workingDir = Paths.get(configuredHome);
+        }
+        return workingDir.toAbsolutePath();
     }
 
     /**
@@ -132,13 +171,15 @@ public class InMemoryRepositoryProvider implements RepositoryProvider {
     }
 
     /**
-     * Initializes the Test Repository with the Inque nodetype model
+     * Initializes the Repository with the configured node types
      *
+     * @param repository
+     *  the repository into which the nodetypes should be loaded
      * @throws RepositoryException
      * @throws IOException
      */
-    private void loadContentModel() throws RepositoryException, IOException {
-        final Session session = getAdminSession();
+    private void loadContentModel(final Repository repository) throws RepositoryException, IOException {
+        final Session session = getAdminSession(repository);
         if (cndFileURL != null) {
             JackrabbitUtil.initializeContentModel(session, resolveUrl(cndFileURL));
         }
@@ -147,10 +188,12 @@ public class InMemoryRepositoryProvider implements RepositoryProvider {
     /**
      * Logs into the repository as administrator
      *
+     * @param repository
+     *  the repository to log into as admin
      * @return the session with admin privileges.
      * @throws RepositoryException
      */
-    private Session getAdminSession() throws RepositoryException {
+    private Session getAdminSession(Repository repository) throws RepositoryException {
         if (adminSession == null) {
             adminSession = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
         }

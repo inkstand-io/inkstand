@@ -17,16 +17,13 @@
 package io.inkstand.http.undertow;
 
 import static io.inkstand.scribble.Scribble.inject;
-import static io.inkstand.scribble.net.NetworkMatchers.isReachable;
-import static io.inkstand.scribble.net.NetworkMatchers.remotePort;
+import static io.inkstand.scribble.net.NetworkMatchers.isAvailable;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.net.URL;
-import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,12 +45,14 @@ public class UndertowWebServerTest {
     private UndertowWebServer subject;
 
     private int port;
+    private URL serviceUrl;
 
     @Before
     public void setUp() throws Exception {
+        port = NetworkUtils.findAvailablePort();
+        serviceUrl = new URL("http://localhost:"+port);
 
         subject = new UndertowWebServer();
-        port = NetworkUtils.findAvailablePort();
         undertow = Undertow.builder().addHttpListener(port, "localhost", new HttpHandler() {
 
             @Override
@@ -67,22 +66,28 @@ public class UndertowWebServerTest {
 
     @Test
     public void testStartStop() throws Exception {
-
-
         subject.start();
+        assertThat(serviceUrl, isAvailable());
 
-        //TODO this line should be changed to check for the HTTP-connectivity and not just socket reachability
-        // as this is prone to error on windows (for some reasons...)
-        assertNotNull(new URL("http://localhost:"+port).openStream());
-        assertThat(remotePort("localhost", port), isReachable().within(10, TimeUnit.SECONDS));
         subject.stop();
-        assertThat(remotePort("localhost", port), not(isReachable().within(10, TimeUnit.SECONDS)));
+        Thread.sleep(1000);
+        assertThat(serviceUrl, not(isAvailable()));
     }
 
 
     @Test
     public void testGetUndertow() throws Exception {
         assertEquals(undertow, subject.getUndertow());
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        //prepare
+
+        //act
+        assertEquals("[Undertow]", subject.toString());
+        //assert
+
     }
 
 }

@@ -18,14 +18,9 @@ package io.inkstand.http.undertow;
 
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
-import io.undertow.Undertow;
-import io.undertow.servlet.api.DeploymentInfo;
 
 import java.net.URL;
 import java.util.Collections;
-
-import io.inkstand.config.WebServerConfiguration;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +28,10 @@ import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import io.inkstand.config.WebServerConfiguration;
+import io.undertow.Undertow;
+import io.undertow.servlet.api.DeploymentInfo;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UndertowWebServerProviderTest {

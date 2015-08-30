@@ -16,17 +16,27 @@
   -->
 
 <configuration status="OFF">
-	<appenders>
-		<Console name="Console" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
-		</Console>
-	</appenders>
-	<Loggers>
-		<Logger name="io.inkstand" level="debug" additivity="false">
-			<AppenderRef ref="Console" />
-		</Logger>
-		<Root level="error">
-			<AppenderRef ref="Console" />
-		</Root>
-	</Loggers>
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <!-- Sysout appender for the console logger. have to configure it in the test-config as this will
+             override the main config-->
+        <Console name="SYSOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%msg%n"/>
+        </Console>
+    </appenders>
+    <Loggers>
+        <!-- Console logger for the printing output statements to the system console. We have to configure it in the
+            test-config as this will override the main config-->
+        <Logger name="CONSOLE" level="info" additivity="false">
+            <AppenderRef ref="SYSOUT"/>
+        </Logger>
+        <Logger name="io.inkstand" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="error">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
 </configuration>

@@ -17,15 +17,14 @@
 package io.inkstand.http.undertow.auth.ldap;
 
 import javax.inject.Inject;
+import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 import io.inkstand.security.LdapAuthConfiguration;
-
-import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 public class DefaultLdapConfiguration implements LdapAuthConfiguration {
     @Inject
     @ConfigProperty(name = "inkstand.auth.ldap.port", defaultValue = "389")
-    private int port;
+    private Integer port;
 
     @Inject
     @ConfigProperty(name = "inkstand.auth.ldap.host", defaultValue = "localhost")

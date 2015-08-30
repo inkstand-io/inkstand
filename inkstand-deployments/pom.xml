@@ -19,13 +19,16 @@
   <parent>
     <groupId>io.inkstand</groupId>
     <artifactId>inkstand</artifactId>
-    <version>0.1.3</version>
+    <version>0.2.0-SNAPSHOT</version>
   </parent>
   <artifactId>inkstand-deployments</artifactId>
   <packaging>pom</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
   <description>Deployments for Inkstand.</description>
   <modules>
-  	<module>inkstand-deployment-resteasy</module>
+  	<module>inkstand-undertow-resteasy</module>
+    <module>inkstand-undertow-staticcontent</module>
   </modules>
+
+
 </project>

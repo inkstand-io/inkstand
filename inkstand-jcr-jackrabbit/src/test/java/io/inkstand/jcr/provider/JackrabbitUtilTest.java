@@ -16,21 +16,26 @@
 
 package io.inkstand.jcr.provider;
 
-import static io.inkstand.scribble.JCRAssert.*;
+import static io.inkstand.scribble.JCRAssert.assertMixinNodeType;
+import static io.inkstand.scribble.JCRAssert.assertNodeExistByPath;
+import static io.inkstand.scribble.JCRAssert.assertNodeTypeExists;
+import static io.inkstand.scribble.JCRAssert.assertPrimaryNodeType;
+import static io.inkstand.scribble.JCRAssert.assertStringPropertyEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.URL;
 import javax.jcr.Node;
 import javax.jcr.Session;
+import java.net.URL;
+import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import io.inkstand.InkstandRuntimeException;
 import io.inkstand.scribble.Scribble;
 import io.inkstand.scribble.rules.jcr.ContentRepository;
-import io.inkstand.InkstandRuntimeException;
 
 public class JackrabbitUtilTest {
 
@@ -38,7 +43,7 @@ public class JackrabbitUtilTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     @Rule
-    public final ContentRepository repository = Scribble.newTempFolder().aroundInMemoryContentRepository().build();
+    public final ContentRepository repository = Scribble.newInMemoryContentRepository().build();
 
 
     @Test
@@ -57,6 +62,18 @@ public class JackrabbitUtilTest {
         assertNotNull(repo);
         assertEquals(folder.getRoot().toString(), repo.getHomeDir());
         repo.shutdown();
+    }
+
+    @Test
+    public void testAsTransientRepository_validRepository() throws Exception {
+        //prepare
+        RepositoryImpl repoImpl = (RepositoryImpl) repository.getRepository();
+
+        //act
+        TransientRepository result = JackrabbitUtil.asTransientRepository(repoImpl);
+
+        //assert
+        assertNotNull(result);
     }
 
     @Test

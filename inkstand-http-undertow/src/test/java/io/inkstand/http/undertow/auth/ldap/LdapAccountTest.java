@@ -65,7 +65,7 @@ public class LdapAccountTest {
 
     @Test
     public void testGetDn() throws Exception {
-        assertEquals(TEST_USER_DN, subject.getDn());
+        assertEquals(TEST_USER_DN, subject.getUserDn());
     }
 
 }

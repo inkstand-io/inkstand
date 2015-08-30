@@ -13,21 +13,20 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.inkstand</groupId>
         <artifactId>inkstand</artifactId>
-        <version>0.1.3</version>
+        <version>0.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>inkstand-core</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <packaging>jar</packaging>
     <url>https://github.com/inkstand.io/inkstand/wiki</url>
     <description>
-        The core package contains the configuration API, a launcher class and CDI extensions that are
-        required for configuration and auto-discovery. The CDI extensions can be used without the full inkstand
-        bundle by just using this core package.
+        The core package contains the configuration API and a launcher class.
     </description>
 
     <dependencies>
@@ -39,6 +38,16 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-cdi-globalalternative</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-cdi-resourceautodiscovery</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

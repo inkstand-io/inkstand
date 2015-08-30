@@ -16,7 +16,7 @@
 
 package io.inkstand.security;
 
-import io.inkstand.InkstandException;
+import io.inkstand.InkstandRuntimeException;
 
 /**
  * Exception that should be thrown when the authentication of a user fails. If there are no further details about the
@@ -25,7 +25,7 @@ import io.inkstand.InkstandException;
  *
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
-public class AuthenticationException extends InkstandException {
+public class AuthenticationException extends InkstandRuntimeException {
 
     private static final long serialVersionUID = 2358944636079872791L;
 
@@ -50,25 +50,25 @@ public class AuthenticationException extends InkstandException {
 
     @Override
     public String getMessage() {
-        return getMessage(super.getMessage(), userId);
+        return this.createMessage(super.getMessage(), this.userId);
     }
 
     @Override
     public String getLocalizedMessage() {
-        return getMessage(super.getLocalizedMessage(), userId);
+        return super.getLocalizedMessage();
     }
 
-    private String getMessage(final String message, final String user) {
-        return message + "[user=" + user+ ']';
+    private String createMessage(final String message, final String user) {
+        return message + " [user=" + user+ ']';
     }
 
     /**
-     * The id of the user that failed to authenticate
+     * The id of the user that failed to authenticate.
      *
      * @return a string representing the id of the user whose authentication failed
      */
     public String getUserId() {
-        return userId;
+        return this.userId;
     }
 
 }
