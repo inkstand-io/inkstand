@@ -61,8 +61,7 @@ public class DefaultStaticContentDeploymentProviderTest {
         //assert
         assertNotNull(di);
         assertEquals("/", di.getContextPath());
-        //TODO do it right
-        assertEquals("index.html", di.getWelcomePages());
+        assertEquals("[index.html]", di.getWelcomePages().toString());
         assertEquals("StaticContent", di.getDeploymentName());
         ResourceManager rm = di.getResourceManager();
         //the index.html file is contained in the testfile.zip
@@ -84,8 +83,7 @@ public class DefaultStaticContentDeploymentProviderTest {
         //assert
         assertNotNull(di);
         assertEquals("/", di.getContextPath());
-        //TODO do it right
-        assertEquals("index.html", di.getWelcomePages());
+        assertEquals("[index.html]", di.getWelcomePages().toString());
         assertEquals("StaticContent", di.getDeploymentName());
         //the resource manager should serve content in the DIRECTORY of the content.zip
         //therefore there is no index.html resource (it's in the testfile.zip) but a resource named "testfile.zip"
