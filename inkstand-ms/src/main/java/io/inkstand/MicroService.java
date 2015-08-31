@@ -33,4 +33,42 @@ public interface MicroService {
      * Stops the web server
      */
     void stop();
+
+    /**
+     * Extension interface for {@link MicroService}. MicroService implementations may implement this interface
+     * to provide information about the current state of the service.
+     * Created by Gerald Mücke on 30.08.2015.
+     */
+    interface StateSupport {
+
+        /**
+         * Provides the information of the current state of the service.
+         * @return
+         *  the current state of the implementor
+         */
+        State getState();
+
+        /**
+         *
+         * The state of the microservice. The basic state machine for a microservice is
+         * <ul>
+         *     <li>{@code (create)}: -&gt; NEW</li>
+         *     <li>{@code start()}: NEW -&gt; RUNNING</li>
+         *     <li>{@code stop()}: RUNNING -&gt; STOPPED</li>
+         *     <li>{@code start()}: STOPPED -&gt; RUNNING</li>
+         * </ul>
+         * @return
+         *  the current state of the microservice.
+         *
+         */
+        enum State {
+            NEW,
+            RUNNING,
+            STOPPED,
+            ;
+        }
+
+
+    }
+
 }

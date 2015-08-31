@@ -22,6 +22,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
 @ApplicationScoped
-public class MicroServiceController {
+public class MicroServiceController implements MicroService.StateSupport{
 
     /**
      * SLF4J Logger for this class
@@ -42,10 +44,13 @@ public class MicroServiceController {
     @Inject
     private MicroService microService;
 
+    private AtomicReference<State> trackedState = new AtomicReference<>(State.NEW);
+
     @PostConstruct
     public void init() {
         LOG.info("Starting '{}'", microService);
         microService.start();
+        trackedState.set(State.RUNNING);
     }
 
     void watch(@Observes final ContainerInitialized containerInitialized) {
@@ -56,6 +61,15 @@ public class MicroServiceController {
     @PreDestroy
     public void shutdown() {
         microService.stop();
+        trackedState.set(State.STOPPED);
         LOG.info("'{}' stopped", microService);
+    }
+
+    @Override
+    public State getState(){
+        if(microService instanceof MicroService.StateSupport){
+            return ((MicroService.StateSupport) microService).getState();
+        }
+        return trackedState.get();
     }
 }

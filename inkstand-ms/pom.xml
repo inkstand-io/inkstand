@@ -34,5 +34,10 @@
 			<groupId>org.jboss.weld.se</groupId>
 			<artifactId>weld-se</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.inkstand</groupId>
+			<artifactId>scribble</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
