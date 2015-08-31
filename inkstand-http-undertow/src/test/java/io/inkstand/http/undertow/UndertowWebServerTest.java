@@ -16,6 +16,9 @@
 
 package io.inkstand.http.undertow;
 
+import static io.inkstand.MicroService.StateSupport.State.NEW;
+import static io.inkstand.MicroService.StateSupport.State.RUNNING;
+import static io.inkstand.MicroService.StateSupport.State.STOPPED;
 import static io.inkstand.scribble.Scribble.inject;
 import static io.inkstand.scribble.net.NetworkMatchers.isAvailable;
 import static org.hamcrest.CoreMatchers.not;
@@ -24,16 +27,16 @@ import static org.junit.Assert.assertThat;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.net.URL;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.Logger;
 
 import io.inkstand.scribble.net.NetworkUtils;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UndertowWebServerTest {
@@ -66,12 +69,15 @@ public class UndertowWebServerTest {
 
     @Test
     public void testStartStop() throws Exception {
+        assertEquals(NEW, subject.getState());
         subject.start();
         assertThat(serviceUrl, isAvailable());
+        assertEquals(RUNNING, subject.getState());
 
         subject.stop();
         Thread.sleep(1000);
         assertThat(serviceUrl, not(isAvailable()));
+        assertEquals(STOPPED, subject.getState());
     }
 
 

@@ -31,9 +31,19 @@
 
     <dependencies>
         <!-- the Weld CDI container -->
+        <!--
         <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se</artifactId>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.deltaspike.cdictrl</groupId>
+            <artifactId>deltaspike-cdictrl-weld</artifactId>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

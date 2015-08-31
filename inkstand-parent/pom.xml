@@ -176,6 +176,21 @@
                 <artifactId>deltaspike-core-impl</artifactId>
                 <version>${apache.deltaspike.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.cdictrl</groupId>
+                <artifactId>deltaspike-cdictrl-api</artifactId>
+                <version>${apache.deltaspike.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.cdictrl</groupId>
+                <artifactId>deltaspike-cdictrl-servlet</artifactId>
+                <version>${apache.deltaspike.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.cdictrl</groupId>
+                <artifactId>deltaspike-cdictrl-weld</artifactId>
+                <version>${apache.deltaspike.version}</version>
+            </dependency>
             <!-- Apache DS -->
             <dependency>
                 <groupId>org.apache.directory.api</groupId>

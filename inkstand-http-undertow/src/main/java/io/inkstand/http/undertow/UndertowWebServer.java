@@ -16,29 +16,42 @@
 
 package io.inkstand.http.undertow;
 
+import javax.inject.Inject;
+import java.util.concurrent.atomic.AtomicReference;
+
 import io.inkstand.MicroService;
 import io.undertow.Undertow;
-
-import javax.inject.Inject;
 
 /**
  * Undertow based WebServer implementation
  *
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
-public class UndertowWebServer implements MicroService {
+public class UndertowWebServer implements MicroService, MicroService.StateSupport{
 
     @Inject
     private Undertow undertow;
 
+    /**
+     * The current state
+     */
+    private AtomicReference<State> state = new AtomicReference<>(State.NEW);
+
     @Override
     public void start() {
         undertow.start();
+        state.set(State.RUNNING);
     }
 
     @Override
     public void stop() {
         undertow.stop();
+        state.set(State.STOPPED);
+    }
+
+    @Override
+    public State getState() {
+        return this.state.get();
     }
 
     /**

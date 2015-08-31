@@ -20,6 +20,11 @@
             <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-ms</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
         </dependency>
@@ -32,6 +37,10 @@
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
 
     </dependencies>

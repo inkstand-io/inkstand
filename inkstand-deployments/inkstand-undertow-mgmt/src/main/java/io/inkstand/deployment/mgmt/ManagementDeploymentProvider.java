@@ -8,9 +8,11 @@ import javax.servlet.annotation.WebServlet;
 import io.inkstand.Management;
 import io.inkstand.cdi.WebServlets;
 import io.inkstand.http.undertow.UndertowDeploymentProvider;
-import io.inkstand.mgmt.ManagementServlet;
+import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
+import io.undertow.servlet.api.ListenerInfo;
 import io.undertow.servlet.api.ServletInfo;
+import org.apache.deltaspike.cdise.servlet.CdiServletRequestListener;
 
 /**
  * Provider to provide the default management deployment containing all management servlets.
@@ -28,13 +30,15 @@ public class ManagementDeploymentProvider implements UndertowDeploymentProvider 
         final DeploymentInfo di = new DeploymentInfo();
 
         for(Class servletClass : servlets.getServlets(Management.class)) {
-            final WebServlet servletDesc = (WebServlet) servletClass.getAnnotation(WebServlet.class);
-            final ServletInfo si = createServletInfo(servletDesc);
+            final ServletInfo si = createServletInfo(servletClass);
             di.addServlet(si);
 
         }
+
+        final ListenerInfo listenerInfo = Servlets.listener(CdiServletRequestListener.class);
+        di.addListener(listenerInfo);
         di.setDeploymentName("Management Console");
-        di.setContextPath("/mgmt");
+        di.setContextPath("/inkstand");
         di.setClassLoader(ClassLoader.getSystemClassLoader());
         return di;
     }
@@ -43,16 +47,17 @@ public class ManagementDeploymentProvider implements UndertowDeploymentProvider 
      * Creates the servlet info from the servlet descriptor to be added to the deployment info for
      * the undertow deployment manager. The method will extract url mappings, init parameters,
      * async-settings and load-on-startup behavior from the descriptor.
-     * @param servletDesc
-     *  the servlet descriptor annotation from the servlet class
+     * @param servletClass
+     *  the servlet class that is annotated with {@link WebServlet}
      * @return
      *  the ServletInfo to be added to a deployment.
      */
-    private ServletInfo createServletInfo(final WebServlet servletDesc) {
+    private ServletInfo createServletInfo(final Class servletClass) {
 
         //TODO candidate for Undertow utility class
+        final WebServlet servletDesc = (WebServlet) servletClass.getAnnotation(WebServlet.class);
 
-        final ServletInfo si = new ServletInfo(servletDesc.name(), ManagementServlet.class);
+        final ServletInfo si = new ServletInfo(servletDesc.name(), servletClass);
         si.addMappings(servletDesc.urlPatterns());
         for(WebInitParam param : servletDesc.initParams()) {
             si.addInitParam(param.name(), param.value());

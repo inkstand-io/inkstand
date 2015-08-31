@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import org.apache.deltaspike.cdise.api.CdiContainer;
+import org.apache.deltaspike.cdise.api.CdiContainerLoader;
+
 /**
  * Inkstand launcher. It's not just an alternative way of starting the CDI Container. The launcher also provides
  * an extensible mechanism for processing command line arguments. The command line argument have to be of the format
@@ -43,7 +46,9 @@ public final class Inkstand {
         final Map<String, String> argValues = argsToMap(args);
         applyArgs(argValues);
 
-        org.jboss.weld.environment.se.StartMain.main(args);
+        CdiContainer cdiContainer = CdiContainerLoader.getCdiContainer();
+        cdiContainer.boot();
+        cdiContainer.getContextControl().startContexts();
     }
 
     /**
