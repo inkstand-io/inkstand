@@ -89,6 +89,11 @@ public class UndertowWebServerProvider {
             //mgmt Deployment is completely optional and will only be activated, if there is a mgmt config
             if(!mgmtConfig.isUnsatisfied() && !mgmtDeployment.isUnsatisfied()) {
                 final WebServerConfiguration mCfg = mgmtConfig.get();
+
+                LOG.info("Creating management endpoint {}:{}",
+                         mCfg.getBindAddress(),
+                         mCfg.getPort());
+
                 final ServletContainer mContainer = Servlets.newContainer();
                 final HttpHandler root;
                 if(mgmtDeployment.isAmbiguous()) {

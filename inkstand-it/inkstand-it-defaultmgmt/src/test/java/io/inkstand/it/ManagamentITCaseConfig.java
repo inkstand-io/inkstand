@@ -26,7 +26,7 @@ import io.inkstand.config.WebServerConfiguration;
  */
 public class ManagamentITCaseConfig {
 
-    private static int port = Integer.valueOf(System.getProperty("inkstand.mgmt.port"));
+    private int port = Integer.valueOf(System.getProperty("inkstand.mgmt.port"));
 
     @Produces
     @Management

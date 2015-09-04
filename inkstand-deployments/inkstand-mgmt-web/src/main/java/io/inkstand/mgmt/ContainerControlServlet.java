@@ -45,34 +45,30 @@ import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 import org.slf4j.Logger;
 
 /**
- * Basic Management Servlet for Inkstand Microservice container that provides basic control
- * functions such as starting and stopping the inkstand container.<br>
- * The servlet serves the following endpoints
- * <ul>
- *     <li>/mgtm/control/status/</li>
- *     <li>/mgtm/control/</li>
- * </ul>
- * Created by Gerald on 09.08.2015.
+ * Basic Management Servlet for Inkstand Microservice container that provides basic control functions such as starting
+ * and stopping the inkstand container.<br> The servlet serves the following endpoints <ul>
+ * <li>/mgtm/control/status/</li> <li>/mgtm/control/</li> </ul> Created by Gerald on 09.08.2015.
  */
 @Management
-@WebServlet(name="control",
+@WebServlet(name = "control",
             description = "Inkstand Container Control Servlet",
-            urlPatterns={"/inkstand/control/*"})
+            urlPatterns = { "/inkstand/control/*" })
 public class ContainerControlServlet extends HttpServlet {
 
     /*
      * This servlet is intentionally not implemented using Jax-RS resources.
-     * As Inkstand Microservices have a web container as minimal requirements, every instance of Inkstand
-     * should be capable of running servlets.
+     * As Inkstand Microservices have a web container as minimal requirement, every instance of Inkstand
+     * should be capable of running servlets including the management servlets, even without adding
+     * a Jax-RS module.
      */
 
     private static final Logger LOG = getLogger(ContainerControlServlet.class);
+    public static final String ATTR_JSON = "json";
 
     private ServletConfig config;
 
     @Inject
     private MicroServiceController msc;
-
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
@@ -82,18 +78,16 @@ public class ContainerControlServlet extends HttpServlet {
 
         //if the servlet was not instantiated in a CDI container it has to
         //be added to the current cdi context
-        if(this.msc == null) {
-
+        if (this.msc == null) {
             addToContext(this);
-
         }
-
     }
 
     /**
      * Adds this servlet to the cdi context and injecting all unresolved dependencies from the cdi context-
+     *
      * @param unmanagedInstance
-     *  the instance whose depenencies should be resolved using the context
+     *         the instance whose depenencies should be resolved using the context
      */
     private void addToContext(final Object unmanagedInstance) {
         //TODO potential candidate for CDI Utility
@@ -112,71 +106,122 @@ public class ContainerControlServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+    protected void service(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
 
+        LOG.debug("{} {}", req.getMethod(), req.getPathInfo());
         resp.setContentType("application/json");
-        try(final JsonGenerator out = Json.createGenerator(resp.getOutputStream())) {
-            if(isJsonAccepted(req)) {
 
-                String resourcePath = req.getPathInfo();
-                LOG.info("GET resource;{}", resourcePath);
-                if("/status/".equals(resourcePath)) {
-                    out.writeStartObject();
-                    out.write("state", msc.getState().toString());
-                    out.writeEnd();
-                } else {
-                    resp.setStatus(404);
-                    out.writeStartObject();
-                    out.write("message", "Resource not found");
-                    out.write("resource", resourcePath);
-                    out.writeEnd();
-                }
+        try (final JsonGenerator out = Json.createGenerator(resp.getOutputStream())) {
+            if (isJsonAccepted(req)) {
+                req.setAttribute("json", out);
+                super.service(req, resp);
             } else {
-                resp.setStatus(406);
-                out.writeStartObject();
-                out.write("message", "ContentType: " + req.getContentType() + " not supported");
-                out.writeEnd();
+                sendError(resp, out, 406, "ContentType: " + req.getHeader("Accept") + " not supported");
             }
         }
     }
 
-    private boolean isJsonAccepted(final HttpServletRequest request) {
-        final String acceptHeader = request.getHeader("Accept");
-        return acceptHeader == null ||acceptHeader.contains("application/json");
+    @Override
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        final JsonGenerator out = (JsonGenerator) req.getAttribute("json");
+
+        final String resourcePath = req.getPathInfo();
+        LOG.info("GET resource;{}", resourcePath);
+        if ("/status/".equals(resourcePath)) {
+            out.writeStartObject();
+            out.write("state", msc.getState().toString());
+            out.writeEnd();
+        } else {
+            sendError(resp, out, 404, "Resource not found", "resource", resourcePath);
+        }
+
     }
 
     @Override
     protected void doPost(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
 
-        final JsonReader reader = Json.createReader(req.getInputStream());
-        JsonObject json = reader.readObject();
+        final JsonGenerator out = (JsonGenerator) req.getAttribute(ATTR_JSON);
+        final JsonObject json = readJsonBody(req);
         int delay = json.getInt("delay", 5);
 
-        final JsonGenerator out = Json.createGenerator(resp.getOutputStream());
-        out.writeStartObject();
-        out.write("msg", "ok");
-        out.writeEnd();
-        out.close();
+        final String resourcePath = req.getPathInfo();
+        if ("/shutdown/".equals(resourcePath)) {
+            out.writeStartObject();
+            out.write("msg", "ok");
+            out.writeEnd();
+            LOG.info("Shutting down {} in {}s", msc, delay);
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.schedule(new Runnable() {
 
-        LOG.info("Shutting down {} in {}s", msc, delay);
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.schedule(new Runnable() {
+                @Override
+                public void run() {
 
-            @Override
-            public void run() {
+                    LOG.info("Shutting down {}", msc);
+                    //msc.stop();
+                    CdiContainerLoader.getCdiContainer().shutdown();
+                    LOG.info("Shutdown complete.");
+                }
+            }, delay, TimeUnit.SECONDS);
 
-                LOG.info("Shutting down {}", msc);
-                //msc.stop();
-                CdiContainerLoader.getCdiContainer().shutdown();
-                LOG.info("Shutdown complete.");
-            }
-        }, delay, TimeUnit.SECONDS);
-
+        } else {
+            sendError(resp, out, 404, "Resource not found", "resource", resourcePath);
+        }
     }
 
+    private JsonObject readJsonBody(final HttpServletRequest req) throws IOException {
 
+        final JsonReader reader = Json.createReader(req.getInputStream());
+        return reader.readObject();
+    }
+
+    /**
+     * Verifies if the request client accepts json as response
+     *
+     * @param request
+     *         the http request containing the client information
+     *
+     * @return true if the client accepts application/json
+     */
+
+    private boolean isJsonAccepted(final HttpServletRequest request) {
+
+        final String acceptHeader = request.getHeader("Accept");
+        return acceptHeader == null || acceptHeader.contains("application/json");
+    }
+
+    /**
+     * Creates an error response to be sent to the client. The response contains not only a status code but also a json
+     * body with information for the client about the error.
+     *
+     * @param resp
+     *         the servlet response
+     * @param out
+     *         the json generator for creating the response body
+     * @param status
+     *         the http status code to be returned
+     * @param message
+     *         the message to be returned
+     * @param params
+     *         parameters to be included in the response. There must name-value pairs.
+     */
+    private void sendError(final HttpServletResponse resp,
+                           final JsonGenerator out,
+                           final int status,
+                           final String message,
+                           final String... params) {
+
+        resp.setStatus(status);
+        out.writeStartObject();
+        out.write("message", message);
+        for (int i = 0; i < params.length; i += 2) {
+            out.write(params[i], params[i + 1]);
+        }
+        out.writeEnd();
+    }
 
     @Override
     public String getServletInfo() {
