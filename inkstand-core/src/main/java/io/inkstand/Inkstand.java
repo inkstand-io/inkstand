@@ -47,7 +47,7 @@ public final class Inkstand {
         applyArgs(argValues);
 
         CdiContainer cdiContainer = CdiContainerLoader.getCdiContainer();
-        cdiContainer.boot();
+        cdiContainer.boot(argValues);
         cdiContainer.getContextControl().startContexts();
     }
 

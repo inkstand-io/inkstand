@@ -16,17 +16,16 @@
 
 package io.inkstand;
 
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeThat;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Map;
+
+import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 import org.jboss.weld.environment.se.StartMain;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -60,14 +59,13 @@ public class InkstandTest {
 
     @Before
     public void setUp() throws Exception {
-        StartMain.PARAMETERS = null;
         baos.reset();
     }
 
     @After
     public void tearDown() throws Exception {
-        StartMain.PARAMETERS = null;
         TestLauncherArgs.reset();
+        CdiContainerLoader.getCdiContainer().shutdown();
     }
 
     /**
@@ -79,16 +77,13 @@ public class InkstandTest {
     public void testMain_noArgs() throws Exception {
 
         //prepare
-        assumeThat(StartMain.PARAMETERS, nullValue());
         String[] args = new String[0];
 
         //act
         Inkstand.main(args);
 
         //assert
-        assertArrayEquals(args, StartMain.getParameters());
         assertFalse(TestLauncherArgs.isApplyInvoked());
-
     }
 
     /**
@@ -100,7 +95,6 @@ public class InkstandTest {
     public void testMain_helpArgs() throws Exception {
 
         assumeTrue(!"pit".equals(System.getProperty("tests.mode")));
-        assumeThat(StartMain.PARAMETERS, nullValue());
         //prepare
         //pass the help arg
         String[] args = new String[]{"-?"};
@@ -109,8 +103,6 @@ public class InkstandTest {
         Inkstand.main(args);
 
         //assert
-        assertArrayEquals(args, StartMain.getParameters());
-
         //the help launcher arg should display the description of all launcherArg extensions on system out
         //so the output should contain the description of the TestLauncherArgs extension
         System.setOut(originalOutStream);
@@ -128,8 +120,6 @@ public class InkstandTest {
      */
     @Test
     public void testMain_applyArgs() throws Exception {
-        assumeThat(StartMain.PARAMETERS, nullValue());
-
         //prepare
         String[] args = new String[]{"-test", "testvalue"};
 
@@ -137,7 +127,6 @@ public class InkstandTest {
         Inkstand.main(args);
 
         //assert
-        assertArrayEquals(args, StartMain.getParameters());
         assertTrue(TestLauncherArgs.isApplyInvoked());
         final Map<String,String> appliedArgs = TestLauncherArgs.getAppliedArgs();
         assertTrue(appliedArgs.containsKey("test"));
@@ -147,8 +136,6 @@ public class InkstandTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMain_applyArgs_invalidArgs_exception() throws Exception {
-        assumeThat(StartMain.PARAMETERS, nullValue());
-
         //prepare
         String[] args = new String[]{"-unknown", "-test", "testvalue"};
 
@@ -158,8 +145,6 @@ public class InkstandTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMain_applyArgs_invalidValue_exception() throws Exception {
-        assumeThat(StartMain.PARAMETERS, nullValue());
-
         //prepare
         String[] args = new String[]{"unknown", "testvalue"};
 
@@ -175,7 +160,6 @@ public class InkstandTest {
      */
     @Test
     public void testMain_applyArgs_flagArg() throws Exception {
-        assumeThat(StartMain.PARAMETERS, nullValue());
 
         //prepare
         String[] args = new String[]{"-test", "-other"};
@@ -184,7 +168,6 @@ public class InkstandTest {
         Inkstand.main(args);
 
         //assert
-        assertArrayEquals(args, StartMain.getParameters());
         assertTrue(TestLauncherArgs.isApplyInvoked());
         final Map<String,String> appliedArgs = TestLauncherArgs.getAppliedArgs();
         assertTrue(appliedArgs.containsKey("test"));
