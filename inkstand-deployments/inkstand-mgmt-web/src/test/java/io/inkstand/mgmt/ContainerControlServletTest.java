@@ -7,6 +7,8 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
+import javax.json.Json;
+import javax.json.stream.JsonGenerator;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -46,7 +49,9 @@ public class ContainerControlServletTest {
     @Mock
     private ServletOutputStream srvOut;
 
+    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
     ServletOutputStreamAnswer answer = new ServletOutputStreamAnswer();
+    private JsonGenerator json;
 
     @Before
     public void setUp() throws Exception {
@@ -55,9 +60,11 @@ public class ContainerControlServletTest {
         doAnswer(answer).when(srvOut).write((byte[]) anyObject());
         doAnswer(answer).when(srvOut).write((anyInt()));
         when(res.getOutputStream()).thenReturn(srvOut);
+        this.json = Json.createGenerator(outStream);
     }
 
     @Test
+    @Ignore
     public void testInit_and_getServletConfig() throws Exception {
 
         //prepare
@@ -84,16 +91,33 @@ public class ContainerControlServletTest {
     }
 
     @Test
-    public void test_GET_status() throws Exception {
+    public void testService_jsonAccepted() throws Exception {
         //prepare
+
+        //act
+
+
+        //assert
+
+    }
+
+    @Test
+    public void test_GET_status() throws Exception {
+        //
+
+
+        when(req.getMethod()).thenReturn("GET");
         when(req.getPathInfo()).thenReturn("status");
+        when(req.getAttribute("json")).thenReturn(json);
 
         //act
         subject.doGet(req, res);
 
         //assert
 
+
     }
+
 
 
     /**

@@ -108,7 +108,7 @@ public class ManagementITCase {
         //assert
         assertEquals(406, response.getStatus());
         JsonObject json = readJson(response);
-        assertEquals("ContentType: null not supported", json.getString("message"));
+        assertEquals("ContentType: application/atom+xml not supported", json.getString("message"));
     }
 
     @Test

@@ -161,8 +161,11 @@ public class ContainerControlServlet extends HttpServlet {
                 public void run() {
 
                     LOG.info("Shutting down {}", msc);
-                    //msc.stop();
-                    CdiContainerLoader.getCdiContainer().shutdown();
+                    //TODO decide which is the better option: shutdown CDI container or just the MS
+                    //in any case, even the management port will become unavailable, so shutting down the
+                    // microservice is only of advantage, when there are other options to control the container
+                    msc.shutdown();
+                    //CdiContainerLoader.getCdiContainer().shutdown();
                     LOG.info("Shutdown complete.");
                 }
             }, delay, TimeUnit.SECONDS);

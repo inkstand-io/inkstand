@@ -7,8 +7,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -57,7 +62,7 @@ public class ManagementDeploymentProviderTest {
         //assert
         assertNotNull(di);
         assertEquals("Management Console", di.getDeploymentName());
-        assertEquals("/mgmt", di.getContextPath());
+        assertEquals("/inkstand", di.getContextPath());
         Map<String, ServletInfo> servlets = di.getServlets();
         assertNotNull(servlets);
         assertTrue(servlets.isEmpty());
@@ -66,8 +71,12 @@ public class ManagementDeploymentProviderTest {
     @Test
     public void testGetDeployment_twoServlets() throws Exception {
         //prepare
+        Servlet1.class.getDeclaredConstructor(new Class[0]);
+        Servlet2.class.getDeclaredConstructor(new Class[0]);
         when(webServlets.getServlets(Management.class))
                 .thenReturn(this.<Class>setFromList(Servlet1.class, Servlet2.class));
+
+
 
         //act
         DeploymentInfo di = subject.getDeployment();
@@ -75,7 +84,7 @@ public class ManagementDeploymentProviderTest {
         //assert
         assertNotNull(di);
         assertEquals("Management Console", di.getDeploymentName());
-        assertEquals("/mgmt", di.getContextPath());
+        assertEquals("/inkstand", di.getContextPath());
         final Map<String, ServletInfo> servlets = di.getServlets();
         assertNotNull(servlets);
         assertEquals(2, servlets.size());
@@ -121,8 +130,7 @@ public class ManagementDeploymentProviderTest {
                 urlPatterns = { "/test1/*", "/t1/*" },
                 initParams = { @WebInitParam(name="foo", value="Hello"),
                                @WebInitParam(name="bar", value="World!")})
-    public abstract class Servlet1 implements Servlet {
-
+    public static class Servlet1 extends TestServlet{
     }
 
     @WebServlet(name = "servlet2",
@@ -130,7 +138,38 @@ public class ManagementDeploymentProviderTest {
                 loadOnStartup = 10,
                 urlPatterns = { "/test2/*", "/t2/*" },
                 initParams = { @WebInitParam(name="text", value="Test")})
-    public abstract class Servlet2 implements Servlet {
+    public static class Servlet2 extends TestServlet{
 
+    }
+
+    public static class TestServlet implements Servlet {
+
+        @Override
+        public void init(final ServletConfig servletConfig) throws ServletException {
+
+        }
+
+        @Override
+        public ServletConfig getServletConfig() {
+
+            return null;
+        }
+
+        @Override
+        public void service(final ServletRequest servletRequest, final ServletResponse servletResponse)
+                throws ServletException, IOException {
+
+        }
+
+        @Override
+        public String getServletInfo() {
+
+            return null;
+        }
+
+        @Override
+        public void destroy() {
+
+        }
     }
 }
