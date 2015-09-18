@@ -18,6 +18,12 @@
             <groupId>io.inkstand</groupId>
             <artifactId>inkstand-core</artifactId>
             <version>0.2.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.deltaspike.cdictrl</groupId>
+                    <artifactId>deltaspike-cdictrl-weld</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.inkstand</groupId>
@@ -42,7 +48,10 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>scribble</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -16,14 +16,12 @@
 
 package io.inkstand.mgmt;
 
+import static io.inkstand.mgmt.Injector.addToContext;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.AnnotatedType;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.stream.JsonGenerator;
@@ -40,7 +38,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.inkstand.Management;
 import io.inkstand.MicroServiceController;
-import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 import org.slf4j.Logger;
 
@@ -83,22 +80,6 @@ public class ContainerControlServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Adds this servlet to the cdi context and injecting all unresolved dependencies from the cdi context-
-     *
-     * @param unmanagedInstance
-     *         the instance whose depenencies should be resolved using the context
-     */
-    private void addToContext(final Object unmanagedInstance) {
-        //TODO potential candidate for CDI Utility
-        final CdiContainer cdiContainer = CdiContainerLoader.getCdiContainer();
-        final BeanManager beanManager = cdiContainer.getBeanManager();
-        final CreationalContext creationalContext = beanManager.createCreationalContext(null);
-        final AnnotatedType annotatedType = beanManager.createAnnotatedType(unmanagedInstance.getClass());
-        final InjectionTarget injectionTarget = beanManager.createInjectionTarget(annotatedType);
-        injectionTarget.inject(unmanagedInstance, creationalContext);
-    }
-
     @Override
     public ServletConfig getServletConfig() {
 
@@ -109,16 +90,20 @@ public class ContainerControlServlet extends HttpServlet {
     protected void service(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
 
-        LOG.debug("{} {}", req.getMethod(), req.getPathInfo());
-        resp.setContentType("application/json");
+        if("GET".equals(req.getMethod()) || "POST".equals(req.getMethod())) {
 
-        try (final JsonGenerator out = Json.createGenerator(resp.getOutputStream())) {
-            if (isJsonAccepted(req)) {
-                req.setAttribute("json", out);
-                super.service(req, resp);
-            } else {
-                sendError(resp, out, 406, "ContentType: " + req.getHeader("Accept") + " not supported");
+            LOG.debug("{} {}", req.getMethod(), req.getPathInfo());
+            resp.setContentType("application/json");
+            try (final JsonGenerator out = Json.createGenerator(resp.getOutputStream())) {
+                if (isJsonAccepted(req)) {
+                    req.setAttribute("json", out);
+                    super.service(req, resp);
+                } else {
+                    sendError(resp, out, 406, "ContentType: " + req.getHeader("Accept") + " not supported");
+                }
             }
+        }else {
+            super.service(req,resp);
         }
     }
 
@@ -151,21 +136,19 @@ public class ContainerControlServlet extends HttpServlet {
         final String resourcePath = req.getPathInfo();
         if ("/shutdown/".equals(resourcePath)) {
             out.writeStartObject();
-            out.write("msg", "ok");
+            out.write("msg", "Shutdown request received");
             out.writeEnd();
-            LOG.info("Shutting down {} in {}s", msc, delay);
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            LOG.info("Shutting down CDI container in {}s", delay);
+            final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             scheduler.schedule(new Runnable() {
 
                 @Override
                 public void run() {
 
-                    LOG.info("Shutting down {}", msc);
-                    //TODO decide which is the better option: shutdown CDI container or just the MS
+                    LOG.info("Begin CDI Container shutdown");
                     //in any case, even the management port will become unavailable, so shutting down the
                     // microservice is only of advantage, when there are other options to control the container
-                    msc.shutdown();
-                    //CdiContainerLoader.getCdiContainer().shutdown();
+                    CdiContainerLoader.getCdiContainer().shutdown();
                     LOG.info("Shutdown complete.");
                 }
             }, delay, TimeUnit.SECONDS);
@@ -175,10 +158,19 @@ public class ContainerControlServlet extends HttpServlet {
         }
     }
 
-    private JsonObject readJsonBody(final HttpServletRequest req) throws IOException {
+    private JsonObject readJsonBody(final HttpServletRequest req)  {
 
-        final JsonReader reader = Json.createReader(req.getInputStream());
-        return reader.readObject();
+        final JsonReader reader;
+        try {
+            reader = Json.createReader(req.getInputStream());
+            return reader.readObject();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JsonException e) {
+            e.getCause().printStackTrace();
+            throw e;
+        }
     }
 
     /**
