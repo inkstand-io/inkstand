@@ -18,19 +18,20 @@ package io.inkstand.deployment.resteasy;
 
 import javax.inject.Inject;
 import java.util.Collection;
-import org.apache.deltaspike.core.api.config.ConfigProperty;
+import java.util.HashSet;
 
+import io.inkstand.Management;
 import io.inkstand.cdi.ResourcesAndProviders;
 import io.inkstand.config.ApplicationConfiguration;
+import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 /**
- * {@link ApplicationConfiguration} for setting up the Resteasy deployment configuration (i.e. the
- * {@link DefaultResteasyDeploymentProvider}). This implentation provides a context root (property
+ * {@link ApplicationConfiguration} for setting up the Resteasy deployment configuration (i.e. the {@link
+ * DefaultResteasyDeploymentProvider}). This implentation provides a context root (property
  * <code>inkstand.rest.contextRoot</code>) that is injected as DeltaSpike {@link ConfigProperty} and which is an empty
- * string as default value. <br>
- * The Resource and Provider classes are injected by the {@link ResourcesAndProviders} CDI extension that scans the
- * classpath and detects matching classes on bootstrap automatically.
- * 
+ * string as default value. <br> The Resource and Provider classes are injected by the {@link ResourcesAndProviders} CDI
+ * extension that scans the classpath and detects matching classes on bootstrap automatically.
+ *
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
 public class DynamicResteasyConfiguration implements ApplicationConfiguration {
@@ -45,20 +46,23 @@ public class DynamicResteasyConfiguration implements ApplicationConfiguration {
     @SuppressWarnings("rawtypes")
     @Override
     public Collection<Class> getProviderClasses() {
-        return scanner.getProviderClasses();
+        final Collection<Class> all = new HashSet<>(scanner.getProviderClasses());
+        all.removeAll(scanner.getProviderClasses(Management.class));
+        return all;
     }
 
     @SuppressWarnings("rawtypes")
     @Override
     public Collection<Class> getResourceClasses() {
-        return scanner.getResourceClasses();
+        final Collection<Class> all = new HashSet<>(scanner.getResourceClasses());
+        all.removeAll(scanner.getResourceClasses(Management.class));
+        return all;
     }
 
     @Override
     public String getContextRoot() {
-        return contexRoot == null
-                ? ""
-                : contexRoot;
+
+        return contexRoot == null ? "" : contexRoot;
     }
 
 }

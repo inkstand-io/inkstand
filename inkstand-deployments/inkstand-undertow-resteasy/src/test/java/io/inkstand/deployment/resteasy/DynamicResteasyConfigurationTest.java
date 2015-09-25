@@ -17,18 +17,21 @@
 package io.inkstand.deployment.resteasy;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.Collection;
+
+import io.inkstand.Management;
+import io.inkstand.cdi.ResourcesAndProviders;
+import io.inkstand.scribble.Scribble;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import io.inkstand.scribble.Scribble;
-import io.inkstand.cdi.ResourcesAndProviders;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicResteasyConfigurationTest {
@@ -44,9 +47,16 @@ public class DynamicResteasyConfigurationTest {
     })
     @Test
     public void testGetProviderClasses() throws Exception {
-        final Collection<Class> providers = mock(Collection.class);
-        when(scanner.getProviderClasses()).thenReturn(providers);
-        assertEquals(providers, subject.getProviderClasses());
+        //prepare
+        when(scanner.getProviderClasses()).thenReturn(Arrays.<Class>asList(Resource.class, ManagementResource.class));
+        when(scanner.getProviderClasses(Management.class)).thenReturn(Arrays.<Class>asList(ManagementResource.class));
+        //act
+        Collection<Class> providers = subject.getProviderClasses();
+
+        //assert
+        assertNotNull(providers);
+        assertEquals(1, providers.size());
+        assertTrue(providers.contains(Resource.class));
     }
 
     @SuppressWarnings({
@@ -54,9 +64,16 @@ public class DynamicResteasyConfigurationTest {
     })
     @Test
     public void testGetResourceClasses() throws Exception {
-        final Collection<Class> resources = mock(Collection.class);
-        when(scanner.getResourceClasses()).thenReturn(resources);
-        assertEquals(resources, subject.getResourceClasses());
+        //prepare
+        when(scanner.getResourceClasses()).thenReturn(Arrays.<Class>asList(Resource.class, ManagementResource.class));
+        when(scanner.getResourceClasses(Management.class)).thenReturn(Arrays.<Class>asList(ManagementResource.class));
+        //act
+        Collection<Class> resource = subject.getResourceClasses();
+
+        //assert
+        assertNotNull(resource);
+        assertEquals(1, resource.size());
+        assertTrue(resource.contains(Resource.class));
     }
 
     @Test
@@ -68,6 +85,13 @@ public class DynamicResteasyConfigurationTest {
     @Test
     public void testGetContextRoot_unconfigured() throws Exception {
         assertEquals("", subject.getContextRoot());
+    }
+
+    static class Resource {}
+
+    @Management
+    static class ManagementResource{
+
     }
 
 }
