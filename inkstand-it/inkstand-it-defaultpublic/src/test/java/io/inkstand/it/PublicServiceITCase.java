@@ -18,6 +18,8 @@ package io.inkstand.it;
 
 import javax.ws.rs.client.ClientBuilder;
 import java.util.Properties;
+
+import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,6 +45,7 @@ public class PublicServiceITCase {
     @After
     public void tearDown() throws Exception {
         System.setProperties(originalProperties);
+        CdiContainerLoader.getCdiContainer().shutdown();
     }
 
     @Test

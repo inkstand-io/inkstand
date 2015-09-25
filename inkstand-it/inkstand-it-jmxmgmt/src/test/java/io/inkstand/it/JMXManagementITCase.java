@@ -16,27 +16,18 @@
 
 package io.inkstand.it;
 
-import static io.inkstand.scribble.net.NetworkMatchers.isAvailable;
-import static javax.ws.rs.client.Entity.entity;
-import static javax.ws.rs.core.MediaType.APPLICATION_ATOM_XML;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
-import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
-import javax.json.stream.JsonGenerator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.URL;
 import java.util.Properties;
 
 import io.inkstand.Inkstand;
@@ -50,9 +41,9 @@ import org.slf4j.Logger;
 /**
  * Created by Gerald on 09.08.2015.
  */
-public class ManagementITCase {
+public class JMXManagementITCase {
 
-    private static final Logger LOG = getLogger(ManagementITCase.class);
+    private static final Logger LOG = getLogger(JMXManagementITCase.class);
 
     private int port;
     private int mgmtPort;
@@ -71,8 +62,9 @@ public class ManagementITCase {
         CdiContainerLoader.getCdiContainer().shutdown();
         System.setProperties(originalProperties);
     }
+
     @Test
-      public void testManagementService_queryStatus() throws Exception {
+    public void testManagementService_jmxStatus() throws Exception {
         //prepare
         //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
         System.setProperty("inkstand.http.port", String.valueOf(port));
@@ -82,73 +74,14 @@ public class ManagementITCase {
         //act
         Inkstand.main(new String[] {});
         verifyPublicServiceRunning(client);
-        final WebTarget statusSvc = getManagementService(client).path("control/status/");
+        final WebTarget statusSvc = getManagementService(client).path("jmx/");
+        LOG.info("REQ {}" ,statusSvc.getUri());
         final Response response = statusSvc.request(APPLICATION_JSON_TYPE).get();
 
         //assert
         JsonObject json = readJson(response);
-        assertEquals("RUNNING", json.getString("state"));
-    }
 
-    @Test
-    public void testManagementService_queryStatus_unsupportedMediaType_406() throws Exception {
-        //prepare
-        //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
-        System.setProperty("inkstand.http.port", String.valueOf(port));
-        System.setProperty("inkstand.mgmt.port", String.valueOf(mgmtPort));
-        final Client client = ClientBuilder.newClient();
 
-        //act
-        Inkstand.main(new String[] {});
-        verifyPublicServiceRunning(client);
-        final WebTarget statusSvc = getManagementService(client).path("control/status/");
-        final Response response = statusSvc.request(APPLICATION_ATOM_XML).get();
-
-        //assert
-        assertEquals(406, response.getStatus());
-        JsonObject json = readJson(response);
-        assertEquals("ContentType: application/atom+xml not supported", json.getString("message"));
-    }
-
-    @Test
-    public void testManagementService_shutdown() throws Exception {
-        //prepare
-        //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
-        System.setProperty("inkstand.http.port", String.valueOf(port));
-        System.setProperty("inkstand.mgmt.port", String.valueOf(mgmtPort));
-        final Client client = ClientBuilder.newClient();
-
-        //act
-        Inkstand.main(new String[] {});
-        verifyPublicServiceRunning(client);
-
-        //assert
-        final WebTarget statusSvc = getManagementService(client).path("control/shutdown/");
-
-        //Post shutdown comand the mgmtService
-        final Response response = statusSvc.request(APPLICATION_JSON_TYPE).post(createShutdownEntity(5));
-
-        //Se Response.Status.OK;
-        assertEquals(200, response.getStatus());
-        final JsonObject json = readJson(response);
-        assertEquals("Shutdown request received", json.getString("msg"));
-
-        LOG.info("Waiting for service to shutdown");
-        Thread.sleep(10000);
-        LOG.info("Trying service");
-        assertThat(new URL("http://localhost:" + port + "/test"), not(isAvailable()));
-        LOG.info("Done");
-    }
-
-    private Entity createShutdownEntity(final int delay) {
-
-        final StringWriter writer = new StringWriter();
-        try(final JsonGenerator out = Json.createGenerator(writer)) {
-            out.writeStartObject();
-            out.write("delay", delay);
-            out.writeEnd();
-        }
-        return entity(writer.toString(), APPLICATION_JSON_TYPE);
     }
 
     /**
@@ -158,7 +91,7 @@ public class ManagementITCase {
      */
     private WebTarget getManagementService(final Client client) {
 
-        return client.target("http://localhost:" + mgmtPort).path("inkstand/servlet");
+        return client.target("http://localhost:" + mgmtPort).path("inkstand/rest/");
     }
 
 

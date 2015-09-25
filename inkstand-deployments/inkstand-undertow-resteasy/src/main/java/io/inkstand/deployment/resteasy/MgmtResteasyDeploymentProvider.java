@@ -21,6 +21,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.inkstand.Management;
 import io.inkstand.PublicService;
 import io.inkstand.config.ApplicationConfiguration;
 import io.inkstand.http.undertow.UndertowDeploymentProvider;
@@ -41,13 +42,15 @@ import ws.ament.hammock.core.impl.CDIListener;
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
 @Singleton
-public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProvider {
+@Management
+public class MgmtResteasyDeploymentProvider implements UndertowDeploymentProvider {
 
     @Inject
+    @Management
     private ApplicationConfiguration appConfig;
 
     @Override
-    @Produces
+    @Produces @Management
     public DeploymentInfo getDeployment() {
 
         final ResteasyDeployment deployment = new ResteasyDeployment();
@@ -74,7 +77,7 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
         .addServlet(resteasyServlet)
         .setDeploymentName("ResteasyUndertow")
         .setClassLoader(ClassLoader.getSystemClassLoader());
-        // @formatter:on
+        //@formatter:on
 
     }
 
@@ -90,7 +93,7 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
     @Priority(1)
     @PublicService
     @Singleton
-    private static class PublicResteaysDeploymentProvider extends DefaultResteasyDeploymentProvider {
+    private static class PublicResteaysDeploymentProvider extends MgmtResteasyDeploymentProvider {
 
     }
 }

@@ -38,7 +38,7 @@ public class ManagementDeploymentProvider implements UndertowDeploymentProvider 
         final ListenerInfo listenerInfo = Servlets.listener(CdiServletRequestListener.class);
         di.addListener(listenerInfo);
         di.setDeploymentName("Management Console");
-        di.setContextPath("/inkstand");
+        di.setContextPath("/inkstand/servlet");
         di.setClassLoader(ClassLoader.getSystemClassLoader());
         return di;
     }

@@ -74,7 +74,7 @@ public class UndertowWebServerProvider {
             final DeploymentInfo deployInfo = this.getDeploymentInfo();
             final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deployInfo);
             deploymentManager.deploy();
-            LOG.info("Creating service endpoint {}:{}/{} for {} at ",
+            LOG.info("Creating service endpoint {}:{}{} for {} at ",
                      httpConfig.getBindAddress(),
                      httpConfig.getPort(),
                      deployInfo.getContextPath(),
@@ -101,6 +101,7 @@ public class UndertowWebServerProvider {
                     final PathHandler path = new PathHandler();
                     for(DeploymentInfo mDI : mgmtDeployment) {
                         final DeploymentManager mDM = mContainer.addDeployment(mDI);
+                        LOG.info("Deploying management extension {}", mDI.getContextPath());
                         mDM.deploy();
                         path.addPrefixPath(mDI.getContextPath(),mDM.start());
                     }
@@ -109,6 +110,7 @@ public class UndertowWebServerProvider {
                     //single deployment
                     final DeploymentInfo mDI = mgmtDeployment.get();
                     final DeploymentManager mDM = mContainer.addDeployment(mDI);
+                    LOG.info("Deploying management extension {}", mDI.getContextPath());
                     mDM.deploy();
                     root = mDM.start();
                 }

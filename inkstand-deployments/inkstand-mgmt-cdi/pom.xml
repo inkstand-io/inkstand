@@ -11,9 +11,19 @@
 
     <artifactId>inkstand-mgmt-web</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Web-based management console for inksstand</description>
+    <description>Basic CDI Control servlet that provides a simple REST API to query the microservice
+        status and shutdown the CDI container</description>
 
     <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.inkstand</groupId>
             <artifactId>inkstand-core</artifactId>
@@ -31,13 +41,14 @@
             <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <!-- Implementation providers for testing -->
+        <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.skyscreamer</groupId>
@@ -45,12 +56,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.inkstand</groupId>
             <artifactId>scribble</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

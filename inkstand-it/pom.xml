@@ -33,6 +33,7 @@
         <module>inkstand-it-protectedservice</module>
         <module>inkstand-it-staticcontent</module>
         <module>inkstand-it-defaultmgmt</module>
+        <module>inkstand-it-jmxmgmt</module>
     </modules>
     <packaging>pom</packaging>
 

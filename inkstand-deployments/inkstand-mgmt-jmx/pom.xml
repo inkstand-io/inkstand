@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>inkstand-deployments</artifactId>
+        <groupId>io.inkstand</groupId>
+        <version>0.2.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>inkstand-mgmt-jmx</artifactId>
+    <description>Services for JMX access via REST api. The module requires a Jax-RS implementation
+        provider to be present, as it should be the case for most instances.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+        </dependency>
+        <!-- Implementation providers for test-->
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>inkstand-core</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import io.inkstand.InkstandRuntimeException;
 import io.inkstand.Management;
 import io.inkstand.MicroServiceController;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
@@ -49,7 +50,7 @@ import org.slf4j.Logger;
 @Management
 @WebServlet(name = "control",
             description = "Inkstand Container Control Servlet",
-            urlPatterns = { "/inkstand/control/*" })
+            urlPatterns = { "/inkstand/servlet/control/*" })
 public class ContainerControlServlet extends HttpServlet {
 
     /*
@@ -164,12 +165,9 @@ public class ContainerControlServlet extends HttpServlet {
         try {
             reader = Json.createReader(req.getInputStream());
             return reader.readObject();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (JsonException e) {
-            e.getCause().printStackTrace();
-            throw e;
+        } catch (IOException | JsonException e) {
+            LOG.error("Could not create Json reader", e);
+            throw new InkstandRuntimeException(e);
         }
     }
 

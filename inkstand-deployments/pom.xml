@@ -28,8 +28,9 @@
   <modules>
   	<module>inkstand-undertow-resteasy</module>
     <module>inkstand-undertow-staticcontent</module>
-    <module>inkstand-mgmt-web</module>
     <module>inkstand-undertow-mgmt</module>
+    <module>inkstand-mgmt-cdi</module>
+    <module>inkstand-mgmt-jmx</module>
   </modules>
 
 
