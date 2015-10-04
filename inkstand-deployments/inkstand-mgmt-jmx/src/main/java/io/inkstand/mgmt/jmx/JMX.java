@@ -12,6 +12,7 @@ import javax.ws.rs.Produces;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
+import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.Map;
 
@@ -100,9 +101,15 @@ public class JMX {
 
     @GET
     @Path("/os")
-    public JsonObject os() {
-
-        return null;
+    public String os() {
+        final JsonObjectBuilder builder = createObjectBuilder();
+        OperatingSystemMXBean os = ManagementFactory.getOperatingSystemMXBean();
+        builder.add("arch", os.getArch());
+        builder.add("name", os.getName());
+        builder.add("version", os.getVersion());
+        builder.add("processors", os.getAvailableProcessors());
+        builder.add("sysLoadAvg", os.getSystemLoadAverage());
+        return builder.build().toString();
     }
 
     @GET
