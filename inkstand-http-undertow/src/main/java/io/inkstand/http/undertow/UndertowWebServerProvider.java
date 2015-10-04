@@ -74,7 +74,7 @@ public class UndertowWebServerProvider {
             final DeploymentInfo deployInfo = this.getDeploymentInfo();
             final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deployInfo);
             deploymentManager.deploy();
-            LOG.info("Creating service endpoint {}:{}{} for {} at ",
+            LOG.info("Creating service endpoint {}:{}{} for {}",
                      httpConfig.getBindAddress(),
                      httpConfig.getPort(),
                      deployInfo.getContextPath(),
