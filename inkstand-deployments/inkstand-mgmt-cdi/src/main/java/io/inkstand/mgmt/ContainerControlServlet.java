@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 @Management
 @WebServlet(name = "control",
             description = "Inkstand Container Control Servlet",
-            urlPatterns = { "/inkstand/servlet/control/*" })
+            urlPatterns = { "/control/*" })
 public class ContainerControlServlet extends HttpServlet {
 
     /*

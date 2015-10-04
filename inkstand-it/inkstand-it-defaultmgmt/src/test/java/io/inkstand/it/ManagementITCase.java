@@ -83,6 +83,7 @@ public class ManagementITCase {
         Inkstand.main(new String[] {});
         verifyPublicServiceRunning(client);
         final WebTarget statusSvc = getManagementService(client).path("control/status/");
+        LOG.info("REQ GET {}", statusSvc.getUri());
         final Response response = statusSvc.request(APPLICATION_JSON_TYPE).get();
 
         //assert
@@ -102,6 +103,7 @@ public class ManagementITCase {
         Inkstand.main(new String[] {});
         verifyPublicServiceRunning(client);
         final WebTarget statusSvc = getManagementService(client).path("control/status/");
+        LOG.info("REQ GET {}", statusSvc.getUri());
         final Response response = statusSvc.request(APPLICATION_ATOM_XML).get();
 
         //assert
@@ -126,6 +128,7 @@ public class ManagementITCase {
         final WebTarget statusSvc = getManagementService(client).path("control/shutdown/");
 
         //Post shutdown comand the mgmtService
+        LOG.info("REQ POST {}", statusSvc.getUri());
         final Response response = statusSvc.request(APPLICATION_JSON_TYPE).post(createShutdownEntity(5));
 
         //Se Response.Status.OK;

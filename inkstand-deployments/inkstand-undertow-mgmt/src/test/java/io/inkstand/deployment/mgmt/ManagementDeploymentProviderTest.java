@@ -31,7 +31,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Created by Gerald Mücke on 24.08.2015.
+ * Created by Gerald Mï¿½cke on 24.08.2015.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ManagementDeploymentProviderTest {
@@ -62,7 +62,7 @@ public class ManagementDeploymentProviderTest {
         //assert
         assertNotNull(di);
         assertEquals("Management Console", di.getDeploymentName());
-        assertEquals("/inkstand", di.getContextPath());
+        assertEquals("/inkstand/servlet", di.getContextPath());
         Map<String, ServletInfo> servlets = di.getServlets();
         assertNotNull(servlets);
         assertTrue(servlets.isEmpty());
@@ -84,7 +84,7 @@ public class ManagementDeploymentProviderTest {
         //assert
         assertNotNull(di);
         assertEquals("Management Console", di.getDeploymentName());
-        assertEquals("/inkstand", di.getContextPath());
+        assertEquals("/inkstand/servlet", di.getContextPath());
         final Map<String, ServletInfo> servlets = di.getServlets();
         assertNotNull(servlets);
         assertEquals(2, servlets.size());
