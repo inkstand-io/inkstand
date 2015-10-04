@@ -25,7 +25,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>inkstand-mgmt-web</artifactId>
+    <artifactId>inkstand-mgmt-cdi</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Basic CDI Control servlet that provides a simple REST API to query the microservice
         status and shutdown the CDI container</description>
