@@ -20,7 +20,6 @@ import static javax.json.Json.createArrayBuilder;
 import static javax.json.Json.createObjectBuilder;
 
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -30,6 +29,7 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
+import java.lang.management.ThreadMXBean;
 import java.util.Map;
 
 import io.inkstand.Management;
@@ -130,22 +130,24 @@ public class JMX {
 
     @GET
     @Path("/threads")
-    public JsonObject threads() {
-
-        return null;
+    public String threads() {
+        final JsonObjectBuilder builder = createObjectBuilder();
+        ThreadMXBean threads = ManagementFactory.getThreadMXBean();
+        builder.add("threadCount", threads.getThreadCount());
+        return builder.build().toString();
     }
 
     @GET
     @Path("/classloading")
-    public JsonObject classloading() {
-
-        return null;
+    public String classloading() {
+        final JsonObjectBuilder builder = createObjectBuilder();
+        return builder.build().toString();
     }
 
     @GET
     @Path("/compilation")
-    public JsonObject compilation() {
-
-        return null;
+    public String compilation() {
+        final JsonObjectBuilder builder = createObjectBuilder();
+        return builder.build().toString();
     }
 }
