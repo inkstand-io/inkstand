@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>io.inkstand</groupId>
-            <artifactId>inkstand-mgmt-web</artifactId>
+            <artifactId>inkstand-mgmt-cdi</artifactId>
             <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
