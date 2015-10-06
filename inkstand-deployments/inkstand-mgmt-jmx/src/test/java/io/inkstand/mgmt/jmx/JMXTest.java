@@ -38,7 +38,7 @@ import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
 
 /**
- * Created by Gerald Mücke on 06.10.2015.
+ * Created by Gerald Muecke on 06.10.2015.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class JMXTest {
