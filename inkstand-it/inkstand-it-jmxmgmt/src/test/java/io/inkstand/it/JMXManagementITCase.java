@@ -49,6 +49,19 @@ public class JMXManagementITCase {
     private int mgmtPort;
     private Properties originalProperties;
 
+    /**
+     * method to start the instance for demo purposes.
+     * @param args
+     * @throws Exception
+     */
+    public static void main(String... args) throws Exception {
+        JMXManagementITCase it = new JMXManagementITCase();
+        it.setUp();
+        System.setProperty("inkstand.http.port", String.valueOf(it.port));
+        System.setProperty("inkstand.mgmt.port", String.valueOf(it.mgmtPort));
+        Inkstand.main();
+    }
+
     @Before
     public void setUp() throws Exception {
         port = NetworkUtils.findAvailablePort();
