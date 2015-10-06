@@ -23,11 +23,13 @@ import static org.slf4j.LoggerFactory.getLogger;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
+import java.util.Map;
 import java.util.Properties;
 
 import io.inkstand.Inkstand;
@@ -77,7 +79,7 @@ public class JMXManagementITCase {
     }
 
     @Test
-    public void testManagementService_jmxStatus() throws Exception {
+    public void testManagementService_jmx_root() throws Exception {
         //prepare
         //we set the port to use a randomized port for testing, otherwise the default port 80 will be used
         System.setProperty("inkstand.http.port", String.valueOf(port));
@@ -92,8 +94,16 @@ public class JMXManagementITCase {
         final Response response = statusSvc.request(APPLICATION_JSON_TYPE).get();
 
         //assert
-        JsonObject json = readJson(response);
+        JsonObject links = readJson(response).getJsonObject("_links");
 
+        for(Map.Entry<String, JsonValue> entry : links.entrySet()){
+            String link = ((JsonObject)entry.getValue()).getString("href");
+            WebTarget linkTarget = statusSvc.path(link);
+            LOG.info("REQ {}" ,linkTarget.getUri());
+            Response linkResponse = linkTarget.request(APPLICATION_JSON_TYPE).get();
+            JsonObject json = readJson(linkResponse);
+            LOG.info("RCV {}", json);
+        }
 
     }
 
