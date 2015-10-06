@@ -206,7 +206,7 @@ public class JMXTest {
 
     private void assertPath(final Method method, final String subpath) {
 
-        Path path = method.getDeclaredAnnotation(Path.class);
+        Path path = method.getAnnotation(Path.class);
         assertNotNull("method " + method + " does not declare a subpath", path);
         assertEquals(subpath, path.value());
 
@@ -214,7 +214,7 @@ public class JMXTest {
 
     private void assertProduces(final Method method, final String... mimeType) {
 
-        Produces produces = method.getDeclaredAnnotation(Produces.class);
+        Produces produces = method.getAnnotation(Produces.class);
         assertNotNull("method " + method + " does not declare mimetype", produces);
         List<String> mimeTypes = Arrays.asList(produces.value());
         for(String type : mimeType) {
@@ -224,6 +224,6 @@ public class JMXTest {
 
     private void assertAction(final Method method, Class<? extends Annotation> actionAnnotation) {
 
-        assertNotNull(method.getDeclaredAnnotation(actionAnnotation));
+        assertNotNull(method.getAnnotation(actionAnnotation));
     }
 }
