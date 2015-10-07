@@ -18,6 +18,7 @@ package io.inkstand.it;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import javax.json.Json;
@@ -88,23 +89,33 @@ public class JMXManagementITCase {
 
         //act
         Inkstand.main(new String[] {});
-        verifyPublicServiceRunning(client);
-        final WebTarget statusSvc = getManagementService(client).path("jmx/");
-        LOG.info("REQ {}" ,statusSvc.getUri());
-        final Response response = statusSvc.request(APPLICATION_JSON_TYPE).get();
 
         //assert
-        JsonObject links = readJson(response).getJsonObject("_links");
+        verifyPublicServiceRunning(client);
+        final WebTarget statusSvc = getManagementService(client).path("jmx/");
+        final JsonObject links = introspectService(statusSvc);
+        verifyLinks(statusSvc, links);
+
+    }
+
+    private void verifyLinks(final WebTarget statusSvc, final JsonObject links) {
 
         for(Map.Entry<String, JsonValue> entry : links.entrySet()){
-            String link = ((JsonObject)entry.getValue()).getString("href");
-            WebTarget linkTarget = statusSvc.path(link);
+            final JsonObject linkObject = (JsonObject)entry.getValue();
+            final WebTarget linkTarget = statusSvc.path(linkObject.getString("href"));
             LOG.info("REQ {}" ,linkTarget.getUri());
-            Response linkResponse = linkTarget.request(APPLICATION_JSON_TYPE).get();
+            final Response linkResponse = linkTarget.request(APPLICATION_JSON_TYPE).get();
+            assertEquals(200, linkResponse.getStatus());
             JsonObject json = readJson(linkResponse);
-            LOG.info("RCV {}", json);
+            assertFalse(json.entrySet().isEmpty());
         }
+    }
 
+    private JsonObject introspectService(final WebTarget statusSvc) {
+
+        LOG.info("REQ {}" ,statusSvc.getUri());
+        final Response response = statusSvc.request(APPLICATION_JSON_TYPE).get();
+        return readJson(response).getJsonObject("_links");
     }
 
     /**
@@ -132,7 +143,7 @@ public class JMXManagementITCase {
     private static JsonObject readJson(final Response response) {
 
         String strRespones = response.readEntity(String.class);
-        LOG.info("RCV: {}" , strRespones);
+        LOG.info("RCV {}" , strRespones);
         final StringReader stringReader = new StringReader(strRespones);
         final JsonObject json;
         try (JsonReader jsonReader = Json.createReader(stringReader)) {
