@@ -19,29 +19,50 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>inkstand-it</artifactId>
+        <artifactId>inkstand-deployments</artifactId>
         <groupId>io.inkstand</groupId>
         <version>0.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>inkstand-it-protectedservice</artifactId>
+    <artifactId>inkstand-mgmt-cdi</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-
-    <description>
-        Integration Test of a ProtectedService using LDAP as authentication provider.
-    </description>
+    <description>Basic CDI Control servlet that provides a simple REST API to query the microservice
+        status and shutdown the CDI container</description>
 
     <dependencies>
         <dependency>
             <groupId>io.inkstand</groupId>
-            <artifactId>inkstand-undertow-server</artifactId>
+            <artifactId>inkstand-core</artifactId>
             <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.inkstand</groupId>
-            <artifactId>inkstand-undertow-resteasy</artifactId>
+            <artifactId>inkstand-ms</artifactId>
             <version>0.2.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <!-- Implementation providers for testing -->
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.inkstand</groupId>
+            <artifactId>scribble</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

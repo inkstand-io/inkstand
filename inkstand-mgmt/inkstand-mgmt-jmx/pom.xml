@@ -19,29 +19,36 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>inkstand-it</artifactId>
+        <artifactId>inkstand-deployments</artifactId>
         <groupId>io.inkstand</groupId>
         <version>0.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>inkstand-it-protectedservice</artifactId>
+    <artifactId>inkstand-mgmt-jmx</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-
-    <description>
-        Integration Test of a ProtectedService using LDAP as authentication provider.
-    </description>
+    <description>Services for JMX access via REST api. The module requires a Jax-RS implementation
+        provider to be present, as it should be the case for most instances.</description>
 
     <dependencies>
         <dependency>
             <groupId>io.inkstand</groupId>
-            <artifactId>inkstand-undertow-server</artifactId>
+            <artifactId>inkstand-core</artifactId>
             <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>io.inkstand</groupId>
-            <artifactId>inkstand-undertow-resteasy</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.json</groupId>
+            <artifactId>javax.json-api</artifactId>
+        </dependency>
+        <!-- Implementation providers for test-->
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

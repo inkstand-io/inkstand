@@ -33,14 +33,13 @@
 		<module>inkstand-core</module>
 		<module>inkstand-jcr</module>
 		<module>inkstand-jcr-jackrabbit</module>
-		<module>inkstand-http</module>
-		<module>inkstand-http-undertow</module>
-		<module>inkstand-deployments</module>
+		<module>inkstand-undertow</module>
 		<module>inkstand-ms</module>
 		<module>inkstand-security</module>
 		<module>inkstand-parent</module>
 		<module>inkstand-cdi</module>
 		<module>inkstand-it</module>
+		<module>inkstand-mgmt</module>
 	</modules>
 
 	<dependencies>
