@@ -93,9 +93,10 @@
         <test.arquillian.weld.version>1.0.0.CR8</test.arquillian.weld.version>
         <test.jsonassert.version>1.2.3</test.jsonassert.version>
         <!-- javax library versions -->
+        <javax.javaee-api.version>7.0</javax.javaee-api.version>
         <javax.jcr.version>2.0</javax.jcr.version>
         <javax.json.version>1.0</javax.json.version>
-        <javax.javaee-api.version>7.0</javax.javaee-api.version>
+        <javax.enterprise.cdi.version>1.2</javax.enterprise.cdi.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
@@ -123,6 +124,11 @@
                 <groupId>javax</groupId>
                 <artifactId>javaee-api</artifactId>
                 <version>${javax.javaee-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>${javax.enterprise.cdi.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>

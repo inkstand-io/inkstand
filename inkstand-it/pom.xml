@@ -84,4 +84,20 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>cdi-weld</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <!-- use weld CDI for testing-->
+                <dependency>
+                    <groupId>org.apache.deltaspike.cdictrl</groupId>
+                    <artifactId>deltaspike-cdictrl-weld</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
 </project>

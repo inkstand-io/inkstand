@@ -13,6 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# have to add the provider from the main package because the test package overrides the services file
-io.inkstand.HelpLauncherArgs
-io.inkstand.TestLauncherArgs
+
+io.inkstand.TestCdiContainer
