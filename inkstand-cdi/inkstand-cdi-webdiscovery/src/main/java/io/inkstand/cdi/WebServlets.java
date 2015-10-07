@@ -24,7 +24,6 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
 import javax.inject.Qualifier;
 import javax.servlet.annotation.WebServlet;
-import javax.ws.rs.Path;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,10 +41,10 @@ public class WebServlets implements Extension  {
     private final Set<Class> servlets = new HashSet<>();
 
     /**
-     * Collects a found {@link Path} resource
+     * Collects a found {@link WebServlet}s
      *
      * @param pat
-     *  the event for the type that is annotated with the {@link Path}  annotation
+     *  the event for the type that is annotated with the {@link WebServlet}  annotation
      */
     public void servletFound(@Observes
                           @WithAnnotations(WebServlet.class) final ProcessAnnotatedType pat) {

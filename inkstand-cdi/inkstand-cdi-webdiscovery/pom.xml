@@ -32,4 +32,11 @@
         The WebDiscovery CDI extension registers web servlet 3.0 resources upon BDA scan.
     </description>
 
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
