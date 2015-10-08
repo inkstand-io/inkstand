@@ -87,10 +87,10 @@ public class GlobalAlternativeSelector implements Extension {
 
     private URL getBeansXmlResource() {
         final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        if (cl != null) {
-            return cl.getResource(BEANS_XML);
-        } else {
+        if (cl == null) {
             return getClass().getResource(BEANS_XML);
+        } else {
+            return cl.getResource(BEANS_XML);
         }
     }
 
