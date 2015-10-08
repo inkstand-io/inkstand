@@ -50,7 +50,7 @@ public class UndertowLauncherArgsTest {
     @Before
     public void setUp() throws Exception {
 
-        originalProperties = System.getProperties();
+        originalProperties = (Properties) System.getProperties().clone();
 
     }
 
