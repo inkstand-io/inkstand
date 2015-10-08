@@ -17,18 +17,21 @@
 package io.inkstand.mgmt;
 
 import static io.inkstand.MicroService.StateSupport.State.RUNNING;
-import static io.inkstand.scribble.Scribble.inject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.servlet.ServletConfig;
@@ -43,9 +46,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import io.inkstand.MicroServiceController;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
@@ -137,7 +144,7 @@ public class ContainerControlServletTest {
         when(req.getMethod()).thenReturn("GET");
         when(req.getHeader("Accept")).thenReturn("application/json");
         when(req.getPathInfo()).thenReturn("/status/");
-        inject(msc).asQualifyingInstance().into(subject);
+        setupBeanManager();
         when(msc.getState()).thenReturn(RUNNING);
 
         //act
@@ -149,6 +156,16 @@ public class ContainerControlServletTest {
         assertEquals("RUNNING", object.getString("state"));
     }
 
+    private void setupBeanManager() {
+
+        BeanManager bm = CdiContainerLoader.getCdiContainer().getBeanManager();
+        final Bean msBean = mock(Bean.class);
+        final Set<Bean<?>> beans = new HashSet<>(Arrays.<Bean<?>>asList(msBean));
+        when(bm.getBeans(MicroServiceController.class)).thenReturn(beans);
+        when(bm.resolve(beans)).thenReturn(msBean);
+        when(bm.getReference(eq(msBean), any(Type.class), any(CreationalContext.class))).thenReturn(msc);
+    }
+
     @Test
     public void testService_post_jsonAccepted_shutdownResource() throws Exception {
         //prepare
@@ -156,7 +173,7 @@ public class ContainerControlServletTest {
         when(req.getMethod()).thenReturn("POST");
         when(req.getHeader("Accept")).thenReturn("application/json");
         when(req.getPathInfo()).thenReturn("/shutdown/");
-        inject(msc).asQualifyingInstance().into(subject);
+        setupBeanManager();
         ServletInputStreamAnswer.mockInputStream(req).setData("{\"delay\":"+delay+"}");
 
         //act

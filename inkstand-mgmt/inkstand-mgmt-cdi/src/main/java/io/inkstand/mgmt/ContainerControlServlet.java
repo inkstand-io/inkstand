@@ -16,10 +16,8 @@
 
 package io.inkstand.mgmt;
 
-import static io.inkstand.mgmt.Injector.addToContext;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonException;
 import javax.json.JsonObject;
@@ -63,29 +61,12 @@ public class ContainerControlServlet extends HttpServlet {
     private static final Logger LOG = getLogger(ContainerControlServlet.class);
     public static final String ATTR_JSON = "json";
 
-    private transient ServletConfig config;
-
-    @Inject
-    private transient MicroServiceController msc;
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
-
         LOG.info("Management Servlet {} initialized", this);
-        this.config = config;
-
-        //if the servlet was not instantiated in a CDI container it has to
-        //be added to the current cdi context
-        if (this.msc == null) {
-            addToContext(this);
-        }
     }
 
-    @Override
-    public ServletConfig getServletConfig() {
-
-        return config;
-    }
 
     @Override
     protected void service(final HttpServletRequest req, final HttpServletResponse resp)
@@ -117,6 +98,8 @@ public class ContainerControlServlet extends HttpServlet {
         final String resourcePath = req.getPathInfo();
         LOG.info("GET resource;{}", resourcePath);
         if ("/status/".equals(resourcePath)) {
+
+            final MicroServiceController msc = Injector.getBeanInstance(MicroServiceController.class);
             out.writeStartObject();
             out.write("state", msc.getState().toString());
             out.writeEnd();

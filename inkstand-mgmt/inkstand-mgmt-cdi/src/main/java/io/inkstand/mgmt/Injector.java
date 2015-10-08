@@ -18,6 +18,7 @@ package io.inkstand.mgmt;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionTarget;
 
@@ -39,12 +40,33 @@ public class Injector {
      *  the instance to be added to the context.
      */
     public static void addToContext(final Object unmanagedInstance) {
-        final CdiContainer cdiContainer = CdiContainerLoader.getCdiContainer();
-        final BeanManager beanManager = cdiContainer.getBeanManager();
+        final BeanManager beanManager = getBeanManager();
         final CreationalContext creationalContext = beanManager.createCreationalContext(null);
         final AnnotatedType annotatedType = beanManager.createAnnotatedType(unmanagedInstance.getClass());
         final InjectionTarget injectionTarget = beanManager.createInjectionTarget(annotatedType);
         injectionTarget.inject(unmanagedInstance, creationalContext);
     }
 
+    private static BeanManager getBeanManager() {
+
+        final CdiContainer cdiContainer = CdiContainerLoader.getCdiContainer();
+        return cdiContainer.getBeanManager();
+    }
+
+    /**
+     * Resolves an instance of the specified from the active CDI container.
+     * @param type
+     *  the type of the bean that should be retrieved.
+     * @param <T>
+     *  the type of the bean instance
+     * @return
+     *  an instance of the resolved bean
+     */
+    public static <T> T getBeanInstance(Class<? extends T> type){
+        final BeanManager beanManager = getBeanManager();
+        final Bean<T> bean = (Bean<T>) beanManager.resolve(beanManager.getBeans(type));
+        final T beanInstace = (T) beanManager.getReference(bean, bean.getBeanClass(), beanManager
+                .createCreationalContext(bean));
+        return beanInstace;
+    }
 }
