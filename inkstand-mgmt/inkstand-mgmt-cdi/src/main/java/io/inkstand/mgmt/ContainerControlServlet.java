@@ -52,7 +52,7 @@ import io.inkstand.MicroServiceController;
             urlPatterns = { "/control/*" })
 public class ContainerControlServlet extends HttpServlet {
 
-
+    private static final long serialVersionUID = -5582281120387888213L;
     /*
      * This servlet is intentionally not implemented using Jax-RS resources.
      * As Inkstand Microservices have a web container as minimal requirement, every instance of Inkstand
