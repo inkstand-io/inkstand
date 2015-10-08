@@ -52,13 +52,15 @@ import io.inkstand.MicroServiceController;
             urlPatterns = { "/control/*" })
 public class ContainerControlServlet extends HttpServlet {
 
+
     /*
      * This servlet is intentionally not implemented using Jax-RS resources.
      * As Inkstand Microservices have a web container as minimal requirement, every instance of Inkstand
      * should be capable of running servlets including the management servlets, even without adding
      * a Jax-RS module.
      */
-
+    private static final String METHOD_GET = "GET";
+    private static final String METHOD_POST = "POST";
     private static final Logger LOG = getLogger(ContainerControlServlet.class);
     public static final String ATTR_JSON = "json";
     private final AtomicReference<ScheduledExecutorService> SCHEDULER = new AtomicReference<>();
@@ -74,7 +76,8 @@ public class ContainerControlServlet extends HttpServlet {
     protected void service(final HttpServletRequest req, final HttpServletResponse resp)
             throws ServletException, IOException {
 
-        if("GET".equals(req.getMethod()) || "POST".equals(req.getMethod())) {
+
+        if(METHOD_GET.equals(req.getMethod()) || METHOD_POST.equals(req.getMethod())) {
 
             LOG.debug("{} {}", req.getMethod(), req.getPathInfo());
             resp.setContentType("application/json");
@@ -129,6 +132,7 @@ public class ContainerControlServlet extends HttpServlet {
 
                 @Override
                 public void run() {
+
                     LOG.info("Begin CDI Container shutdown");
                     //in any case, even the management port will become unavailable, so shutting down the
                     // microservice is only of advantage, when there are other options to control the container
