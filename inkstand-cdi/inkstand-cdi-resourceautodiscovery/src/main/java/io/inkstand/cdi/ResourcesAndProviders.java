@@ -88,7 +88,7 @@ public class ResourcesAndProviders implements Extension {
         return filter(this.resources, annotations);
     }
 
-    private Collection<Class> filter(final Set<Class> input, final Class<?>[] annotations) {
+    private Collection<Class> filter(final Set<Class> input, final Class<?>... annotations) {
 
         Set<Class> result = new HashSet<>();
         for(Class resource : input) {
@@ -99,7 +99,7 @@ public class ResourcesAndProviders implements Extension {
         return result;
     }
 
-    private boolean isAnnotated(final Class resource, final Class<?>[] annotations) {
+    private boolean isAnnotated(final Class resource, final Class<?>... annotations) {
 
         for(Class<?> annotation : annotations) {
             if(resource.getAnnotation(annotation) == null) {

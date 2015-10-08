@@ -91,7 +91,7 @@ public class WebServlets implements Extension  {
      * @return
      *  <code>true</code> if all annotations were found on the servlet class
      */
-    private boolean matchesAnnotations(final Class servletClass, final Class[] qualifiers) {
+    private boolean matchesAnnotations(final Class servletClass, final Class... qualifiers) {
 
         if(qualifiers.length == 0){
             for(Annotation an : servletClass.getAnnotations()) {
