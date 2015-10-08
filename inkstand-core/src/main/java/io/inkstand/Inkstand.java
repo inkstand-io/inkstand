@@ -107,56 +107,24 @@ public final class Inkstand {
 
         final Map<String, String> argValues = new HashMap<>();
 
-        String argValue = null;
-        for(int i = 0; i < args.length; i++){
-
-            if(argValue != null){
-                //if the current position contains a value (detected by the previous loop-cycle), reset the
-                //value and continue the loop. With this we avoid manipulating the loop counter directly.
-                argValue = null;
-                continue;
-            } else
-            if(args[i].startsWith("-")){
-                argValue = getArgumentValue(args, i);
-                argValues.put(args[i].substring(1), argValue);
+        String argName = null;
+        for(String arg : args ){
+            if(arg.startsWith("-")) {
+                if(argName != null) {
+                    argValues.put(argName, null);
+                }
+                argName = arg.substring(1);
+            } else if(argName != null){
+                argValues.put(argName, arg);
+                argName = null;
             } else {
-                throw new IllegalArgumentException(args[i] + " is no valid argument");
+                throw new IllegalArgumentException(arg + " is no valid argument");
             }
         }
-        return argValues;
-    }
-
-    /**
-     * Returns the argument value for the argument at the position indicated by i. If there is no corresponding value
-     * for the argument, {@code null} is returned.
-     * @param args
-     *  the array of arguments
-     * @param i
-     *  the position of the current argument for which the value should be returned.
-     * @return
-     *  the argument value for the current argument or {@code null} if there is no argument.
-     */
-    private static String getArgumentValue(final String[] args, final int i) {
-        if(hasArgumentValue(args, i)){
-            return args[i+1];
-
+        if(argName != null) {
+            argValues.put(argName, null);
         }
-        return null;
-    }
 
-    /**
-     * Checks if the next element in the chain denotes an argument value, that is, if it exist and does not start
-     * with a dash '-'.
-     *
-     * @param args
-     *  the array of arguments
-     * @param i
-     *  the position of the current element in the array for which the successor should be checked.
-     * @return
-     *  <code>true</code> if the next element exists and is a value
-     */
-    private static boolean hasArgumentValue(final String[] args, final int i) {
-
-        return i+1 < args.length && !args[i+1].startsWith("-");
+        return argValues;
     }
 }
