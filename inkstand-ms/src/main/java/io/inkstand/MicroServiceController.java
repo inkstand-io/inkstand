@@ -44,7 +44,7 @@ public class MicroServiceController implements MicroService.StateSupport{
     @Inject
     private MicroService microService;
 
-    private AtomicReference<State> trackedState = new AtomicReference<>(State.NEW);
+    private final AtomicReference<State> trackedState = new AtomicReference<>(State.NEW);
 
     @PostConstruct
     public void init() {

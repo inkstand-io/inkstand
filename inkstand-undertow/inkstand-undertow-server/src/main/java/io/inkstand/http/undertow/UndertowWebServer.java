@@ -35,7 +35,7 @@ public class UndertowWebServer implements MicroService, MicroService.StateSuppor
     /**
      * The current state
      */
-    private AtomicReference<State> state = new AtomicReference<>(State.NEW);
+    private final AtomicReference<State> state = new AtomicReference<>(State.NEW);
 
     @Override
     public void start() {

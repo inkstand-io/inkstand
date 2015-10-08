@@ -61,7 +61,7 @@ public class ContainerControlServlet extends HttpServlet {
 
     private static final Logger LOG = getLogger(ContainerControlServlet.class);
     public static final String ATTR_JSON = "json";
-    private static AtomicReference<ScheduledExecutorService> SCHEDULER = new AtomicReference<>();
+    private final AtomicReference<ScheduledExecutorService> SCHEDULER = new AtomicReference<>();
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
