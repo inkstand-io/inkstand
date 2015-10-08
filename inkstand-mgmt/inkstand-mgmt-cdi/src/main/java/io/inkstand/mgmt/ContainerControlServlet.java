@@ -33,12 +33,13 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import org.apache.deltaspike.cdise.api.CdiContainerLoader;
+import org.slf4j.Logger;
 
 import io.inkstand.InkstandRuntimeException;
 import io.inkstand.Management;
 import io.inkstand.MicroServiceController;
-import org.apache.deltaspike.cdise.api.CdiContainerLoader;
-import org.slf4j.Logger;
 
 /**
  * Basic Management Servlet for Inkstand Microservice container that provides basic control functions such as starting
@@ -60,12 +61,12 @@ public class ContainerControlServlet extends HttpServlet {
 
     private static final Logger LOG = getLogger(ContainerControlServlet.class);
     public static final String ATTR_JSON = "json";
-    private static ScheduledExecutorService SCHEDULER;
+    private static AtomicReference<ScheduledExecutorService> SCHEDULER = new AtomicReference<>();
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
         LOG.info("Management Servlet {} initialized", this);
-        SCHEDULER = Executors.newScheduledThreadPool(1);
+        SCHEDULER.set(Executors.newScheduledThreadPool(1));
     }
 
 
@@ -124,7 +125,7 @@ public class ContainerControlServlet extends HttpServlet {
             out.write("msg", "Shutdown request received");
             out.writeEnd();
             LOG.info("Shutting down CDI container in {}s", delay);
-            SCHEDULER.schedule(new Runnable() {
+            SCHEDULER.get().schedule(new Runnable() {
 
                 @Override
                 public void run() {
@@ -206,6 +207,6 @@ public class ContainerControlServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        SCHEDULER.shutdown();
+        SCHEDULER.get().shutdown();
     }
 }
