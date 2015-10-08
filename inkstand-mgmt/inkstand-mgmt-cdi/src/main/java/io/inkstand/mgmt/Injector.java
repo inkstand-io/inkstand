@@ -29,7 +29,7 @@ import org.apache.deltaspike.cdise.api.CdiContainerLoader;
  * Injection utiltiy for making CDI handling more convenient.
  * Created by Gerald Mücke on 17.09.2015.
  */
-public class Injector {
+public final class Injector {
     //TODO candidate to be moved to a cdi util
     private Injector(){}
 

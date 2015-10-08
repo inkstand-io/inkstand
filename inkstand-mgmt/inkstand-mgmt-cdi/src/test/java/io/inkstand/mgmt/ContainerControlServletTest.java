@@ -56,6 +56,7 @@ import java.util.Set;
 
 import io.inkstand.MicroServiceController;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,6 +99,12 @@ public class ContainerControlServletTest {
 
         attrs = AttributeAnswer.mockAttributes(req);
         outStream = ServletOutputStreamAnswer.mockOutputStream(res);
+        subject.init(servletConfig);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        subject.destroy();
     }
 
     @Test

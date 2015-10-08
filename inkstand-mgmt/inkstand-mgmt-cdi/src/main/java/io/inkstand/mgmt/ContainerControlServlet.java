@@ -60,11 +60,12 @@ public class ContainerControlServlet extends HttpServlet {
 
     private static final Logger LOG = getLogger(ContainerControlServlet.class);
     public static final String ATTR_JSON = "json";
-
+    private static ScheduledExecutorService SCHEDULER;
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
         LOG.info("Management Servlet {} initialized", this);
+        SCHEDULER = Executors.newScheduledThreadPool(1);
     }
 
 
@@ -123,12 +124,10 @@ public class ContainerControlServlet extends HttpServlet {
             out.write("msg", "Shutdown request received");
             out.writeEnd();
             LOG.info("Shutting down CDI container in {}s", delay);
-            final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-            scheduler.schedule(new Runnable() {
+            SCHEDULER.schedule(new Runnable() {
 
                 @Override
                 public void run() {
-
                     LOG.info("Begin CDI Container shutdown");
                     //in any case, even the management port will become unavailable, so shutting down the
                     // microservice is only of advantage, when there are other options to control the container
@@ -207,6 +206,6 @@ public class ContainerControlServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-
+        SCHEDULER.shutdown();
     }
 }
