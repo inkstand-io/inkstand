@@ -175,7 +175,7 @@ public class ContainerControlServlet extends HttpServlet {
      *
      * @param resp
      *         the servlet response
-     * @param out
+     * @param json
      *         the json generator for creating the response body
      * @param status
      *         the http status code to be returned
@@ -185,18 +185,18 @@ public class ContainerControlServlet extends HttpServlet {
      *         parameters to be included in the response. There must name-value pairs.
      */
     private void sendError(final HttpServletResponse resp,
-                           final JsonGenerator out,
+                           final JsonGenerator json,
                            final int status,
                            final String message,
                            final String... params) {
 
         resp.setStatus(status);
-        out.writeStartObject();
-        out.write("message", message);
+        json.writeStartObject();
+        json.write("message", message);
         for (int i = 0; i < params.length; i += 2) {
-            out.write(params[i], params[i + 1]);
+            json.write(params[i], params[i + 1]);
         }
-        out.writeEnd();
+        json.writeEnd();
     }
 
     @Override
