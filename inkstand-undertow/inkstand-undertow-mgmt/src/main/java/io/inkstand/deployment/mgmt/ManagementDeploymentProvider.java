@@ -20,6 +20,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
+import org.apache.deltaspike.cdise.servlet.CdiServletRequestListener;
 
 import io.inkstand.Management;
 import io.inkstand.cdi.WebServlets;
@@ -28,7 +29,6 @@ import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.ListenerInfo;
 import io.undertow.servlet.api.ServletInfo;
-import org.apache.deltaspike.cdise.servlet.CdiServletRequestListener;
 
 /**
  * Provider to provide the default management deployment containing all management servlets.
@@ -39,6 +39,7 @@ public class ManagementDeploymentProvider implements UndertowDeploymentProvider 
     @Inject
     private WebServlets servlets;
 
+    @Override
     @Produces
     @Management
     public DeploymentInfo getDeployment() {
