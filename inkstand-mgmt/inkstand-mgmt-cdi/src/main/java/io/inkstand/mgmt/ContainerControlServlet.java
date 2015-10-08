@@ -63,10 +63,10 @@ public class ContainerControlServlet extends HttpServlet {
     private static final Logger LOG = getLogger(ContainerControlServlet.class);
     public static final String ATTR_JSON = "json";
 
-    private ServletConfig config;
+    private transient ServletConfig config;
 
     @Inject
-    private MicroServiceController msc;
+    private transient MicroServiceController msc;
 
     @Override
     public void init(final ServletConfig config) throws ServletException {
