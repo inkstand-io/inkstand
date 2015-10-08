@@ -6,7 +6,7 @@
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~ http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,6 +32,8 @@
         <module>inkstand-it-publicservice</module>
         <module>inkstand-it-protectedservice</module>
         <module>inkstand-it-staticcontent</module>
+        <module>inkstand-it-defaultmgmt</module>
+        <module>inkstand-it-jmxmgmt</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -81,5 +83,21 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>cdi-weld</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <!-- use weld CDI for testing-->
+                <dependency>
+                    <groupId>org.apache.deltaspike.cdictrl</groupId>
+                    <artifactId>deltaspike-cdictrl-weld</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>

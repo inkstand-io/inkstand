@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+
+import org.apache.deltaspike.cdise.api.CdiContainer;
+import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 
 /**
  * Inkstand launcher. It's not just an alternative way of starting the CDI Container. The launcher also provides
@@ -43,7 +46,9 @@ public final class Inkstand {
         final Map<String, String> argValues = argsToMap(args);
         applyArgs(argValues);
 
-        org.jboss.weld.environment.se.StartMain.main(args);
+        CdiContainer cdiContainer = CdiContainerLoader.getCdiContainer();
+        cdiContainer.boot(argValues);
+        cdiContainer.getContextControl().startContexts();
     }
 
     /**

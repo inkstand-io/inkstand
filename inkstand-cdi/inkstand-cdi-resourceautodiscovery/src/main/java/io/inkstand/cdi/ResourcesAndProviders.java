@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,17 +66,47 @@ public class ResourcesAndProviders implements Extension {
     }
 
     /**
-     * @return all found provider classes
+     * Retrieves the provider classes found during BDA scan.
+     * @return all found provider classes, filtered by the annotation list
+     * @param annotations list of annotation classes. Only those provider classes are returned that have all of the
+     *                    specified annotations. The class itself could have more annotations, but must have at least
+     *                    the ones specified. If no annotation is specified, all classes are returned.
+     *
      */
-    public Collection<Class> getProviderClasses() {
-        return providers;
+    public Collection<Class> getProviderClasses(final Class<?>...annotations) {
+        return filter(this.providers, annotations);
     }
 
     /**
+     * Retrieves the resource classes found during BDA scan.
      * @return all found resources
+     * @param annotations  list of annotation classes. Only those resource classes are returned that have all of the
+     *                    specified annotations. The class itself could have more annotations, but must have at least
+     *                    the ones specified. If no annotation is specified, all classes are returned.
      */
-    public Collection<Class> getResourceClasses() {
-        return resources;
+    public Collection<Class> getResourceClasses(final Class<?>... annotations) {
+        return filter(this.resources, annotations);
+    }
+
+    private Collection<Class> filter(final Set<Class> input, final Class<?>[] annotations) {
+
+        Set<Class> result = new HashSet<>();
+        for(Class resource : input) {
+            if(isAnnotated(resource, annotations)) {
+                result.add(resource);
+            }
+        }
+        return result;
+    }
+
+    private boolean isAnnotated(final Class resource, final Class<?>[] annotations) {
+
+        for(Class<?> annotation : annotations) {
+            if(resource.getAnnotation(annotation) == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

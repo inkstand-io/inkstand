@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,6 +23,9 @@ import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.ClientBuilder;
 import java.net.URL;
+
+import org.apache.deltaspike.cdise.api.CdiContainerLoader;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -73,6 +76,12 @@ public class ProtectedServiceITCase {
         System.setProperty("inkstand.http.auth.allowedRoles", "admins");
         System.setProperty("inkstand.http.auth.protectedResources", "/*");
 
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
+        CdiContainerLoader.getCdiContainer().shutdown();
     }
 
     @Test

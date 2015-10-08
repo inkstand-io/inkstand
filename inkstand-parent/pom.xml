@@ -6,7 +6,7 @@
   ~ you may not use this file except in compliance with the License.
   ~ You may obtain a copy of the License at
   ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~ http://www.apache.org/licenses/LICENSE-2.0
   ~
   ~ Unless required by applicable law or agreed to in writing, software
   ~ distributed under the License is distributed on an "AS IS" BASIS,
@@ -91,11 +91,16 @@
         <test.jsonassert.version>1.2.3</test.jsonassert.version>
         <test.arquillian.version>1.1.8.Final</test.arquillian.version>
         <test.arquillian.weld.version>1.0.0.CR8</test.arquillian.weld.version>
+        <test.jsonassert.version>1.2.3</test.jsonassert.version>
         <!-- javax library versions -->
-        <javax.jcr.version>2.0</javax.jcr.version>
         <javax.javaee-api.version>7.0</javax.javaee-api.version>
+        <javax.jcr.version>2.0</javax.jcr.version>
+        <javax.json.version>1.0</javax.json.version>
+        <javax.enterprise.cdi.version>1.2</javax.enterprise.cdi.version>
+        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
+        <org.glassfish.json.version>1.0.4</org.glassfish.json.version>
         <!-- Apache Library Version -->
         <apache.commons.io.version>2.4</apache.commons.io.version>
         <apache.commons.codec.version>1.10</apache.commons.codec.version>
@@ -121,6 +126,16 @@
                 <version>${javax.javaee-api.version}</version>
             </dependency>
             <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>${javax.enterprise.cdi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax.servlet-api.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.jcr</groupId>
                 <artifactId>jcr</artifactId>
                 <version>${javax.jcr.version}</version>
@@ -134,6 +149,11 @@
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>${javax.validation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.json</groupId>
+                <artifactId>javax.json-api</artifactId>
+                <version>${javax.json.version}</version>
             </dependency>
 
             <!-- Apache Commons -->
@@ -161,6 +181,21 @@
             <dependency>
                 <groupId>org.apache.deltaspike.core</groupId>
                 <artifactId>deltaspike-core-impl</artifactId>
+                <version>${apache.deltaspike.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.cdictrl</groupId>
+                <artifactId>deltaspike-cdictrl-api</artifactId>
+                <version>${apache.deltaspike.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.cdictrl</groupId>
+                <artifactId>deltaspike-cdictrl-servlet</artifactId>
+                <version>${apache.deltaspike.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.deltaspike.cdictrl</groupId>
+                <artifactId>deltaspike-cdictrl-weld</artifactId>
                 <version>${apache.deltaspike.version}</version>
             </dependency>
             <!-- Apache DS -->
@@ -208,6 +243,12 @@
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-common</artifactId>
                 <version>${jersey.common.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.json</artifactId>
+                <version>${org.glassfish.json.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -264,6 +305,7 @@
                 <scope>test</scope>
             </dependency>
 
+
             <!-- Code Coverage -->
             <dependency>
                 <groupId>org.jacoco</groupId>
@@ -298,6 +340,12 @@
                 <groupId>io.inkstand</groupId>
                 <artifactId>scribble</artifactId>
                 <version>${test.scribble.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${test.jsonassert.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
