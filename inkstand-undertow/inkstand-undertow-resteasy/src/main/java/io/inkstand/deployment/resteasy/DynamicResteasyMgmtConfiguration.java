@@ -59,8 +59,10 @@ public class DynamicResteasyMgmtConfiguration implements ApplicationConfiguratio
 
     @Override
     public String getContextRoot() {
-
-        return contexRoot == null ? "" : contexRoot;
+        if(contexRoot == null) {
+            return "";
+        }
+        return contexRoot;
     }
 
 }

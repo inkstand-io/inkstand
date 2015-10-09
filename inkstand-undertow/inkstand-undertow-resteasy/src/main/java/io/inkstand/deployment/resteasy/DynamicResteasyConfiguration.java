@@ -61,8 +61,10 @@ public class DynamicResteasyConfiguration implements ApplicationConfiguration {
 
     @Override
     public String getContextRoot() {
-
-        return contexRoot == null ? "" : contexRoot;
+        if(contexRoot == null) {
+            return "";
+        }
+        return contexRoot;
     }
 
 }
