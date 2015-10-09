@@ -182,13 +182,13 @@ public class JMXTest {
     }
 
     @Test
-    public void contract_REST_API_basePath() throws Exception {
+    public void contract_REST_API() throws Exception {
         Path path = JMX.class.getAnnotation(Path.class);
         assertNotNull("base resource path not set", path);
         assertEquals("base resource path mismatch", "/jmx", path.value());
         assertResource(GET.class, "/runtime", "application/json", JMX.class.getMethod("runtime"));
         assertResource(GET.class, "/memory", "application/json", JMX.class.getMethod("memory"));
-        assertResource(GET.class, "/os", "application/json", JMX.class.getMethod("os"));
+        assertResource(GET.class, "/os", "application/json", JMX.class.getMethod("operatingSystem"));
         assertResource(GET.class, "/threads", "application/json", JMX.class.getMethod("threads"));
         assertResource(GET.class, "/classloading", "application/json", JMX.class.getMethod("classloading"));
         assertResource(GET.class, "/compilation", "application/json", JMX.class.getMethod("compilation"));
