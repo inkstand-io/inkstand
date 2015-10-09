@@ -16,15 +16,15 @@
 
 package io.inkstand.deployment.resteasy;
 
+import static io.inkstand.scribble.Scribble.inject;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
-import io.undertow.servlet.api.DeploymentInfo;
 
 import java.util.Collections;
 
 import io.inkstand.config.ApplicationConfiguration;
-
+import io.undertow.servlet.api.DeploymentInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +47,7 @@ public class DefaultResteasyDeploymentProviderTest {
         when(config.getContextRoot()).thenReturn("test");
         when(config.getProviderClasses()).thenReturn(Collections.EMPTY_LIST);
         when(config.getResourceClasses()).thenReturn(Collections.EMPTY_LIST);
+        inject(config).asQualifyingInstance().intoAll(subject);
     }
 
     @Test
@@ -54,7 +55,15 @@ public class DefaultResteasyDeploymentProviderTest {
         DeploymentInfo di = this.subject.getDeployment();
         assertNotNull(di);
         assertEquals("test", di.getContextPath());
-        assertEquals("ResteasyUndertow", di.getDeploymentName());
+        assertEquals("ResteasyServletDeployment", di.getDeploymentName());
+    }
+
+    @Test
+    public void testGetManagementDeployment() throws Exception {
+        DeploymentInfo di = this.subject.getManagementDeployment();
+        assertNotNull(di);
+        assertEquals("test", di.getContextPath());
+        assertEquals("ResteasyMgmtServletDeployment", di.getDeploymentName());
     }
 
 }

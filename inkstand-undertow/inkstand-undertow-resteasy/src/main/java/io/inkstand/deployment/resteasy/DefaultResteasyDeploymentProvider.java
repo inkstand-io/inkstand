@@ -21,6 +21,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.inkstand.Management;
 import io.inkstand.PublicService;
 import io.inkstand.config.ApplicationConfiguration;
 import io.inkstand.http.undertow.UndertowDeploymentProvider;
@@ -46,14 +47,27 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
     @Inject
     private ApplicationConfiguration appConfig;
 
+    @Inject
+    @Management
+    private ApplicationConfiguration mgmtConfig;
+
+    @Produces @Management
+    public DeploymentInfo getManagementDeployment() {
+
+        return createDeployment(this.mgmtConfig, "ResteasyMgmtServlet");
+    }
+
     @Override
     @Produces
     public DeploymentInfo getDeployment() {
 
+        return createDeployment(this.appConfig, "ResteasyServlet");
+
+    }
+
+    private DeploymentInfo createDeployment(final ApplicationConfiguration config, final String servletName) {
+
         final ResteasyDeployment deployment = new ResteasyDeployment();
-
-        final ApplicationConfiguration config = this.getAppConfig();
-
         deployment.getActualResourceClasses().addAll(config.getResourceClasses());
         deployment.getActualProviderClasses().addAll(config.getProviderClasses());
         deployment.setInjectorFactoryClass(CdiInjectorFactory.class.getName());
@@ -61,7 +75,7 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
         final ListenerInfo listener = Servlets.listener(CDIListener.class);
 
         //@formatter:off
-        final ServletInfo resteasyServlet = Servlets.servlet("ResteasyServlet", HttpServlet30Dispatcher.class)
+        final ServletInfo resteasyServlet = Servlets.servlet(servletName, HttpServlet30Dispatcher.class)
                 .setAsyncSupported(true)
                 .setLoadOnStartup(1)
                 .addInitParam("org.jboss.weld.environment.servlet.archive.isolation", "true")
@@ -72,15 +86,9 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
         .setContextPath(config.getContextRoot())
         .addServletContextAttribute(ResteasyDeployment.class.getName(), deployment)
         .addServlet(resteasyServlet)
-        .setDeploymentName("ResteasyUndertow")
+        .setDeploymentName(servletName + "Deployment")
         .setClassLoader(ClassLoader.getSystemClassLoader());
-        // @formatter:on
-
-    }
-
-    public ApplicationConfiguration getAppConfig() {
-
-        return this.appConfig;
+        //@formatter:on
     }
 
     /**
@@ -90,7 +98,7 @@ public class DefaultResteasyDeploymentProvider implements UndertowDeploymentProv
     @Priority(1)
     @PublicService
     @Singleton
-    private static class PublicResteaysDeploymentProvider extends DefaultResteasyDeploymentProvider {
+    private static class PublicResteasyDeploymentProvider extends DefaultResteasyDeploymentProvider {
 
     }
 }
