@@ -96,6 +96,7 @@ public class ContainerControlServletTest {
     @Before
     public void setUp() throws Exception {
 
+        AttributeAnswer.mockAttributes(req);
         outStream = ServletOutputStreamAnswer.mockOutputStream(res);
         subject.init(servletConfig);
     }
