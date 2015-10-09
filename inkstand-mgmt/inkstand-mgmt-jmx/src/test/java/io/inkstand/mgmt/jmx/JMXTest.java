@@ -128,9 +128,9 @@ public class JMXTest {
     }
 
     @Test
-    public void testOs() throws Exception {
+    public void testOperatingSystem() throws Exception {
         //act
-        String result = subject.os();
+        String result = subject.operatingSystem();
 
         //assert
         JsonObject json = getJsonObject(result);

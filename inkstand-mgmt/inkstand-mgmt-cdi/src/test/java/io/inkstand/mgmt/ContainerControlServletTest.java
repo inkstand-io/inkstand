@@ -92,12 +92,10 @@ public class ContainerControlServletTest {
     private MicroServiceController msc;
 
     private ServletOutputStreamAnswer outStream;
-    private AttributeAnswer attrs;
 
     @Before
     public void setUp() throws Exception {
 
-        attrs = AttributeAnswer.mockAttributes(req);
         outStream = ServletOutputStreamAnswer.mockOutputStream(res);
         subject.init(servletConfig);
     }

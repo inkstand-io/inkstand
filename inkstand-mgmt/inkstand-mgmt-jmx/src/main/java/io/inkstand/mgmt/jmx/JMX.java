@@ -140,14 +140,14 @@ public class JMX {
     @GET
     @Path(PATH_OS)
     @Produces(APPLICATION_JSON)
-    public String os() {
+    public String operatingSystem() {
         final JsonObjectBuilder builder = createObjectBuilder();
-        OperatingSystemMXBean os = ManagementFactory.getOperatingSystemMXBean();
-        builder.add("arch", os.getArch());
-        builder.add("name", os.getName());
-        builder.add("version", os.getVersion());
-        builder.add("processors", os.getAvailableProcessors());
-        builder.add("sysLoadAvg", os.getSystemLoadAverage());
+        OperatingSystemMXBean osmxb = ManagementFactory.getOperatingSystemMXBean();
+        builder.add("arch", osmxb.getArch());
+        builder.add("name", osmxb.getName());
+        builder.add("version", osmxb.getVersion());
+        builder.add("processors", osmxb.getAvailableProcessors());
+        builder.add("sysLoadAvg", osmxb.getSystemLoadAverage());
         return builder.build().toString();
     }
 
@@ -182,10 +182,10 @@ public class JMX {
     @Produces(APPLICATION_JSON)
     public String classloading() {
         final JsonObjectBuilder builder = createObjectBuilder();
-        ClassLoadingMXBean cl = ManagementFactory.getClassLoadingMXBean();
-        builder.add("loadedClassCount", cl.getLoadedClassCount());
-        builder.add("totalLoadedClassCount", cl.getTotalLoadedClassCount());
-        builder.add("totalUnloadedClassCount", cl.getUnloadedClassCount());
+        ClassLoadingMXBean clmxb = ManagementFactory.getClassLoadingMXBean();
+        builder.add("loadedClassCount", clmxb.getLoadedClassCount());
+        builder.add("totalLoadedClassCount", clmxb.getTotalLoadedClassCount());
+        builder.add("totalUnloadedClassCount", clmxb.getUnloadedClassCount());
         return builder.build().toString();
     }
 
