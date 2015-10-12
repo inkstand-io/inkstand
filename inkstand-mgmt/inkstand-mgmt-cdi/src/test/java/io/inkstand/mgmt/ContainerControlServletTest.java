@@ -233,7 +233,7 @@ public class ContainerControlServletTest {
     }
 
     @Test
-    public void testService_get_jsonNotAccepted_406() throws Exception {
+     public void testService_get_jsonNotAccepted_406() throws Exception {
         //prepare
         when(req.getMethod()).thenReturn("GET");
         when(req.getHeader("Accept")).thenReturn("application/pdf");
@@ -247,6 +247,23 @@ public class ContainerControlServletTest {
         verify(res).setStatus(406);
         JsonObject object = Json.createReader(outStream.getBytesAsStream()).readObject();
         assertEquals("ContentType: application/pdf not supported", object.getString("message"));
+    }
+
+    @Test
+    public void testService_get_noAcceptHeader_statusResource() throws Exception {
+        //prepare
+        when(req.getMethod()).thenReturn("GET");
+        when(req.getPathInfo()).thenReturn("/status/");
+        setupBeanManager();
+        when(msc.getState()).thenReturn(RUNNING);
+
+        //act
+        subject.service(req, res);
+
+        //assert
+        verify(res).setContentType("application/json");
+        JsonObject object = Json.createReader(outStream.getBytesAsStream()).readObject();
+        assertEquals("RUNNING", object.getString("state"));
     }
 
     @Test
