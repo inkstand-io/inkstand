@@ -38,14 +38,14 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Properties;
-
-import io.inkstand.Inkstand;
-import io.inkstand.scribble.net.NetworkUtils;
 import org.apache.deltaspike.cdise.api.CdiContainerLoader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
+
+import io.inkstand.Inkstand;
+import io.inkstand.scribble.net.NetworkUtils;
 
 /**
  * Created by Gerald on 09.08.2015.
