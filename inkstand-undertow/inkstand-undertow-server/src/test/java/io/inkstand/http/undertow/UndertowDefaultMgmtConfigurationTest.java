@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,25 +22,42 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-public class UndertowDefaultConfigurationTest {
+/**
+ * Created by Gerald on 12.10.2015.
+ */
+public class UndertowDefaultMgmtConfigurationTest {
 
-    private UndertowDefaultConfiguration subject;
+    private UndertowDefaultMgmtConfiguration subject;
 
     @Before
     public void setUp() throws Exception {
-        subject = new UndertowDefaultConfiguration();
-        inject(1024).asConfigProperty("inkstand.http.port").into(subject);
-        inject("foreign.host").asConfigProperty("inkstand.http.listenaddress").into(subject);
+        subject = new UndertowDefaultMgmtConfiguration();
+        inject(1024).asConfigProperty("inkstand.mgmt.port").into(subject);
+        inject("foreign.host").asConfigProperty("inkstand.mgmt.listenaddress").into(subject);
     }
 
     @Test
     public void testGetPort() throws Exception {
         assertEquals(1024, subject.getPort());
     }
+   @Test
+    public void testGetPort_default() throws Exception {
+       //prepare
+       inject(null).asConfigProperty("inkstand.mgmt.port").into(subject);
+
+       //act
+       //assert
+       assertEquals(7999, subject.getPort());
+
+    }
 
     @Test
     public void testGetBindAddress() throws Exception {
         assertEquals("foreign.host", subject.getBindAddress());
     }
-
+    @Test
+    public void testGetBindAddress_default() throws Exception {
+        inject(null).asConfigProperty("inkstand.mgmt.listenaddress").into(subject);
+        assertEquals("localhost", subject.getBindAddress());
+    }
 }
