@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package io.inkstand.http.undertow;
+package io.inkstand.deployment.mgmt;
 
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 import io.inkstand.Management;
+import io.inkstand.config.SimpleWebServerConfiguration;
 import io.inkstand.config.WebServerConfiguration;
-import io.undertow.Undertow;
+import org.apache.deltaspike.core.api.config.ConfigProperty;
 
 /**
- * Default configuration for an {@link Undertow} web container that defines the listen address and the port of the
- * management console. If none is
- * specified (via Delta Spike {@link ConfigProperty} injection), the default values localhost:7999 will be used. The
- * property names are
+ * Management configuration producer for an {@link WebServerConfiguration}.
+ * The values ar specified (via Delta Spike {@link ConfigProperty} injection), if none are specified, the default
+ * values {@code localhost:7999}  will be used.
+ * The property names are
  * <ul>
- * <li><code>inkstand.http.mgmt.port</code></li>
- * <li><code>inkstand.http.mgmt.listenaddress</code></li>
+ * <li><code>inkstand.mgmt.port</code></li>
+ * <li><code>inkstand.mgmt.listenaddress</code></li>
  * </ul>
+ *
  *
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
-@Management
-public class UndertowDefaultMgmtConfiguration implements WebServerConfiguration {
+public class UndertowManagementConfigurationProducer {
 
     public static final String HTTP_PORT_PROPERTY = "inkstand.mgmt.port";
     public static final String HTTP_HOSTNAME_PROPERTY = "inkstand.mgmt.listenaddress";
@@ -49,14 +50,10 @@ public class UndertowDefaultMgmtConfiguration implements WebServerConfiguration 
     @ConfigProperty(name = HTTP_HOSTNAME_PROPERTY, defaultValue = "localhost")
     private String bindAddress;
 
-    @Override
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    public String getBindAddress() {
-        return bindAddress;
+    @Produces
+    @Management
+    public WebServerConfiguration getConfiguration(){
+        return new SimpleWebServerConfiguration(bindAddress, port);
     }
 
 }

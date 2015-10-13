@@ -16,8 +16,8 @@
 
 package io.inkstand.http.undertow;
 
-import static io.inkstand.http.undertow.UndertowDefaultConfiguration.HTTP_HOSTNAME_PROPERTY;
-import static io.inkstand.http.undertow.UndertowDefaultConfiguration.HTTP_PORT_PROPERTY;
+import static io.inkstand.http.undertow.UndertowDefaultConfigurationProducer.HTTP_HOSTNAME_PROPERTY;
+import static io.inkstand.http.undertow.UndertowDefaultConfigurationProducer.HTTP_PORT_PROPERTY;
 import static io.inkstand.util.CollectionHelper.asUnmodifiableSet;
 
 import java.util.Set;

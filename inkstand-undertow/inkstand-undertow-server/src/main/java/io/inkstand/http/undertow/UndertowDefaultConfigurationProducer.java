@@ -16,16 +16,18 @@
 
 package io.inkstand.http.undertow;
 
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+
+import io.inkstand.config.SimpleWebServerConfiguration;
+import io.inkstand.config.WebServerConfiguration;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 
-import io.inkstand.config.WebServerConfiguration;
-import io.undertow.Undertow;
-
 /**
- * Default configuration for an {@link Undertow} web container that defines the listen address and the port. If none is
- * specified (via Delta Spike {@link ConfigProperty} injection), the default values localhost:80 will be used. The
- * property names are
+ * Default configuration producer for an {@link WebServerConfiguration}.
+ * The values ar specified (via Delta Spike {@link ConfigProperty} injection), if none are specified, the default
+ * values {@code localhost:80}  will be used.
+ * The property names are
  * <ul>
  * <li><code>inkstand.http.port</code></li>
  * <li><code>inkstand.http.listenaddress</code></li>
@@ -33,7 +35,7 @@ import io.undertow.Undertow;
  *
  * @author <a href="mailto:gerald@inkstand.io">Gerald M&uuml;cke</a>
  */
-public class UndertowDefaultConfiguration implements WebServerConfiguration {
+public class UndertowDefaultConfigurationProducer {
 
     public static final String HTTP_PORT_PROPERTY = "inkstand.http.port";
     public static final String HTTP_HOSTNAME_PROPERTY = "inkstand.http.listenaddress";
@@ -46,14 +48,9 @@ public class UndertowDefaultConfiguration implements WebServerConfiguration {
     @ConfigProperty(name = HTTP_HOSTNAME_PROPERTY, defaultValue = "localhost")
     private String bindAddress;
 
-    @Override
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    public String getBindAddress() {
-        return bindAddress;
+    @Produces
+    public WebServerConfiguration getConfiguration(){
+        return new SimpleWebServerConfiguration(bindAddress, port);
     }
 
 }

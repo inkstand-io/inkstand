@@ -14,33 +14,36 @@
  * limitations under the License.
  */
 
-package io.inkstand.http.undertow;
+package io.inkstand.config;
 
-import static io.inkstand.scribble.Scribble.inject;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class UndertowDefaultConfigurationTest {
+/**
+ * Created by Gerald Muecke on 13.10.2015.
+ */
+public class SimpleWebServerConfigurationTest {
 
-    private UndertowDefaultConfiguration subject;
+    /**
+     * The class under test
+     */
+    private SimpleWebServerConfiguration subject;
 
     @Before
     public void setUp() throws Exception {
-        subject = new UndertowDefaultConfiguration();
-        inject(1024).asConfigProperty("inkstand.http.port").into(subject);
-        inject("foreign.host").asConfigProperty("inkstand.http.listenaddress").into(subject);
+        subject = new SimpleWebServerConfiguration("testhost", 12345);
     }
 
     @Test
     public void testGetPort() throws Exception {
-        assertEquals(1024, subject.getPort());
+
+        assertEquals(12345, subject.getPort());
     }
 
     @Test
     public void testGetBindAddress() throws Exception {
-        assertEquals("foreign.host", subject.getBindAddress());
+        assertEquals("testhost", subject.getBindAddress());
     }
-
 }
