@@ -39,10 +39,15 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
      * The configuration property for the location of the static content. Could point to a zip file or a directory.
      */
     public static final String HTTP_CONTENT_ROOT_PROPERTY = "inkstand.http.content.root";
+    public static final String HTTP_CONTEXT_PATH = "inkstand.http.context.path";
 
     @Inject
     @ConfigProperty(name = HTTP_CONTENT_ROOT_PROPERTY)
     private String contentFileLocation; //NOSONAR
+
+    @Inject
+    @ConfigProperty(name = HTTP_CONTEXT_PATH, defaultValue = "/")
+    private String contextPath; //NOSONAR
 
     @Override
     @Produces
@@ -51,7 +56,7 @@ public class DefaultStaticContentDeploymentProvider implements UndertowDeploymen
         final ResourceManager resMgr = createResourceManager();
 
         return new DeploymentInfo()
-        .setContextPath("/")
+        .setContextPath(contextPath)
         .setResourceManager(resMgr)
         .setDeploymentName("StaticContent")
         .setClassLoader(ClassLoader.getSystemClassLoader());

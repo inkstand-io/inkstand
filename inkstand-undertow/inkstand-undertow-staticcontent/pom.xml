@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>io.inkstand</groupId>
-            <artifactId>scribble</artifactId>
+            <artifactId>scribble-all</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
