@@ -16,11 +16,14 @@
 
 package io.inkstand.jcr.util;
 
-import static io.inkstand.scribble.JCRAssert.*;
+import static io.inkstand.scribble.jcr.JCRAssert.*;
 import static org.junit.Assert.assertEquals;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+
+import io.inkstand.scribble.Scribble;
+import io.inkstand.scribble.jcr.rules.ContentRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -28,9 +31,6 @@ import org.junit.Test;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-
-import io.inkstand.scribble.Scribble;
-import io.inkstand.scribble.rules.jcr.ContentRepository;
 
 public class JCRContentHandlerTest {
 
