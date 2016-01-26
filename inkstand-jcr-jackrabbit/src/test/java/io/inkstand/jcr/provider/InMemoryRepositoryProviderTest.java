@@ -16,8 +16,8 @@
 
 package io.inkstand.jcr.provider;
 
-import static io.inkstand.scribble.JCRAssert.assertNodeTypeExists;
 import static io.inkstand.scribble.Scribble.inject;
+import static io.inkstand.scribble.jcr.JCRAssert.assertNodeTypeExists;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

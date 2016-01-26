@@ -16,10 +16,7 @@
 
 package io.inkstand.jcr.util;
 
-import static io.inkstand.scribble.JCRAssert.assertMixinNodeType;
-import static io.inkstand.scribble.JCRAssert.assertNodeExistByPath;
-import static io.inkstand.scribble.JCRAssert.assertPrimaryNodeType;
-import static io.inkstand.scribble.JCRAssert.assertStringPropertyEquals;
+import static io.inkstand.scribble.jcr.JCRAssert.*;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -33,6 +30,10 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
+
+import io.inkstand.InkstandRuntimeException;
+import io.inkstand.scribble.Scribble;
+import io.inkstand.scribble.jcr.rules.ContentRepository;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -40,10 +41,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import io.inkstand.InkstandRuntimeException;
-import io.inkstand.scribble.Scribble;
-import io.inkstand.scribble.rules.jcr.ContentRepository;
 
 public class JCRContentLoaderTest {
 

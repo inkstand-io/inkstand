@@ -54,6 +54,7 @@ public class DefaultStaticContentDeploymentProviderTest {
     public void testGetDeployment_zipContentFile() throws Exception {
 
         //prepare
+        inject(null).asConfigProperty("inkstand.http.context.path").into(subject);
         inject(file.getFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.root").into(subject);
 
         //act
@@ -73,6 +74,7 @@ public class DefaultStaticContentDeploymentProviderTest {
     public void testGetDeployment_fsContentRoot() throws Exception {
 
         //prepare
+        inject(null).asConfigProperty("inkstand.http.context.path").into(subject);
         inject(file.getFile().getParentFile().getAbsolutePath()).asConfigProperty("inkstand.http.content.root").into(
                 subject);
 

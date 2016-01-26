@@ -17,11 +17,13 @@
 package io.inkstand.http.undertow;
 
 import javax.annotation.Priority;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +59,10 @@ public class UndertowWebServerProvider {
     @Management
     private Instance<WebServerConfiguration> mgmtConfig;
 
+    //TODO remove @Default annotation [SCRIB-62]
     @Inject
-    private DeploymentInfo deploymentInfo;
+    @Default
+    private Instance<DeploymentInfo> deploymentInfo;
 
     @Inject
     @Management
@@ -66,72 +70,73 @@ public class UndertowWebServerProvider {
 
     @Produces
     public Undertow getUndertow() {
-
-        final WebServerConfiguration httpConfig = this.getConfig();
-
         try {
-
-            final DeploymentInfo deployInfo = this.getDeploymentInfo();
-            final DeploymentManager deploymentManager = Servlets.defaultContainer().addDeployment(deployInfo);
-            deploymentManager.deploy();
-            LOG.info("Creating service endpoint {}:{}{} for {}",
-                     httpConfig.getBindAddress(),
-                     httpConfig.getPort(),
-                     deployInfo.getContextPath(),
-                     deployInfo.getDeploymentName());
-
-            final Builder builder = Undertow.builder()
-                           .addHttpListener(httpConfig.getPort(),
-                                            httpConfig.getBindAddress(),
-                                            deploymentManager.start());
-
-
-            //mgmt Deployment is completely optional and will only be activated, if there is a mgmt config
-            if(!mgmtConfig.isUnsatisfied() && !mgmtDeployment.isUnsatisfied()) {
-                final WebServerConfiguration mCfg = mgmtConfig.get();
-
-                LOG.info("Creating management endpoint {}:{}",
-                         mCfg.getBindAddress(),
-                         mCfg.getPort());
-
-                final ServletContainer mContainer = Servlets.newContainer();
-                final HttpHandler root;
-                if(mgmtDeployment.isAmbiguous()) {
-                    //multi-deployment
-                    final PathHandler path = new PathHandler();
-                    for(DeploymentInfo mDI : mgmtDeployment) {
-                        final DeploymentManager mDM = mContainer.addDeployment(mDI);
-                        LOG.info("Deploying management extension {}", mDI.getContextPath());
-                        mDM.deploy();
-                        path.addPrefixPath(mDI.getContextPath(),mDM.start());
-                    }
-                    root = path;
-                } else {
-                    //single deployment
-                    final DeploymentInfo mDI = mgmtDeployment.get();
-                    final DeploymentManager mDM = mContainer.addDeployment(mDI);
-                    LOG.info("Deploying management extension {}", mDI.getContextPath());
-                    mDM.deploy();
-                    root = mDM.start();
-                }
-                builder.addHttpListener(mCfg.getPort(), mCfg.getBindAddress(), root);
-
-            }
-
+            final Builder builder = Undertow.builder();
+            addServices(builder);
+            addManagementExtensions(builder);
             return builder.build();
         } catch (final ServletException e) {
             throw new InkstandRuntimeException(e);
         }
     }
 
-    public WebServerConfiguration getConfig() {
+    /**
+     * Adds the business service deployments that are injected into the provider.
+     * @param builder
+     *  the builder to create the undertow instance
+     * @throws ServletException
+     */
+    private void addServices(final Builder builder) throws ServletException {
 
-        return this.config;
+        final ServletContainer container = Servlets.defaultContainer();
+        final Iterable<DeploymentInfo> deployments = this.deploymentInfo;
+        final PathHandler path = addDeployments(container, deployments);
+        final WebServerConfiguration httpConfig = this.config;
+        LOG.info("Creating service endpoint {}:{}", httpConfig.getBindAddress(), httpConfig.getPort());
+        builder.addHttpListener(httpConfig.getPort(), httpConfig.getBindAddress(), path);
     }
 
-    public DeploymentInfo getDeploymentInfo() {
+    /**
+     * Adds the optional management extensions into the undertow builder configuration. The management extensions
+     * have to be injected using the {@link io.inkstand.Management} qualifier.
+     * @param builder
+     *  the builder to create the undertow instance.
+     * @throws ServletException
+     */
+    private void addManagementExtensions(final Builder builder) throws ServletException {
 
-        return this.deploymentInfo;
+        //mgmt Deployment is completely optional and will only be activated, if there is a mgmt config
+        if (!mgmtConfig.isUnsatisfied() && !mgmtDeployment.isUnsatisfied()) {
+            final WebServerConfiguration mCfg = mgmtConfig.get();
+            LOG.info("Creating management endpoint {}:{}", mCfg.getBindAddress(), mCfg.getPort());
+            final ServletContainer mContainer = Servlets.newContainer();
+            final HttpHandler root = addDeployments(mContainer, this.mgmtDeployment);
+            builder.addHttpListener(mCfg.getPort(), mCfg.getBindAddress(), root);
+        }
+    }
+
+    /**
+     * Adds deployments to a servlet container. Each deployment is registered at a separate context path provided by
+     * their {@link io.undertow.servlet.api.DeploymentInfo}
+     * @param container
+     *  the container to which the the deployments should be added
+     * @param deployments
+     *  the deployments to be added
+     * @return
+     *  a path handler to the deployments. Multiple deployments have to be distinguished by their context paths.
+     * @throws ServletException
+     */
+    private PathHandler addDeployments(final ServletContainer container, final Iterable<DeploymentInfo> deployments)
+            throws ServletException {
+
+        final PathHandler path = new PathHandler();
+        for (DeploymentInfo di : deployments) {
+            final DeploymentManager dm = container.addDeployment(di);
+            LOG.info("Deploying service {}", di.getContextPath());
+            dm.deploy();
+            path.addPrefixPath(di.getContextPath(), dm.start());
+        }
+        return path;
     }
 
     /**
