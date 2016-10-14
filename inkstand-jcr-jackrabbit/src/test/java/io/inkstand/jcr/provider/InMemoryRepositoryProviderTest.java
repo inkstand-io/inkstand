@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,50 +17,59 @@
 package io.inkstand.jcr.provider;
 
 import static io.inkstand.scribble.Scribble.inject;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static io.inkstand.scribble.jcr.JCRAssert.assertNodeTypeExists;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.jcr.nodetype.NodeTypeManager;
-import org.apache.jackrabbit.core.SessionImpl;
-import org.apache.jackrabbit.core.SessionListener;
-import org.apache.jackrabbit.core.TransientRepository;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.apache.jackrabbit.core.RepositoryImpl;
+import org.apache.jackrabbit.core.config.ConfigurationException;
+import org.apache.jackrabbit.core.config.RepositoryConfig;
+import org.apache.jackrabbit.core.fs.mem.MemoryFileSystem;
+import org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.mockito.Answers;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import io.inkstand.InkstandRuntimeException;
+import io.inkstand.scribble.Scribble;
 
 @RunWith(MockitoJUnitRunner.class)
 public class InMemoryRepositoryProviderTest {
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private Path tempfolder;
-
-    @Mock
-    private TransientRepository repository;
+    @Rule
+    public TemporaryFolder folder = Scribble.newTempFolder().build();
 
     @InjectMocks
     private InMemoryRepositoryProvider subject;
+
+    private Repository repository;
 
     private ClassLoader contextClassLoader;
 
     @Before
     public void setUp() throws Exception {
-        inject(getResourceUrl("/repository.xml")).asConfigProperty("inkstand.jcr.transient.configURL").into(subject);
+
         contextClassLoader = Thread.currentThread().getContextClassLoader();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
+        Thread.currentThread().setContextClassLoader(contextClassLoader);
+        if(repository != null && repository instanceof RepositoryImpl) {
+            ((RepositoryImpl)repository).shutdown();
+        }
     }
 
     private String getResourceUrl(final String resourceName) {
@@ -68,106 +77,162 @@ public class InMemoryRepositoryProviderTest {
         return getClass().getResource(resourceName).toString();
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Thread.currentThread().setContextClassLoader(contextClassLoader);
+    @Test
+    public void testGetRepositoryHome_preConfigured() throws Exception {
+        //prepare
+        Path homepath = folder.getRoot().toPath();
+        inject(homepath.toString()).asConfigProperty("inkstand.jcr.home").into(subject);
+
+        //act
+        String actual = subject.getRepositoryHome();
+
+        //assert
+        assertEquals(homepath.toString(), actual);
+
     }
 
     @Test
-    public void testGetRepository() throws Exception {
-        assertEquals(repository, subject.getRepository());
-    }
+    public void testGetRepositoryHome_tempFolder() throws Exception {
+        //prepare
 
-    @Test(expected = InkstandRuntimeException.class)
-    public void testStartRepository_brokenRepositoryXml_exceptionOnStartup() throws Exception {
-        // prepare
-        inject(getResourceUrl("/broken_repository.xml")).asConfigProperty("inkstand.jcr.transient.configURL").into(
-                subject);
-        // act
-        subject.startRepository();
-        // assert
-        final Session session = subject.getRepository().login();
-        assertNotNull(session);
+        //act
+        String actual = subject.getRepositoryHome();
+
+        //assert
+        assertNotNull(actual);
+        assertTrue(Files.exists(Paths.get(actual)));
     }
 
     @Test
-    public void testStartRepository_defaultConfigurationXml() throws Exception {
-        inject(null).asConfigProperty("inkstand.jcr.transient.configURL").into(subject);
+    public void testGetRepositoryHome_tempFolderReuse() throws Exception {
+        //prepare
+
+        //act
+        String initialFolder = subject.getRepositoryHome();
+        String nextFolder = subject.getRepositoryHome();
+
+        //assert
+        assertNotNull(initialFolder);
+        assertEquals(initialFolder, nextFolder);
+    }
+
+    @Test
+    public void testGetRepositoryConfig_defaultConfigXml() throws Exception {
+        //prepare
+        //null will result in the default value being injected
+        inject(null).asConfigProperty("inkstand.jcr.config").into(subject);
         Thread.currentThread().setContextClassLoader(null);
-        // start the repository
-        subject.startRepository();
+
+        //act
+        RepositoryConfig config = subject.getRepositoryConfig();
+        //assert
+        assertNotNull(config);
+        assertEquals(config.getHomeDir(), subject.getRepositoryHome());
+        assertTrue(config.getFileSystem() instanceof MemoryFileSystem);
+        assertEquals(InMemBundlePersistenceManager.class.getName(),
+                     config.getWorkspaceConfig("default").getPersistenceManagerConfig().getClassName());
     }
 
     @Test
-    public void testStartRepository_externalConfigXml() throws Exception {
-        inject(getResourceUrl("InMemoryRepositoryProviderTest_externalConfig.xml")).asConfigProperty("inkstand.jcr.transient.configURL").into(subject);
+    public void testGetRepositoryConfig_externalConfigXml() throws Exception {
+        //prepare
+        inject(getResourceUrl("InMemoryRepositoryProviderTest_externalConfig.xml")).asConfigProperty(
+                "inkstand.jcr.config").into(subject);
         Thread.currentThread().setContextClassLoader(null);
-        // start the repository
-        subject.startRepository();
+
+        //act
+        RepositoryConfig config = subject.getRepositoryConfig();
+        //assert
+        assertNotNull(config);
+        assertEquals(config.getHomeDir(), subject.getRepositoryHome());
+        assertTrue(config.getFileSystem() instanceof MemoryFileSystem);
+        assertEquals(InMemBundlePersistenceManager.class.getName(),
+                     config.getWorkspaceConfig("default").getPersistenceManagerConfig().getClassName());
+
+    }
+
+    @Test(expected = ConfigurationException.class)
+    public void testGetRepositoryConfig_invalidConfigXml() throws Exception {
+        //prepare
+        inject(getResourceUrl("InMemoryRepositoryProviderTest_invalid_repository.xml")).asConfigProperty(
+                "inkstand.jcr.config").into(subject);
+
+        //act
+        subject.getRepositoryConfig();
+    }
+
+    @Test(expected = ConfigurationException.class)
+    public void testGetRepositoryConfig_brokenConfigXml() throws Exception {
+        //prepare
+        inject(getResourceUrl("InMemoryRepositoryProviderTest_broken_repository.xml")).asConfigProperty(
+                "inkstand.jcr.config").into(subject);
+
+        //act
+        RepositoryConfig config = subject.getRepositoryConfig();
+        //assert
+        //the class is only instantiated on demand, so this call will fail
+        assertNotNull(config.getFileSystem());
     }
 
     @Test
-    public void testStartRepository_noCndFile() throws Exception {
-        // check the repository does not perform a login as it is still a mock
-        assertNull(subject.getRepository().login());
-        // start the repository
-        subject.startRepository();
-        // the repository should be working
-        final Session session = subject.getRepository().login();
-        assertNotNull(session);
-        final NodeTypeManager ntm = session.getWorkspace().getNodeTypeManager();
-        assertFalse(ntm.hasNodeType("test:testType"));
+    public void testGetRepository_withCnd() throws Exception {
+
+        //prepare
+        inject(null).asConfigProperty("inkstand.jcr.config").into(subject);
+        inject(getResourceUrl("InMemoryRepositoryProviderTest_ntmodel.cnd"))
+                .asConfigProperty("inkstand.jcr.cnd")
+                .into(subject);
+
+        //act
+        repository = subject.getRepository();
+
+        //assert
+        assertNotNull(repository);
+        Session session = repository.login();
+        assertNodeTypeExists(session, "test:testType");
+
     }
 
     @Test
-    public void testStartRepository_withCndFile() throws Exception {
-        // check the repository does not perform a login as it is still a mock
-        assertNull(subject.getRepository().login());
-        inject(getResourceUrl("InMemoryRepositoryProviderTest_testStartRepository.cnd")).asConfigProperty("inkstand.jcr.transient.cndFileURL").into(subject);
-        // start the repository
-        subject.startRepository();
-        // the repository should be working
-        final Session session = subject.getRepository().login();
-        assertNotNull(session);
-        final NodeTypeManager ntm = session.getWorkspace().getNodeTypeManager();
-        assertTrue(ntm.hasNodeType("test:testType"));
+    public void testGetRepository_withoutCnd() throws Exception {
+        //prepare
+        inject(null).asConfigProperty("inkstand.jcr.config").into(subject);
+
+        //act
+        repository = subject.getRepository();
+
+        //assert
+        assertNotNull(repository);
     }
 
     @Test
-    public void testShutdownRepository_providedRepositoryNoStartShutdown_success() throws Exception {
-        // repository is not started
-        subject.shutdownRepository(repository);
-        verify(repository).shutdown();
+    public void testClose_configuredWorkingDirectory_noCleanup() throws Exception {
+        //prepare
+        //injecting null to activate the default config
+        inject(null).asConfigProperty("inkstand.jcr.config").into(subject);
+        Path workDir = folder.getRoot().toPath();
+        inject(workDir.toString()).asConfigProperty("inkstand.jcr.home").into(subject);
+        Repository repository = subject.getRepository();
+
+        //act
+        subject.close(repository);
+
+        //assert
+        assertTrue(Files.exists(workDir));
     }
 
     @Test
-    public void testShutdownRepository_providedRepositoryStartShutdown_success() throws Exception {
-        // prepare
-        // start the repository and obtain a session
-        subject.startRepository();
-        final Repository repo = subject.getRepository();
-        final SessionImpl session = (SessionImpl) repo.login();
-        // the shutdown can be verified if all sessions are logged out
-        final SessionListener listener = mock(SessionListener.class);
-        session.addListener(listener);
-        // act
-        subject.shutdownRepository(repo);
-        // assert
-        // shutdown can only be verified indirectly, when all session are logged out
-        verify(listener).loggedOut(any(SessionImpl.class));
-    }
+    public void testClose_tempWorkingDirectory_cleanup() throws Exception {
+        //prepare
+        //injecting null to activate the default config
+        inject(null).asConfigProperty("inkstand.jcr.config").into(subject);
+        //no workdir -> use temp folder
+        repository = subject.getRepository();
 
-    @Test
-    public void testShutdownRepository_foreignRepository_success() throws Exception {
-        final TransientRepository foreigRepository = mock(TransientRepository.class);
-        subject.shutdownRepository(foreigRepository);
-        verify(foreigRepository, times(0)).shutdown();
-    }
+        //act
+        subject.close(repository);
 
-    @Test(expected = InkstandRuntimeException.class)
-    public void testShutdownRepository_exceptionOnShutdown() throws Exception {
-        doThrow(IOException.class).when(repository).shutdown();
-        subject.shutdownRepository(repository);
+        //assert
+        assertFalse("Temporary folder was not deleted", Files.exists(Paths.get(subject.getRepositoryHome())));
     }
-
 }
